@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Instagram, Linkedin } from "lucide-react";
 
 const footerLinks = {
@@ -20,7 +21,11 @@ const footerLinks = {
   ],
 };
 
-export function Footer() {
+interface FooterProps {
+  logoUrl?: string | null;
+}
+
+export function Footer({ logoUrl }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -29,11 +34,20 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link
-              href="/"
-              className="text-2xl font-black tracking-tight text-foreground"
-            >
-              GHOST ROASTING
+            <Link href="/" className="inline-block">
+              {logoUrl ? (
+                <Image
+                  src={logoUrl}
+                  alt="Ghost Roastery"
+                  width={400}
+                  height={100}
+                  className="h-[100px] w-auto"
+                />
+              ) : (
+                <span className="text-2xl font-black tracking-tight text-foreground">
+                  GHOST ROASTERY
+                </span>
+              )}
             </Link>
             <p className="mt-4 text-neutral-400 max-w-sm">
               Your brand. Our roastery. Nobody needs to know.
@@ -143,7 +157,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-neutral-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-neutral-500">
-              &copy; {currentYear} Ghost Roasting UK. All rights reserved.
+              &copy; {currentYear} Ghost Roastery. All rights reserved.
             </p>
             <p className="text-sm text-neutral-500">
               Specialty grade coffee roasted in the UK

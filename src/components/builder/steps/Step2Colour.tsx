@@ -7,8 +7,15 @@ import { StepHeading } from "../StepHeading";
 import { BagVisualisation } from "../BagVisualisation";
 import type { BagColour } from "../types";
 
+function getSwatchClass(name: string): string {
+  const n = name.toLowerCase();
+  if (n.includes("holo")) return "swatch-holo";
+  if (n.includes("shiny")) return "swatch-shiny";
+  return "";
+}
+
 export function Step2Colour() {
-  const { state, dispatch, bagColours, siteSettings } = useBuilder();
+  const { state, dispatch, bagColours, builderSettings } = useBuilder();
   const [hoveredColour, setHoveredColour] = useState<BagColour | null>(null);
 
   const handleSelect = (colour: BagColour) => {
@@ -18,19 +25,23 @@ export function Step2Colour() {
       name: colour.name,
       hex: colour.hex,
       photoUrl: colour.bagPhotoUrl,
+      actualPhotoUrl: colour.actualBagPhotoUrl,
     });
   };
 
   const heading =
-    siteSettings.builderCopy?.step2Heading || "Pick your bag colour.";
+    builderSettings.step2Heading || "Pick your bag colour.";
   const subheading =
-    siteSettings.builderCopy?.step2Subheading ||
+    builderSettings.step2Subheading ||
     "This is the base colour of your bag.";
 
   // Get the photo URL to display (hovered or selected)
   const previewPhotoUrl =
     hoveredColour?.bagPhotoUrl || state.bagPhotoUrl || null;
+  const previewActualPhotoUrl =
+    hoveredColour?.actualBagPhotoUrl || state.actualBagPhotoUrl || null;
   const previewHex = hoveredColour?.hex || state.bagColourHex || null;
+  const previewName = hoveredColour?.name || state.bagColourName || null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -58,7 +69,7 @@ export function Step2Colour() {
                   state.bagColourId === colour._id
                     ? "ring-4 ring-accent ring-offset-4 ring-offset-background"
                     : "ring-2 ring-neutral-700 hover:ring-neutral-500"
-                }`}
+                } ${getSwatchClass(colour.name)}`}
                 style={{ backgroundColor: colour.hex }}
               />
               <span
@@ -99,6 +110,8 @@ export function Step2Colour() {
             <BagVisualisation
               bagPhotoUrl={previewPhotoUrl}
               bagColourHex={previewHex}
+              bagColourName={previewName}
+              actualBagPhotoUrl={previewActualPhotoUrl}
               labelFileURL={null}
               size="large"
               showPlaceholder
@@ -111,6 +124,8 @@ export function Step2Colour() {
       <BagVisualisation
         bagPhotoUrl={previewPhotoUrl}
         bagColourHex={previewHex}
+        bagColourName={previewName}
+        actualBagPhotoUrl={previewActualPhotoUrl}
         labelFileURL={null}
         size="medium"
         collapsible

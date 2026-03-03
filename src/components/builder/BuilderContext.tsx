@@ -4,6 +4,8 @@ import {
   createContext,
   useContext,
   useReducer,
+  useEffect,
+  useState,
   ReactNode,
   Dispatch,
   useMemo,
@@ -15,10 +17,12 @@ import {
   BagColour,
   RoastProfile,
   GrindOption,
-  PricingTier,
-  SiteSettings,
+  BuilderSettings,
 } from "./types";
+import type { PricingData } from "@/lib/pricing";
 import { builderReducer, initialBuilderState } from "./builderReducer";
+import { createBrowserClient } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 interface BuilderContextType {
   state: BuilderState;
@@ -27,9 +31,11 @@ interface BuilderContextType {
   bagColours: BagColour[];
   roastProfiles: RoastProfile[];
   grindOptions: GrindOption[];
-  pricingTiers: PricingTier[];
-  siteSettings: SiteSettings;
+  pricingData: PricingData;
+  builderSettings: BuilderSettings;
   canContinue: boolean;
+  user: User | null;
+  isCheckingAuth: boolean;
 }
 
 const BuilderContext = createContext<BuilderContextType | null>(null);
@@ -40,8 +46,8 @@ interface BuilderProviderProps {
   bagColours: BagColour[];
   roastProfiles: RoastProfile[];
   grindOptions: GrindOption[];
-  pricingTiers: PricingTier[];
-  siteSettings: SiteSettings;
+  pricingData: PricingData;
+  builderSettings: BuilderSettings;
 }
 
 export function BuilderProvider({
@@ -50,39 +56,70 @@ export function BuilderProvider({
   bagColours,
   roastProfiles,
   grindOptions,
-  pricingTiers,
-  siteSettings,
+  pricingData,
+  builderSettings,
 }: BuilderProviderProps) {
-  // Initialize with site settings for quantity bounds
+  // Initialize with site settings for quantity bounds and default colour
+  const defaultColour = bagColours.find((c) => c.name === "Black Matt") || bagColours[0] || null;
   const initialState = {
     ...initialBuilderState,
-    quantity: siteSettings.minOrderQuantity || 10,
+    quantity: pricingData.minOrder || 25,
+    ...(defaultColour && {
+      bagColourId: defaultColour._id,
+      bagColourName: defaultColour.name,
+      bagColourHex: defaultColour.hex,
+      bagPhotoUrl: defaultColour.bagPhotoUrl,
+    }),
   };
 
   const [state, dispatch] = useReducer(builderReducer, initialState);
+  const [user, setUser] = useState<User | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Check auth session on mount and listen for changes
+  useEffect(() => {
+    const supabase = createBrowserClient();
+
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setIsCheckingAuth(false);
+    });
+
+    // Listen for auth state changes (needed for OAuth redirect flow)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Compute whether the user can continue from the current step
   const canContinue = useMemo(() => {
     switch (state.currentStep) {
       case 1:
-        return !!state.bagSize;
+        return state.brandName.trim().length >= 1;
       case 2:
-        return !!state.bagColourId;
+        return !!state.bagSize;
       case 3:
-        return !!state.labelFile || state.labelSkipped;
+        return !!state.bagColourId;
       case 4:
-        return !!state.roastProfile;
+        return !!state.labelFile || !!state.labelPdfUrl || state.labelSkipped;
       case 5:
-        return !!state.grind;
+        return !!state.roastProfile;
       case 6:
-        return state.quantity >= (siteSettings.minOrderQuantity || 10);
+        return !!state.grind;
       case 7:
+        return state.quantity >= (pricingData.minOrder || 25);
       case 8:
+      case 9:
         return true;
       default:
         return true;
     }
-  }, [state, siteSettings.minOrderQuantity]);
+  }, [state, pricingData.minOrder]);
 
   return (
     <BuilderContext.Provider
@@ -93,9 +130,11 @@ export function BuilderProvider({
         bagColours,
         roastProfiles,
         grindOptions,
-        pricingTiers,
-        siteSettings,
+        pricingData,
+        builderSettings,
         canContinue,
+        user,
+        isCheckingAuth,
       }}
     >
       {children}

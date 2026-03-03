@@ -7,7 +7,10 @@ import { blogPost } from "./blogPost";
 import { caseStudy } from "./caseStudy";
 import { wholesaleEnquiry } from "./wholesaleEnquiry";
 import { siteSettings } from "./siteSettings";
+import { builderSettings } from "./builderSettings";
 import { faq } from "./faq";
+import { labelTemplate } from "./labelTemplate";
+import { svgElement } from "./svgElement";
 
 export const schemaTypes = [
   // Content
@@ -22,9 +25,14 @@ export const schemaTypes = [
   roastProfiles,
   pricingTiers,
 
+  // Label maker
+  labelTemplate,
+  svgElement,
+
   // Business
   wholesaleEnquiry,
 
   // Settings
   siteSettings,
+  builderSettings,
 ];

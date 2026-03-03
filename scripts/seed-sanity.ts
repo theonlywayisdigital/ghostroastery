@@ -24,6 +24,7 @@ async function seed() {
     {
       _type: "pricingTiers",
       bagSize: "250g",
+      tier_10_24: 9.5,
       tier_25_49: 8.5,
       tier_50_99: 7.5,
       tier_100_150: 6.5,
@@ -32,17 +33,10 @@ async function seed() {
     {
       _type: "pricingTiers",
       bagSize: "500g",
+      tier_10_24: 14.5,
       tier_25_49: 13,
       tier_50_99: 11.5,
       tier_100_150: 10,
-      shippingCost: 0,
-    },
-    {
-      _type: "pricingTiers",
-      bagSize: "1kg",
-      tier_25_49: 20,
-      tier_50_99: 18,
-      tier_100_150: 16,
       shippingCost: 0,
     },
   ];
@@ -58,7 +52,7 @@ async function seed() {
     {
       _type: "faq",
       question: "What is the minimum order for wholesale?",
-      answer: "Our wholesale service starts at 150 bags per order.",
+      answer: "Our wholesale service starts at 100+ bags per order.",
       category: "wholesale",
       order: 1,
     },
@@ -102,7 +96,7 @@ async function seed() {
     summary:
       "Our proof-of-concept brand, built entirely using our ghost roasting service. From concept to live store in under two weeks.",
     isPlaceholder: false,
-    seoTitle: "Off Your Bean Case Study | Ghost Roasting UK",
+    seoTitle: "Off Your Bean Case Study | Ghost Roastery",
     seoDescription:
       "See how we built Off Your Bean using our own ghost roasting service - from concept to live store in under two weeks.",
   });
@@ -131,12 +125,12 @@ async function seed() {
   await client.create({
     _type: "siteSettings",
     tagline: "Your brand. Our roastery. Nobody needs to know.",
-    defaultSeoTitle: "Ghost Roasting UK | White Label Coffee Roasting",
+    defaultSeoTitle: "Ghost Roastery | White Label Coffee Roasting",
     defaultSeoDescription:
       "UK-based ghost roasting and white label coffee service. Launch your coffee brand with zero barriers.",
-    contactEmail: "hello@ghostroasting.co.uk",
-    adminEmail: "admin@ghostroasting.co.uk",
-    roasteryEmail: "roastery@ghostroasting.co.uk",
+    contactEmail: "hello@ghostroastery.com",
+    adminEmail: "admin@ghostroastery.com",
+    roasteryEmail: "roastery@ghostroastery.com",
     accentColour: "amber",
   });
   console.log("  Created site settings");

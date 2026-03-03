@@ -2,26 +2,32 @@ import { BuilderState, BuilderAction, TOTAL_STEPS } from "./types";
 
 export const initialBuilderState: BuilderState = {
   currentStep: 1,
-  // Step 1: Size
+  // Step 1: Brand Name
+  brandName: "",
+  // Step 2: Size
   bagSize: null,
   bagSizeName: null,
-  // Step 2: Colour
+  // Step 3: Colour
   bagColourId: null,
   bagColourName: null,
   bagColourHex: null,
   bagPhotoUrl: null,
-  // Step 3: Label
+  actualBagPhotoUrl: null,
+  // Step 4: Label
   labelFile: null,
   labelFileURL: null,
   labelSkipped: false,
-  // Step 4: Roast
+  labelPdfUrl: null,
+  labelPreviewUrl: null,
+  savedLabelId: null,
+  // Step 5: Roast
   roastProfile: null,
   roastProfileName: null,
   roastDescriptor: null,
-  // Step 5: Grind
+  // Step 6: Grind
   grind: null,
   grindName: null,
-  // Step 6: Quantity
+  // Step 7: Quantity
   quantity: 25,
   pricePerBag: null,
   totalPrice: null,
@@ -47,6 +53,12 @@ export function builderReducer(
     case "PREV_STEP":
       return { ...state, currentStep: Math.max(state.currentStep - 1, 1) };
 
+    case "SET_BRAND_NAME":
+      return {
+        ...state,
+        brandName: action.name,
+      };
+
     case "SET_BAG_SIZE":
       return {
         ...state,
@@ -61,6 +73,7 @@ export function builderReducer(
         bagColourName: action.name,
         bagColourHex: action.hex,
         bagPhotoUrl: action.photoUrl,
+        actualBagPhotoUrl: action.actualPhotoUrl,
       };
 
     case "SET_LABEL_FILE":
@@ -73,6 +86,38 @@ export function builderReducer(
         labelFile: action.file,
         labelFileURL: action.url,
         labelSkipped: false,
+        labelPdfUrl: null,
+        labelPreviewUrl: null,
+      };
+
+    case "SET_LABEL_FROM_MAKER":
+      // Label created via label maker — store PDF + preview URLs
+      if (state.labelFileURL) {
+        URL.revokeObjectURL(state.labelFileURL);
+      }
+      return {
+        ...state,
+        labelFile: null,
+        labelFileURL: action.previewUrl,
+        labelSkipped: false,
+        labelPdfUrl: action.pdfUrl,
+        labelPreviewUrl: action.previewUrl,
+        savedLabelId: null,
+      };
+
+    case "SET_LABEL_FROM_SAVED":
+      // Label selected from saved labels
+      if (state.labelFileURL) {
+        URL.revokeObjectURL(state.labelFileURL);
+      }
+      return {
+        ...state,
+        labelFile: null,
+        labelFileURL: action.previewUrl,
+        labelSkipped: false,
+        labelPdfUrl: action.pdfUrl,
+        labelPreviewUrl: action.previewUrl,
+        savedLabelId: action.savedLabelId,
       };
 
     case "REMOVE_LABEL_FILE":
@@ -84,6 +129,8 @@ export function builderReducer(
         labelFile: null,
         labelFileURL: null,
         labelSkipped: false,
+        labelPdfUrl: null,
+        labelPreviewUrl: null,
       };
 
     case "SKIP_LABEL":

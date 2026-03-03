@@ -298,47 +298,38 @@ async function seed() {
     console.log(`  Created ${profile.name}`);
   }
 
-  // Update site settings with builder settings
-  console.log("\nUpdating site settings...");
-  const existingSettings = await client.fetch(
-    `*[_type == "siteSettings"][0]._id`
-  );
-  if (existingSettings) {
-    await client
-      .patch(existingSettings)
-      .set({
-        minOrderQuantity: 25,
-        maxOrderQuantity: 150,
-        wholesaleThreshold: 150,
-        turnaroundDays: "7–10 working days",
-        labelMakerUrl: "/label-maker",
-        builderCopy: {
-          step1Heading: "Choose Your Size",
-          step1Subheading: "Select the bag size that works best for your brand",
-          step2Heading: "Choose Your Colour",
-          step2Subheading: "Pick a bag colour that matches your brand identity",
-          step3Heading: "Upload Your Label",
-          step3Subheading:
-            "Add your custom label or use our template. You can also skip this for now.",
-          step4Heading: "Choose Your Flavour Profile",
-          step4Subheading:
-            "Select the roast level that defines your coffee experience",
-          step5Heading: "Choose Your Grind",
-          step5Subheading:
-            "Select how you want your beans prepared. Whole bean is perfect for freshness.",
-          step6Heading: "Choose Your Quantity",
-          step6Subheading:
-            "How many bags would you like? Minimum order is 25 bags.",
-          step7Heading: "Review Your Order",
-          step7Subheading:
-            "Check everything looks right before proceeding to checkout",
-        },
-      })
-      .commit();
-    console.log("  Updated site settings with builder configuration");
-  } else {
-    console.log("  No site settings found - run seed-sanity.ts first");
-  }
+  // Create builder settings document
+  console.log("\nCreating builder settings...");
+  await deleteExisting("builderSettings");
+  await client.create({
+    _type: "builderSettings",
+    _id: "builderSettings",
+    minOrderQuantity: 10,
+    maxOrderQuantity: 99,
+    wholesaleThreshold: 99,
+    turnaroundDays: "7–10 working days",
+    labelMakerUrl: "/label-maker",
+    step1Heading: "Choose Your Size",
+    step1Subheading: "Select the bag size that works best for your brand",
+    step2Heading: "Choose Your Colour",
+    step2Subheading: "Pick a bag colour that matches your brand identity",
+    step3Heading: "Upload Your Label",
+    step3Subheading:
+      "Add your custom label or use our template. You can also skip this for now.",
+    step4Heading: "Choose Your Flavour Profile",
+    step4Subheading:
+      "Select the roast level that defines your coffee experience",
+    step5Heading: "Choose Your Grind",
+    step5Subheading:
+      "Select how you want your beans prepared. Whole bean is perfect for freshness.",
+    step6Heading: "Choose Your Quantity",
+    step6Subheading:
+      "How many bags would you like? Minimum order is 10 bags.",
+    step7Heading: "Review Your Order",
+    step7Subheading:
+      "Check everything looks right before proceeding to checkout",
+  });
+  console.log("  Created builder settings document");
 
   console.log("\n✓ Builder v2 data seeding complete!");
   console.log("\nNext steps:");

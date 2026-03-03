@@ -56,7 +56,7 @@ export function BuilderShell({ children }: BuilderShellProps) {
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="text-foreground font-bold text-lg">
-            Ghost Roasting UK
+            Ghost Roastery
           </Link>
 
           {/* Exit button */}

@@ -2,7 +2,7 @@ import { groq } from "next-sanity";
 
 // Site Settings
 export const siteSettingsQuery = groq`
-  *[_type == "siteSettings"][0] {
+  *[_id == "siteSettings"][0] {
     logo,
     tagline,
     defaultSeoTitle,
@@ -17,11 +17,13 @@ export const siteSettingsQuery = groq`
   }
 `;
 
-// Pricing Tiers
+// DEPRECATED: Pricing now served from Supabase pricing_tier_brackets + pricing_tier_prices tables.
+// The old pricing_tiers table has been dropped. Kept for reference only — do not use in new code.
 export const pricingTiersQuery = groq`
   *[_type == "pricingTiers"] | order(bagSize asc) {
     _id,
     bagSize,
+    tier_10_24,
     tier_25_49,
     tier_50_99,
     tier_100_150,
@@ -60,7 +62,8 @@ export const bagOptionBySlugQuery = groq`
   }
 `;
 
-// Roast Profiles
+// DEPRECATED: Roast profiles now served from Supabase roast_profiles table.
+// Kept for reference only — do not use in new code.
 export const roastProfilesQuery = groq`
   *[_type == "roastProfiles"] | order(roastLevel asc) {
     _id,
@@ -171,6 +174,31 @@ export const faqsByCategoryQuery = groq`
     _id,
     question,
     answer
+  }
+`;
+
+// Label Templates
+export const labelTemplatesQuery = groq`
+  *[_type == "labelTemplate" && isActive == true] | order(sortOrder asc) {
+    _id,
+    name,
+    category,
+    "thumbnailUrl": thumbnail.asset->url,
+    canvasJSON,
+    "bagTypeSlug": bagType->slug.current,
+    sortOrder
+  }
+`;
+
+// SVG Elements
+export const svgElementsQuery = groq`
+  *[_type == "svgElement" && isActive == true] | order(category asc, sortOrder asc) {
+    _id,
+    name,
+    category,
+    svgMarkup,
+    "thumbnailUrl": thumbnail.asset->url,
+    sortOrder
   }
 `;
 

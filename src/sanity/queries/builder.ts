@@ -1,5 +1,7 @@
 import { groq } from "next-sanity";
 
+// DEPRECATED: Bag sizes now served from Supabase bag_sizes table.
+// Kept for reference only — do not use in new code.
 export const bagSizesQuery = groq`
   *[_type == "bagSizes" && isActive == true] | order(sortOrder asc) {
     _id,
@@ -16,11 +18,14 @@ export const bagColoursQuery = groq`
     name,
     hex,
     "bagPhotoUrl": bagPhoto.asset->url,
+    "actualBagPhotoUrl": actualBagPhoto.asset->url,
     sortOrder,
     isActive
   }
 `;
 
+// DEPRECATED: Roast profiles now served from Supabase roast_profiles table.
+// Kept for reference only — do not use in new code.
 export const roastProfilesQuery = groq`
   *[_type == "roastProfiles" && isActive == true] | order(sortOrder asc) {
     _id,
@@ -36,6 +41,8 @@ export const roastProfilesQuery = groq`
   }
 `;
 
+// DEPRECATED: Grind options now served from Supabase grind_options table.
+// Kept for reference only — do not use in new code.
 export const grindOptionsQuery = groq`
   *[_type == "grindOptions" && isActive == true] | order(sortOrder asc) {
     _id,
@@ -48,6 +55,8 @@ export const grindOptionsQuery = groq`
   }
 `;
 
+// DEPRECATED: Pricing now served from Supabase pricing_tier_brackets + pricing_tier_prices tables.
+// The old pricing_tiers table has been dropped. Kept for reference only — do not use in new code.
 export const pricingTiersQuery = groq`
   *[_type == "pricingTiers"] | order(bagSize asc) {
     _id,
@@ -60,13 +69,29 @@ export const pricingTiersQuery = groq`
   }
 `;
 
-export const siteSettingsQuery = groq`
-  *[_type == "siteSettings"][0] {
+// DEPRECATED: Order quantity settings now served from Supabase builder_settings table.
+// Step headings/subheadings remain hardcoded in build/page.tsx defaults.
+// Kept for reference only — do not use in new code.
+export const builderSettingsQuery = groq`
+  *[_type == "builderSettings"][0] {
     minOrderQuantity,
     maxOrderQuantity,
     wholesaleThreshold,
     turnaroundDays,
     labelMakerUrl,
-    builderCopy
+    step1Heading,
+    step1Subheading,
+    step2Heading,
+    step2Subheading,
+    step3Heading,
+    step3Subheading,
+    step4Heading,
+    step4Subheading,
+    step5Heading,
+    step5Subheading,
+    step6Heading,
+    step6Subheading,
+    step7Heading,
+    step7Subheading
   }
 `;

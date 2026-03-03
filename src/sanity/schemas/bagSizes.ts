@@ -1,5 +1,8 @@
 import { defineType, defineField } from "sanity";
 
+// DEPRECATED: Bag sizes now managed in Supabase (bag_sizes table).
+// This schema is kept so existing Sanity documents don't break the Studio.
+// Do not use in new code.
 export const bagSizes = defineType({
   name: "bagSizes",
   title: "Bag Sizes",

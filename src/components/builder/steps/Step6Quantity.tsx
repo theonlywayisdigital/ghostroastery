@@ -6,45 +6,41 @@ import { ExternalLink } from "lucide-react";
 import { useBuilder } from "../BuilderContext";
 import { StepHeading } from "../StepHeading";
 import { BagVisualisation } from "../BagVisualisation";
+import { getPriceForQuantity, getBracketLabel } from "@/lib/pricing";
 
 export function Step6Quantity() {
-  const { state, dispatch, pricingTiers, siteSettings } = useBuilder();
+  const { state, dispatch, pricingData, builderSettings } = useBuilder();
 
-  const minQty = siteSettings.minOrderQuantity || 10;
-  const maxQty = siteSettings.maxOrderQuantity || 150;
-  const wholesaleThreshold = siteSettings.wholesaleThreshold || 150;
+  const minQty = pricingData.minOrder || 25;
+  const maxQty = builderSettings.maxOrderQuantity || 99;
+  const wholesaleThreshold = builderSettings.wholesaleThreshold || 99;
 
   // Calculate pricing based on quantity and size
   const pricing = useMemo(() => {
     if (!state.bagSize) return null;
 
-    const tier = pricingTiers.find((p) => p.bagSize === state.bagSize);
-    if (!tier) return null;
+    const result = getPriceForQuantity(state.quantity, state.bagSize, pricingData);
+    if (!result) return null;
 
-    let pricePerBag: number;
-    let tierName: string;
-    const maxTierPrice: number = tier.tier_10_24 || tier.tier_25_49;
+    const tierName = getBracketLabel(result.bracket);
 
-    if (state.quantity >= 100) {
-      pricePerBag = tier.tier_100_150;
-      tierName = "100–150";
-    } else if (state.quantity >= 50) {
-      pricePerBag = tier.tier_50_99;
-      tierName = "50–99";
-    } else if (state.quantity >= 25) {
-      pricePerBag = tier.tier_25_49;
-      tierName = "25–49";
-    } else {
-      pricePerBag = tier.tier_10_24 || tier.tier_25_49;
-      tierName = "10–24";
-    }
+    // Calculate savings vs. first bracket price
+    const firstBracket = pricingData.brackets[0];
+    const firstPrice = firstBracket
+      ? pricingData.prices.find(
+          (p) => p.bracketId === firstBracket.id && p.bagSize === state.bagSize
+        )
+      : null;
+    const maxTierPrice = firstPrice?.pricePerBag ?? result.pricePerBag;
 
-    const totalPrice = pricePerBag * state.quantity;
+    const totalPrice = result.pricePerBag * state.quantity;
     const savings =
-      state.quantity >= 25 ? (maxTierPrice - pricePerBag) * state.quantity : 0;
+      result.bracket.sortOrder > (firstBracket?.sortOrder ?? 0)
+        ? (maxTierPrice - result.pricePerBag) * state.quantity
+        : 0;
 
-    return { pricePerBag, totalPrice, tierName, savings };
-  }, [state.bagSize, state.quantity, pricingTiers]);
+    return { pricePerBag: result.pricePerBag, totalPrice, tierName, savings, bracket: result.bracket };
+  }, [state.bagSize, state.quantity, pricingData]);
 
   // Update pricing in state
   useEffect(() => {
@@ -68,16 +64,16 @@ export function Step6Quantity() {
   };
 
   // Get tier highlight class
-  const getTierClass = (tier: string) => {
+  const getTierClass = (bracketId: string) => {
     if (!pricing) return "text-neutral-400";
-    return pricing.tierName === tier
+    return pricing.bracket.id === bracketId
       ? "text-accent font-medium bg-accent/10"
       : "text-neutral-400";
   };
 
   const heading =
-    siteSettings.builderCopy?.step6Heading || "How many bags do you need?";
-  const subheading = siteSettings.builderCopy?.step6Subheading || undefined;
+    builderSettings.step6Heading || "How many bags do you need?";
+  const subheading = builderSettings.step6Subheading || undefined;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -165,33 +161,20 @@ export function Step6Quantity() {
 
               {pricing.savings > 0 && (
                 <p className="text-green-500 text-center mt-2 text-sm">
-                  You&apos;re in the {pricing.tierName} tier — saving £
-                  {pricing.savings.toFixed(2)} vs. minimum order price
+                  {`You're in the ${pricing.tierName} tier — saving £${pricing.savings.toFixed(2)} vs. minimum order price`}
                 </p>
               )}
 
-              {/* Tier indicator - 4 tiers */}
-              <div className="mt-6 grid grid-cols-4 gap-2 text-center text-xs sm:text-sm">
-                <div
-                  className={`py-2 px-2 rounded-lg ${getTierClass("10–24")}`}
-                >
-                  10–24
-                </div>
-                <div
-                  className={`py-2 px-2 rounded-lg ${getTierClass("25–49")}`}
-                >
-                  25–49
-                </div>
-                <div
-                  className={`py-2 px-2 rounded-lg ${getTierClass("50–99")}`}
-                >
-                  50–99
-                </div>
-                <div
-                  className={`py-2 px-2 rounded-lg ${getTierClass("100–150")}`}
-                >
-                  100–150
-                </div>
+              {/* Dynamic tier indicators */}
+              <div className={`mt-6 grid gap-2 text-center text-xs sm:text-sm`} style={{ gridTemplateColumns: `repeat(${pricingData.brackets.length}, minmax(0, 1fr))` }}>
+                {pricingData.brackets.map((bracket) => (
+                  <div
+                    key={bracket.id}
+                    className={`py-2 px-2 rounded-lg ${getTierClass(bracket.id)}`}
+                  >
+                    {getBracketLabel(bracket)}
+                  </div>
+                ))}
               </div>
             </motion.div>
           )}
@@ -199,21 +182,24 @@ export function Step6Quantity() {
           {/* Wholesale nudge */}
           {state.quantity >= wholesaleThreshold && (
             <motion.div
-              className="mt-6 p-4 bg-accent/10 border border-accent/30 rounded-lg"
+              className="mt-6 p-5 bg-accent/10 border-2 border-accent/30 rounded-xl"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <p className="text-foreground">
-                Need more than {maxQty} bags? Our wholesale service offers
-                better pricing at volume.
+              <p className="text-foreground font-semibold">
+                You&apos;ve hit our maximum online order.
+              </p>
+              <p className="text-neutral-300 text-sm mt-2">
+                For 100+ bags, our wholesale service offers better pricing,
+                dedicated account management and flexible delivery schedules.
               </p>
               <a
                 href="/wholesale"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-2 text-accent hover:underline"
+                className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-accent/15 text-accent text-sm font-medium rounded-lg hover:bg-accent/25 transition-colors"
               >
-                View wholesale options
+                View wholesale options →
                 <ExternalLink className="w-4 h-4" />
               </a>
             </motion.div>
@@ -221,7 +207,7 @@ export function Step6Quantity() {
 
           {/* Minimum order note */}
           <p className="text-center text-sm text-neutral-500 mt-6">
-            Minimum order is {minQty} bags — perfect for gifting and sampling runs.
+            {`Minimum order is ${minQty} bags — perfect for gifting and sampling runs.`}
           </p>
         </div>
       </div>
@@ -231,6 +217,8 @@ export function Step6Quantity() {
         <BagVisualisation
           bagPhotoUrl={state.bagPhotoUrl}
           bagColourHex={state.bagColourHex}
+          bagColourName={state.bagColourName}
+          actualBagPhotoUrl={state.actualBagPhotoUrl}
           labelFileURL={state.labelFileURL}
           size="medium"
         />
@@ -240,6 +228,8 @@ export function Step6Quantity() {
       <BagVisualisation
         bagPhotoUrl={state.bagPhotoUrl}
         bagColourHex={state.bagColourHex}
+        bagColourName={state.bagColourName}
+        actualBagPhotoUrl={state.actualBagPhotoUrl}
         labelFileURL={state.labelFileURL}
         size="small"
         collapsible

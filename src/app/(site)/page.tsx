@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
-import { pricingTiersQuery } from "@/sanity/lib/queries";
+import { createServerClient } from "@/lib/supabase";
+import type { PricingData } from "@/lib/pricing";
 import {
   Hero,
   HowItWorks,
@@ -14,14 +15,14 @@ import {
 export const revalidate = 3600; // ISR: revalidate every hour
 
 export const metadata: Metadata = {
-  title: "Ghost Roasting UK | White Label Coffee Roasting",
+  title: "Ghost Roastery | White Label Coffee Roasting",
   description:
     "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service. Launch your coffee brand from 25 bags.",
   openGraph: {
-    title: "Ghost Roasting UK | White Label Coffee Roasting",
+    title: "Ghost Roastery | White Label Coffee Roasting",
     description:
       "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service.",
-    url: "https://ghostroasting.co.uk",
+    url: "https://ghostroastery.com",
     type: "website",
   },
 };
@@ -30,9 +31,9 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Ghost Roasting UK",
-  url: "https://ghostroasting.co.uk",
-  logo: "https://ghostroasting.co.uk/logo.png",
+  name: "Ghost Roastery",
+  url: "https://ghostroastery.com",
+  logo: "https://ghostroastery.com/logo.png",
   description:
     "UK-based ghost roasting and white label coffee service. Launch your coffee brand with zero barriers.",
   address: {
@@ -42,17 +43,66 @@ const jsonLd = {
   sameAs: [],
 };
 
-async function getPricingTiers() {
+async function getPricingData(): Promise<PricingData> {
   try {
-    const tiers = await client.fetch(pricingTiersQuery);
-    return tiers;
+    const supabase = createServerClient();
+    const [bracketsResult, pricesResult, settingsResult] = await Promise.all([
+      supabase
+        .from("pricing_tier_brackets")
+        .select("id, min_quantity, max_quantity, sort_order")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true }),
+      supabase
+        .from("pricing_tier_prices")
+        .select("id, bracket_id, bag_size, price_per_bag, shipping_cost, currency")
+        .eq("is_active", true),
+      supabase
+        .from("builder_settings")
+        .select("max_order_quantity")
+        .limit(1)
+        .single(),
+    ]);
+
+    if (bracketsResult.error || !bracketsResult.data?.length) {
+      throw new Error(bracketsResult.error?.message || "No brackets found");
+    }
+
+    const brackets = bracketsResult.data.map((b) => ({
+      id: b.id,
+      min: b.min_quantity,
+      max: b.max_quantity,
+      sortOrder: b.sort_order,
+    }));
+
+    const prices = (pricesResult.data || []).map((p) => ({
+      id: p.id,
+      bracketId: p.bracket_id,
+      bagSize: p.bag_size,
+      pricePerBag: Number(p.price_per_bag),
+      shippingCost: Number(p.shipping_cost),
+      currency: p.currency,
+    }));
+
+    const minOrder = Math.min(...brackets.map((b) => b.min));
+    const maxOrder = settingsResult.data?.max_order_quantity ?? 99;
+
+    return { brackets, prices, minOrder, maxOrder };
   } catch {
-    // Return placeholder data if Sanity fetch fails
-    return [
-      { bagSize: "250g", tier_25_49: 8.5, tier_50_99: 7.5, tier_100_150: 6.5 },
-      { bagSize: "500g", tier_25_49: 13.0, tier_50_99: 11.5, tier_100_150: 10.0 },
-      { bagSize: "1kg", tier_25_49: 20.0, tier_50_99: 18.0, tier_100_150: 16.0 },
+    // Return fallback data if Supabase unreachable
+    const fallbackBrackets = [
+      { id: "fb-1", min: 25, max: 49, sortOrder: 1 },
+      { id: "fb-2", min: 50, max: 74, sortOrder: 2 },
+      { id: "fb-3", min: 75, max: 99, sortOrder: 3 },
     ];
+    const fallbackPrices = [
+      { id: "fp-1", bracketId: "fb-1", bagSize: "250g", pricePerBag: 8.5, shippingCost: 0, currency: "GBP" },
+      { id: "fp-2", bracketId: "fb-2", bagSize: "250g", pricePerBag: 7.5, shippingCost: 0, currency: "GBP" },
+      { id: "fp-3", bracketId: "fb-3", bagSize: "250g", pricePerBag: 6.5, shippingCost: 0, currency: "GBP" },
+      { id: "fp-4", bracketId: "fb-1", bagSize: "500g", pricePerBag: 13.0, shippingCost: 0, currency: "GBP" },
+      { id: "fp-5", bracketId: "fb-2", bagSize: "500g", pricePerBag: 11.5, shippingCost: 0, currency: "GBP" },
+      { id: "fp-6", bracketId: "fb-3", bagSize: "500g", pricePerBag: 10.0, shippingCost: 0, currency: "GBP" },
+    ];
+    return { brackets: fallbackBrackets, prices: fallbackPrices, minOrder: 25, maxOrder: 99 };
   }
 }
 
@@ -74,8 +124,8 @@ async function getCaseStudy() {
 }
 
 export default async function HomePage() {
-  const [pricingTiers, caseStudy] = await Promise.all([
-    getPricingTiers(),
+  const [pricingData, caseStudy] = await Promise.all([
+    getPricingData(),
     getCaseStudy(),
   ]);
 
@@ -88,7 +138,7 @@ export default async function HomePage() {
       <Hero />
       <HowItWorks />
       <ProductPaths />
-      <PricingPreview tiers={pricingTiers} />
+      <PricingPreview pricingData={pricingData} />
       <CaseStudySnippet caseStudy={caseStudy} />
       <TrustSignals />
       <FinalCTA />

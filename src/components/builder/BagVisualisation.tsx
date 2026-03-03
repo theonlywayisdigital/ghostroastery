@@ -3,37 +3,94 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import {
+  getBagMockupConfig,
+  BAG_MOCKUP_CONFIG,
+  DEFAULT_MOCKUP_CONFIG,
+  getLabelBoundary,
+  type LabelRect,
+  type Point,
+} from "./bagMockupConfig";
+import { renderMockupToCanvas } from "./renderMockupToCanvas";
 
 interface BagVisualisationProps {
   bagPhotoUrl: string | null;
   bagColourHex: string | null;
   bagColourName?: string | null;
+  actualBagPhotoUrl?: string | null;
   labelFileURL: string | null;
   size?: "small" | "medium" | "large";
   showPlaceholder?: boolean;
   collapsible?: boolean;
 }
 
-// Label corner positions as percentages of the bag image
-// These define the 4 corners where the label warps to (subtle perspective)
-const LABEL_CORNERS = {
-  // Top-left corner (x%, y%)
-  tl: { x: 32, y: 38 },
-  // Top-right corner
-  tr: { x: 68, y: 38 },
-  // Bottom-left corner (slightly wider for subtle barrel effect)
-  bl: { x: 31.5, y: 62 },
-  // Bottom-right corner (slightly wider for subtle barrel effect)
-  br: { x: 68.5, y: 62 },
-};
+function getSwatchClass(name: string | null | undefined): string {
+  if (!name) return "";
+  const n = name.toLowerCase();
+  if (n.includes("holo")) return "swatch-holo";
+  if (n.includes("shiny")) return "swatch-shiny";
+  return "";
+}
 
-// Label aspect ratio for 250g bags (88mm x 63mm)
-const LABEL_ASPECT_RATIO = 88 / 63;
+// ── Watermark logo (loaded once) ──
+let watermarkImg: HTMLImageElement | null = null;
+let watermarkLoadPromise: Promise<HTMLImageElement> | null = null;
+
+function loadWatermark(): Promise<HTMLImageElement> {
+  if (watermarkImg) return Promise.resolve(watermarkImg);
+  if (watermarkLoadPromise) return watermarkLoadPromise;
+  watermarkLoadPromise = new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => { watermarkImg = img; resolve(img); };
+    img.onerror = () => resolve(img); // resolve anyway so rendering doesn't stall
+    img.src = "/ghost-roastery-logo.png";
+  });
+  return watermarkLoadPromise;
+}
+
+// ── Module-level image cache ──
+const imageCache = new Map<string, HTMLImageElement>();
+
+function getCachedImage(src: string): Promise<HTMLImageElement> {
+  const cached = imageCache.get(src);
+  if (cached) return Promise.resolve(cached);
+
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      imageCache.set(src, img);
+      resolve(img);
+    };
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+// ── Data URL image loader (for warp/lighting maps) ──
+const dataUrlCache = new Map<string, HTMLImageElement>();
+
+function loadDataUrlImage(dataUrl: string): Promise<HTMLImageElement> {
+  const cached = dataUrlCache.get(dataUrl);
+  if (cached) return Promise.resolve(cached);
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      dataUrlCache.set(dataUrl, img);
+      resolve(img);
+    };
+    img.onerror = () => resolve(img); // resolve even on error so we can check .complete
+    img.src = dataUrl;
+  });
+}
+
+// ── Main component ──
 
 export function BagVisualisation({
   bagPhotoUrl,
   bagColourHex,
   bagColourName,
+  actualBagPhotoUrl,
   labelFileURL,
   size = "medium",
   showPlaceholder = false,
@@ -41,8 +98,17 @@ export function BagVisualisation({
 }: BagVisualisationProps) {
   const [isExpanded, setIsExpanded] = useState(!collapsible);
   const [imageError, setImageError] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [canvasEl, setCanvasEl] = useState<HTMLCanvasElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [canvasReady, setCanvasReady] = useState(false);
+  // Track the container width so we can match the calibration tool's sizing
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
+
+  const canvasCallbackRef = (node: HTMLCanvasElement | null) => {
+    canvasRef.current = node;
+    setCanvasEl(node);
+  };
 
   const sizeClasses = {
     small: "max-w-[200px]",
@@ -50,69 +116,91 @@ export function BagVisualisation({
     large: "max-w-[400px]",
   };
 
-  // Render the composite image on canvas when we have both bag and label
+  // ── Compositing pipeline — delegates entirely to shared renderer ──
   useEffect(() => {
-    if (!bagPhotoUrl || !labelFileURL || !canvasRef.current) {
+    if (!bagPhotoUrl || !labelFileURL || !canvasEl) {
       setCanvasReady(false);
       return;
     }
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const canvas = canvasEl;
+    let cancelled = false;
 
-    const bagImg = new Image();
-    bagImg.crossOrigin = "anonymous";
+    (async () => {
+      try {
+        const bagImg = await getCachedImage(bagPhotoUrl);
+        if (cancelled) return;
+        const labelImg = await getCachedImage(labelFileURL);
+        if (cancelled) return;
 
-    bagImg.onload = () => {
-      // Set canvas size to match bag image
-      canvas.width = bagImg.width;
-      canvas.height = bagImg.height;
+        const config = getBagMockupConfig(bagColourName);
+        const { labelRect, warpMapDataUrl, lightingMapDataUrl, lightingOpacity, labelOpacity } = config;
 
-      // Draw the bag
-      ctx.drawImage(bagImg, 0, 0);
+        // Load warp map if present
+        let warpSource: HTMLImageElement | null = null;
+        if (warpMapDataUrl) {
+          warpSource = await loadDataUrlImage(warpMapDataUrl);
+          if (cancelled) return;
+          if (!warpSource.complete || warpSource.naturalWidth === 0) warpSource = null;
+        }
 
-      // Load and draw the label with perspective warp
-      const labelImg = new Image();
-      labelImg.crossOrigin = "anonymous";
+        // Load lighting map if present
+        let lightingSource: HTMLImageElement | null = null;
+        if (lightingMapDataUrl) {
+          lightingSource = await loadDataUrlImage(lightingMapDataUrl);
+          if (cancelled) return;
+          if (!lightingSource.complete || lightingSource.naturalWidth === 0) lightingSource = null;
+        }
 
-      labelImg.onload = () => {
-        // Convert percentage corners to pixel coordinates
-        const corners = {
-          tl: { x: (LABEL_CORNERS.tl.x / 100) * bagImg.width, y: (LABEL_CORNERS.tl.y / 100) * bagImg.height },
-          tr: { x: (LABEL_CORNERS.tr.x / 100) * bagImg.width, y: (LABEL_CORNERS.tr.y / 100) * bagImg.height },
-          bl: { x: (LABEL_CORNERS.bl.x / 100) * bagImg.width, y: (LABEL_CORNERS.bl.y / 100) * bagImg.height },
-          br: { x: (LABEL_CORNERS.br.x / 100) * bagImg.width, y: (LABEL_CORNERS.br.y / 100) * bagImg.height },
-        };
+        if (cancelled) return;
 
-        // Extract the bag's texture/lighting from the label area BEFORE drawing the label
-        const bagTexture = extractBagTexture(ctx, corners, bagImg.width, bagImg.height);
+        // Use container width to match calibration tool's display sizing.
+        // The calibration tool caps at 700px — we use whatever the container
+        // gives us (will be ≤400px for "large", ≤300px for "medium", etc.).
+        const maxW = containerWidth > 0 ? containerWidth : 300;
 
-        // Draw perspective-warped label using triangles
-        drawPerspectiveImage(ctx, labelImg, corners);
+        const wm = await loadWatermark();
+        if (cancelled) return;
 
-        // Apply the bag's texture/lighting as an overlay to make the label look "printed on"
-        applyBagTextureOverlay(ctx, corners, bagTexture);
+        renderMockupToCanvas({
+          canvas,
+          bagImg,
+          labelImg,
+          labelRect,
+          labelOpacity,
+          warpSource,
+          lightingSource,
+          lightingOpacity: lightingOpacity ?? 0.6,
+          maxDisplayWidth: maxW,
+          watermarkImg: wm,
+        });
 
-        setCanvasReady(true);
-      };
+        if (!cancelled) setCanvasReady(true);
+      } catch {
+        if (!cancelled) setImageError(true);
+      }
+    })();
 
-      labelImg.onerror = () => {
-        // If label fails to load, just show the bag
-        setCanvasReady(true);
-      };
-
-      labelImg.src = labelFileURL;
+    return () => {
+      cancelled = true;
     };
+  }, [bagPhotoUrl, bagColourName, labelFileURL, canvasEl, containerWidth]);
 
-    bagImg.onerror = () => {
-      setImageError(true);
-    };
+  // ── Observe container width ──
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    });
+    ro.observe(container);
+    // Set initial width
+    setContainerWidth(container.clientWidth);
+    return () => ro.disconnect();
+  }, []);
 
-    bagImg.src = bagPhotoUrl;
-  }, [bagPhotoUrl, labelFileURL]);
-
-  // Show placeholder state
   if (showPlaceholder && !bagPhotoUrl) {
     return (
       <motion.div
@@ -126,7 +214,6 @@ export function BagVisualisation({
     );
   }
 
-  // Collapsible wrapper for mobile
   if (collapsible) {
     return (
       <div className="lg:hidden">
@@ -135,11 +222,7 @@ export function BagVisualisation({
           className="w-full flex items-center justify-center gap-2 py-3 text-neutral-400 hover:text-foreground transition-colors"
         >
           <span>{isExpanded ? "Hide" : "Show"} bag preview</span>
-          {isExpanded ? (
-            <ChevronUp className="w-4 h-4" />
-          ) : (
-            <ChevronDown className="w-4 h-4" />
-          )}
+          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
         </button>
         <AnimatePresence>
           {isExpanded && (
@@ -153,12 +236,14 @@ export function BagVisualisation({
                 bagPhotoUrl={bagPhotoUrl}
                 bagColourHex={bagColourHex}
                 bagColourName={bagColourName}
+                actualBagPhotoUrl={actualBagPhotoUrl}
                 labelFileURL={labelFileURL}
                 size={size}
                 imageError={imageError}
                 setImageError={setImageError}
-                canvasRef={canvasRef}
+                canvasRef={canvasCallbackRef}
                 canvasReady={canvasReady}
+                containerRef={containerRef}
               />
             </motion.div>
           )}
@@ -172,286 +257,15 @@ export function BagVisualisation({
       bagPhotoUrl={bagPhotoUrl}
       bagColourHex={bagColourHex}
       bagColourName={bagColourName}
+      actualBagPhotoUrl={actualBagPhotoUrl}
       labelFileURL={labelFileURL}
       size={size}
       imageError={imageError}
       setImageError={setImageError}
-      canvasRef={canvasRef}
+      canvasRef={canvasCallbackRef}
       canvasReady={canvasReady}
+      containerRef={containerRef}
     />
-  );
-}
-
-// Draw an image with perspective warp using texture mapping with triangles
-function drawPerspectiveImage(
-  ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
-  corners: { tl: { x: number; y: number }; tr: { x: number; y: number }; bl: { x: number; y: number }; br: { x: number; y: number } }
-) {
-  const { tl, tr, bl, br } = corners;
-
-  // Number of subdivisions for smoother warping
-  const divisions = 10;
-
-  for (let i = 0; i < divisions; i++) {
-    for (let j = 0; j < divisions; j++) {
-      // Calculate the 4 corners of this subdivision in the destination (bag)
-      const u0 = i / divisions;
-      const u1 = (i + 1) / divisions;
-      const v0 = j / divisions;
-      const v1 = (j + 1) / divisions;
-
-      // Bilinear interpolation for destination points
-      const destTL = bilinearInterp(tl, tr, bl, br, u0, v0);
-      const destTR = bilinearInterp(tl, tr, bl, br, u1, v0);
-      const destBL = bilinearInterp(tl, tr, bl, br, u0, v1);
-      const destBR = bilinearInterp(tl, tr, bl, br, u1, v1);
-
-      // Source coordinates in the label image
-      const srcX0 = u0 * img.width;
-      const srcX1 = u1 * img.width;
-      const srcY0 = v0 * img.height;
-      const srcY1 = v1 * img.height;
-
-      // Draw two triangles for this quad
-      drawTexturedTriangle(
-        ctx, img,
-        srcX0, srcY0, srcX1, srcY0, srcX0, srcY1,
-        destTL.x, destTL.y, destTR.x, destTR.y, destBL.x, destBL.y
-      );
-      drawTexturedTriangle(
-        ctx, img,
-        srcX1, srcY0, srcX1, srcY1, srcX0, srcY1,
-        destTR.x, destTR.y, destBR.x, destBR.y, destBL.x, destBL.y
-      );
-    }
-  }
-}
-
-// Bilinear interpolation between 4 corner points
-function bilinearInterp(
-  tl: { x: number; y: number },
-  tr: { x: number; y: number },
-  bl: { x: number; y: number },
-  br: { x: number; y: number },
-  u: number,
-  v: number
-): { x: number; y: number } {
-  const top = {
-    x: tl.x + (tr.x - tl.x) * u,
-    y: tl.y + (tr.y - tl.y) * u,
-  };
-  const bottom = {
-    x: bl.x + (br.x - bl.x) * u,
-    y: bl.y + (br.y - bl.y) * u,
-  };
-  return {
-    x: top.x + (bottom.x - top.x) * v,
-    y: top.y + (bottom.y - top.y) * v,
-  };
-}
-
-// Draw a textured triangle using affine transformation
-function drawTexturedTriangle(
-  ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
-  srcX0: number, srcY0: number,
-  srcX1: number, srcY1: number,
-  srcX2: number, srcY2: number,
-  dstX0: number, dstY0: number,
-  dstX1: number, dstY1: number,
-  dstX2: number, dstY2: number
-) {
-  ctx.save();
-
-  // Clip to the destination triangle
-  ctx.beginPath();
-  ctx.moveTo(dstX0, dstY0);
-  ctx.lineTo(dstX1, dstY1);
-  ctx.lineTo(dstX2, dstY2);
-  ctx.closePath();
-  ctx.clip();
-
-  // Calculate affine transformation matrix
-  const srcDx1 = srcX1 - srcX0;
-  const srcDy1 = srcY1 - srcY0;
-  const srcDx2 = srcX2 - srcX0;
-  const srcDy2 = srcY2 - srcY0;
-
-  const dstDx1 = dstX1 - dstX0;
-  const dstDy1 = dstY1 - dstY0;
-  const dstDx2 = dstX2 - dstX0;
-  const dstDy2 = dstY2 - dstY0;
-
-  const det = srcDx1 * srcDy2 - srcDy1 * srcDx2;
-  if (Math.abs(det) < 0.0001) {
-    ctx.restore();
-    return;
-  }
-
-  const a = (dstDx1 * srcDy2 - dstDx2 * srcDy1) / det;
-  const b = (dstDx2 * srcDx1 - dstDx1 * srcDx2) / det;
-  const c = (dstDy1 * srcDy2 - dstDy2 * srcDy1) / det;
-  const d = (dstDy2 * srcDx1 - dstDy1 * srcDx2) / det;
-  const e = dstX0 - a * srcX0 - b * srcY0;
-  const f = dstY0 - c * srcX0 - d * srcY0;
-
-  ctx.setTransform(a, c, b, d, e, f);
-  ctx.drawImage(img, 0, 0);
-
-  ctx.restore();
-}
-
-// Extract the bag's texture/lighting from the label area
-function extractBagTexture(
-  ctx: CanvasRenderingContext2D,
-  corners: { tl: { x: number; y: number }; tr: { x: number; y: number }; bl: { x: number; y: number }; br: { x: number; y: number } },
-  canvasWidth: number,
-  canvasHeight: number
-): ImageData | null {
-  const { tl, tr, bl, br } = corners;
-
-  // Get bounding box of the label area
-  const minX = Math.floor(Math.min(tl.x, bl.x));
-  const maxX = Math.ceil(Math.max(tr.x, br.x));
-  const minY = Math.floor(Math.min(tl.y, tr.y));
-  const maxY = Math.ceil(Math.max(bl.y, br.y));
-
-  const width = maxX - minX;
-  const height = maxY - minY;
-
-  if (width <= 0 || height <= 0) return null;
-
-  // Extract the pixel data from the bag in the label area
-  try {
-    return ctx.getImageData(minX, minY, width, height);
-  } catch {
-    return null;
-  }
-}
-
-// Check if a point is inside a quadrilateral using cross-product method
-function isPointInQuad(
-  px: number,
-  py: number,
-  tl: { x: number; y: number },
-  tr: { x: number; y: number },
-  br: { x: number; y: number },
-  bl: { x: number; y: number }
-): boolean {
-  // Check if point is on the same side of all edges (clockwise winding)
-  const cross = (ax: number, ay: number, bx: number, by: number) => ax * by - ay * bx;
-
-  const d1 = cross(tr.x - tl.x, tr.y - tl.y, px - tl.x, py - tl.y);
-  const d2 = cross(br.x - tr.x, br.y - tr.y, px - tr.x, py - tr.y);
-  const d3 = cross(bl.x - br.x, bl.y - br.y, px - br.x, py - br.y);
-  const d4 = cross(tl.x - bl.x, tl.y - bl.y, px - bl.x, py - bl.y);
-
-  const hasNeg = d1 < 0 || d2 < 0 || d3 < 0 || d4 < 0;
-  const hasPos = d1 > 0 || d2 > 0 || d3 > 0 || d4 > 0;
-
-  return !(hasNeg && hasPos);
-}
-
-// Apply the bag's texture/lighting as an overlay on the label
-function applyBagTextureOverlay(
-  ctx: CanvasRenderingContext2D,
-  corners: { tl: { x: number; y: number }; tr: { x: number; y: number }; bl: { x: number; y: number }; br: { x: number; y: number } },
-  bagTexture: ImageData | null
-) {
-  if (!bagTexture) return;
-
-  const { tl, tr, bl, br } = corners;
-
-  // Get bounding box
-  const minX = Math.floor(Math.min(tl.x, bl.x));
-  const maxX = Math.ceil(Math.max(tr.x, br.x));
-  const minY = Math.floor(Math.min(tl.y, tr.y));
-  const maxY = Math.ceil(Math.max(bl.y, br.y));
-
-  const width = maxX - minX;
-  const height = maxY - minY;
-
-  // Get the current label pixels
-  let labelData: ImageData;
-  try {
-    labelData = ctx.getImageData(minX, minY, width, height);
-  } catch {
-    return;
-  }
-
-  const labelPixels = labelData.data;
-  const bagPixels = bagTexture.data;
-
-  // Calculate the average luminosity of the bag texture to use as baseline
-  let totalLum = 0;
-  for (let i = 0; i < bagPixels.length; i += 4) {
-    const r = bagPixels[i];
-    const g = bagPixels[i + 1];
-    const b = bagPixels[i + 2];
-    totalLum += (r * 0.299 + g * 0.587 + b * 0.114);
-  }
-  const avgLum = totalLum / (bagPixels.length / 4);
-
-  // Apply the bag's texture as a soft light/multiply blend
-  // Only to pixels INSIDE the label quadrilateral
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const px = minX + x;
-      const py = minY + y;
-
-      // Skip pixels outside the label quadrilateral
-      if (!isPointInQuad(px, py, tl, tr, br, bl)) {
-        continue;
-      }
-
-      const i = (y * width + x) * 4;
-
-      const bagR = bagPixels[i];
-      const bagG = bagPixels[i + 1];
-      const bagB = bagPixels[i + 2];
-
-      // Calculate bag luminosity relative to average (creates the crease/shadow effect)
-      const bagLum = (bagR * 0.299 + bagG * 0.587 + bagB * 0.114);
-
-      // Normalize: values below avgLum darken the label, above avgLum lighten slightly
-      // This creates the "printed on" effect where creases show through
-      const factor = bagLum / avgLum;
-
-      // Apply with intensity for the crease effect (higher = more visible creases)
-      const intensity = 0.65;
-      const adjustedFactor = 1 + (factor - 1) * intensity;
-
-      // Multiply blend the label colors
-      labelPixels[i] = Math.min(255, Math.max(0, labelPixels[i] * adjustedFactor));
-      labelPixels[i + 1] = Math.min(255, Math.max(0, labelPixels[i + 1] * adjustedFactor));
-      labelPixels[i + 2] = Math.min(255, Math.max(0, labelPixels[i + 2] * adjustedFactor));
-    }
-  }
-
-  // Put the modified pixels back
-  ctx.putImageData(labelData, minX, minY);
-}
-
-// Skeleton loader component with shimmer animation
-function BagSkeleton({ size }: { size: "small" | "medium" | "large" }) {
-  const sizeClasses = {
-    small: "max-w-[200px]",
-    medium: "max-w-[300px]",
-    large: "max-w-[400px]",
-  };
-
-  return (
-    <div className={`${sizeClasses[size]} w-full mx-auto`}>
-      <div className="relative w-full aspect-[5/7] bg-neutral-800 rounded-lg overflow-hidden">
-        {/* Shimmer animation */}
-        <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-neutral-700/50 to-transparent" />
-        {/* Bag shape outline */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-30">
-          <BagOutlineSVG />
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -459,36 +273,79 @@ function BagContent({
   bagPhotoUrl,
   bagColourHex,
   bagColourName,
+  actualBagPhotoUrl,
   labelFileURL,
   size,
   imageError,
   setImageError,
   canvasRef,
   canvasReady,
+  containerRef,
 }: {
   bagPhotoUrl: string | null;
   bagColourHex: string | null;
   bagColourName?: string | null;
+  actualBagPhotoUrl?: string | null;
   labelFileURL: string | null;
   size: "small" | "medium" | "large";
   imageError: boolean;
   setImageError: (error: boolean) => void;
-  canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  canvasRef: (node: HTMLCanvasElement | null) => void;
   canvasReady: boolean;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }) {
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const alreadyCached = bagPhotoUrl ? imageCache.has(bagPhotoUrl) : false;
+  const [imageLoaded, setImageLoaded] = useState(alreadyCached);
+  const [loadProgress, setLoadProgress] = useState(alreadyCached ? 100 : 0);
+
   const sizeClasses = {
     small: "max-w-[200px]",
     medium: "max-w-[300px]",
     large: "max-w-[400px]",
   };
 
-  // Reset imageLoaded when bagPhotoUrl changes
   useEffect(() => {
-    setImageLoaded(false);
-  }, [bagPhotoUrl]);
+    if (!bagPhotoUrl) {
+      setImageLoaded(false);
+      setLoadProgress(0);
+      return;
+    }
 
-  // No bag photo - show placeholder with pulse animation
+    if (imageCache.has(bagPhotoUrl)) {
+      setImageLoaded(true);
+      setLoadProgress(100);
+      return;
+    }
+
+    setImageLoaded(false);
+    setLoadProgress(0);
+
+    let cancelled = false;
+    let fakeProgress = 0;
+    const progressTimer = setInterval(() => {
+      if (cancelled) return;
+      fakeProgress = Math.min(90, fakeProgress + (90 - fakeProgress) * 0.08);
+      setLoadProgress(fakeProgress);
+    }, 100);
+
+    getCachedImage(bagPhotoUrl)
+      .then(() => {
+        if (!cancelled) {
+          setLoadProgress(100);
+          setImageLoaded(true);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setImageError(true);
+      })
+      .finally(() => clearInterval(progressTimer));
+
+    return () => {
+      cancelled = true;
+      clearInterval(progressTimer);
+    };
+  }, [bagPhotoUrl, setImageError]);
+
   if (!bagPhotoUrl || imageError) {
     return (
       <motion.div
@@ -507,157 +364,236 @@ function BagContent({
     );
   }
 
-  // Has bag photo and label - show canvas composite
+  // Has label — show the composite canvas
   if (labelFileURL) {
+    const showSideBySide = actualBagPhotoUrl && size !== "small";
+
     return (
       <motion.div
-        className={`${sizeClasses[size]} w-full mx-auto`}
+        className={`${showSideBySide ? "" : sizeClasses[size]} w-full mx-auto`}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="relative">
-          <AnimatePresence mode="wait">
-            {!canvasReady && (
-              <motion.div
-                key="skeleton"
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="absolute inset-0"
-              >
-                <div className="w-full aspect-[5/7] bg-neutral-800 rounded-lg overflow-hidden">
-                  <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-neutral-700/50 to-transparent" />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-30">
+        <div className={showSideBySide ? "flex flex-col sm:flex-row gap-4 items-start" : ""}>
+          {/* Mockup column */}
+          <div className={showSideBySide ? "flex-1 min-w-0" : ""} ref={containerRef}>
+            {showSideBySide && (
+              <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2">
+                Mockup preview
+              </p>
+            )}
+            <div className="relative">
+              {!canvasReady && (
+                <div className="w-full aspect-[5/7] bg-neutral-900 rounded-lg flex flex-col items-center justify-center gap-4">
+                  <div className="opacity-20">
                     <BagOutlineSVG />
                   </div>
+                  <LoadingBar progress={loadProgress} />
                 </div>
-              </motion.div>
+              )}
+              <motion.canvas
+                ref={canvasRef}
+                className={`w-full h-auto rounded-lg shadow-2xl ${!canvasReady ? "absolute inset-0 opacity-0" : ""}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: canvasReady ? 1 : 0 }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+
+            {bagColourName && !showSideBySide && (
+              <div className="text-center mt-3">
+                <span className="text-sm text-neutral-400 flex items-center justify-center gap-2">
+                  {bagColourHex && (
+                    <span
+                      className={`inline-block w-3 h-3 rounded-full border border-neutral-600 ${getSwatchClass(bagColourName)}`}
+                      style={{ backgroundColor: bagColourHex }}
+                    />
+                  )}
+                  {bagColourName}
+                </span>
+              </div>
             )}
-          </AnimatePresence>
-          <motion.canvas
-            ref={canvasRef}
-            className="w-full h-auto rounded-lg shadow-2xl"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: canvasReady ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-          />
+          </div>
+
+          {/* Actual bag column */}
+          {showSideBySide && (
+            <ActualBagPreview
+              url={actualBagPhotoUrl}
+              colourName={bagColourName}
+              colourHex={bagColourHex}
+              standalone
+            />
+          )}
         </div>
 
-        {/* Colour indicator */}
-        {bagColourName && (
-          <div className="text-center mt-3">
-            <span className="text-sm text-neutral-400 flex items-center justify-center gap-2">
-              {bagColourHex && (
-                <span
-                  className="inline-block w-3 h-3 rounded-full border border-neutral-600"
-                  style={{ backgroundColor: bagColourHex }}
-                />
-              )}
-              {bagColourName}
-            </span>
-          </div>
-        )}
-
-        {/* Size disclaimer */}
-        <p className="text-center text-xs text-neutral-500 mt-2">
-          Preview shown for 250g bag. Actual appearance may vary by size.
+        <p className="text-center text-xs text-neutral-500 italic mt-2">
+          Label placement shown is for illustration purposes. Final product may vary slightly.
         </p>
+
+        {actualBagPhotoUrl && !showSideBySide && (
+          <ActualBagPreview url={actualBagPhotoUrl} colourName={bagColourName} colourHex={bagColourHex} />
+        )}
       </motion.div>
     );
   }
 
-  // Has bag photo but no label - show bag with placeholder label area
+  // No label — show bag photo with "Your label here" placeholder
+  const showSideBySideNoLabel = actualBagPhotoUrl && size !== "small";
+
   return (
     <motion.div
-      className={`${sizeClasses[size]} w-full mx-auto`}
+      className={`${showSideBySideNoLabel ? "" : sizeClasses[size]} w-full mx-auto`}
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="relative">
-        {/* Skeleton loader while image loads */}
-        <AnimatePresence mode="wait">
-          {!imageLoaded && (
-            <motion.div
-              key="skeleton"
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-0 z-10"
-            >
-              <div className="w-full aspect-[5/7] bg-neutral-800 rounded-lg overflow-hidden">
-                <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-neutral-700/50 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-30">
+      <div className={showSideBySideNoLabel ? "flex flex-col sm:flex-row gap-4 items-start" : ""}>
+        {/* Mockup column */}
+        <div className={showSideBySideNoLabel ? "flex-1 min-w-0" : ""} ref={containerRef}>
+          {showSideBySideNoLabel && (
+            <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2">
+              Mockup preview
+            </p>
+          )}
+          <div className="relative">
+            {!imageLoaded && (
+              <div className="w-full aspect-[5/7] bg-neutral-900 rounded-lg flex flex-col items-center justify-center gap-4">
+                <div className="opacity-20">
                   <BagOutlineSVG />
                 </div>
+                <LoadingBar progress={loadProgress} />
               </div>
-            </motion.div>
+            )}
+
+            {imageLoaded && (
+              <>
+                <img src={bagPhotoUrl} alt="Bag preview" className="w-full h-auto rounded-lg shadow-2xl" />
+                <svg
+                  className="absolute inset-0 w-full h-full pointer-events-none"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                >
+                  {(() => {
+                    const config = BAG_MOCKUP_CONFIG[bagColourName || ""] || DEFAULT_MOCKUP_CONFIG;
+                    const boundary = getLabelBoundary(config.labelRect);
+                    const cx = boundary.reduce((s, p) => s + p.x, 0) / boundary.length;
+                    const cy = boundary.reduce((s, p) => s + p.y, 0) / boundary.length;
+                    const pathD =
+                      boundary.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ") + " Z";
+                    return (
+                      <>
+                        <path
+                          d={pathD}
+                          fill="none"
+                          stroke="rgba(255,255,255,0.3)"
+                          strokeWidth="0.5"
+                          strokeDasharray="2 2"
+                        />
+                        <text x={cx} y={cy} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="3">
+                          Your label here
+                        </text>
+                      </>
+                    );
+                  })()}
+                </svg>
+              </>
+            )}
+          </div>
+
+          {bagColourName && !showSideBySideNoLabel && (
+            <div className="text-center mt-3">
+              <span className="text-sm text-neutral-400 flex items-center justify-center gap-2">
+                {bagColourHex && (
+                  <span
+                    className={`inline-block w-3 h-3 rounded-full border border-neutral-600 ${getSwatchClass(bagColourName)}`}
+                    style={{ backgroundColor: bagColourHex }}
+                  />
+                )}
+                {bagColourName}
+              </span>
+            </div>
           )}
-        </AnimatePresence>
+        </div>
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <motion.img
-          src={bagPhotoUrl}
-          alt={bagColourName || "Coffee bag"}
-          className="w-full h-auto rounded-lg shadow-2xl"
-          onLoad={() => setImageLoaded(true)}
-          onError={() => setImageError(true)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: imageLoaded ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        />
-
-        {/* Label placeholder outline - only show when image is loaded */}
-        {imageLoaded && (
-          <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-          >
-            <rect
-              x={LABEL_CORNERS.tl.x}
-              y={LABEL_CORNERS.tl.y}
-              width={LABEL_CORNERS.tr.x - LABEL_CORNERS.tl.x}
-              height={LABEL_CORNERS.bl.y - LABEL_CORNERS.tl.y}
-              fill="none"
-              stroke="rgba(255,255,255,0.3)"
-              strokeWidth="0.5"
-              strokeDasharray="2 2"
-            />
-            <text
-              x="50"
-              y="50"
-              textAnchor="middle"
-              fill="rgba(255,255,255,0.4)"
-              fontSize="3"
-            >
-              Your label here
-            </text>
-          </svg>
+        {/* Actual bag column */}
+        {showSideBySideNoLabel && (
+          <ActualBagPreview
+            url={actualBagPhotoUrl}
+            colourName={bagColourName}
+            colourHex={bagColourHex}
+            standalone
+          />
         )}
       </div>
 
-      {/* Colour indicator */}
-      {bagColourName && (
+      <p className="text-center text-xs text-neutral-500 italic mt-2">
+        Label placement shown is for illustration purposes. Final product may vary slightly.
+      </p>
+
+      {actualBagPhotoUrl && !showSideBySideNoLabel && (
+        <ActualBagPreview url={actualBagPhotoUrl} colourName={bagColourName} colourHex={bagColourHex} />
+      )}
+    </motion.div>
+  );
+}
+
+function ActualBagPreview({
+  url,
+  colourName,
+  colourHex,
+  standalone = false,
+}: {
+  url: string;
+  colourName?: string | null;
+  colourHex?: string | null;
+  standalone?: boolean;
+}) {
+  return (
+    <motion.div
+      className={standalone ? "flex-1 min-w-0" : "mt-5"}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: 0.2 }}
+    >
+      <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400 mb-2">
+        Your actual bag
+      </p>
+      <img
+        src={url}
+        alt={`Actual ${colourName || "bag"} colour`}
+        className="w-full h-auto rounded-lg shadow-2xl"
+      />
+      {colourName && (
         <div className="text-center mt-3">
           <span className="text-sm text-neutral-400 flex items-center justify-center gap-2">
-            {bagColourHex && (
+            {colourHex && (
               <span
-                className="inline-block w-3 h-3 rounded-full border border-neutral-600"
-                style={{ backgroundColor: bagColourHex }}
+                className={`inline-block w-3 h-3 rounded-full border border-neutral-600 ${getSwatchClass(colourName)}`}
+                style={{ backgroundColor: colourHex }}
               />
             )}
-            {bagColourName}
+            {colourName}
           </span>
         </div>
       )}
-
-      {/* Size disclaimer */}
-      <p className="text-center text-xs text-neutral-500 mt-2">
-        Preview shown for 250g bag. Actual appearance may vary by size.
-      </p>
     </motion.div>
+  );
+}
+
+function LoadingBar({ progress }: { progress: number }) {
+  return (
+    <div className="w-3/4 max-w-[160px]">
+      <div className="h-1 bg-neutral-800 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-accent rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.15, ease: "linear" }}
+        />
+      </div>
+      <p className="text-neutral-500 text-xs text-center mt-2">Loading preview…</p>
+    </div>
   );
 }
 
@@ -670,13 +606,9 @@ function BagOutlineSVG() {
       stroke="currentColor"
       strokeWidth="1"
     >
-      {/* Bag body */}
       <path d="M15 30 Q10 30 10 40 L10 140 Q10 155 25 160 L95 160 Q110 155 110 140 L110 40 Q110 30 105 30 L15 30" />
-      {/* Zip seal */}
       <rect x="15" y="20" width="90" height="12" rx="2" />
-      {/* Top fold */}
       <path d="M15 20 Q60 15 105 20" />
-      {/* Notches */}
       <path d="M10 25 L15 25" />
       <path d="M105 25 L110 25" />
     </svg>

@@ -8,20 +8,20 @@ import { BagVisualisation } from "../BagVisualisation";
 import { Coffee } from "lucide-react";
 
 export function Step5Grind() {
-  const { state, dispatch, grindOptions, siteSettings } = useBuilder();
+  const { state, dispatch, grindOptions, builderSettings } = useBuilder();
 
   const handleSelect = (grind: (typeof grindOptions)[0]) => {
     dispatch({
       type: "SET_GRIND",
-      id: grind._id,
+      id: grind.id,
       name: grind.name,
     });
   };
 
   const heading =
-    siteSettings.builderCopy?.step5Heading ||
+    builderSettings.step5Heading ||
     "How will your customers brew it?";
-  const subheading = siteSettings.builderCopy?.step5Subheading || undefined;
+  const subheading = builderSettings.step5Subheading || undefined;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -29,11 +29,11 @@ export function Step5Grind() {
       <div className="lg:col-span-2">
         <StepHeading heading={heading} subheading={subheading} />
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-3xl">
+        <div className="grid grid-cols-2 gap-4 max-w-xl">
           {grindOptions.map((grind, index) => (
             <SelectionCard
-              key={grind._id}
-              selected={state.grind === grind._id}
+              key={grind.id}
+              selected={state.grind === grind.id}
               onClick={() => handleSelect(grind)}
               delay={index * 0.08}
             >
@@ -50,7 +50,7 @@ export function Step5Grind() {
                   ) : (
                     <div
                       className={`w-full h-full rounded-full flex items-center justify-center ${
-                        state.grind === grind._id
+                        state.grind === grind.id
                           ? "bg-accent/20 text-accent"
                           : "bg-neutral-800 text-neutral-400"
                       }`}
@@ -76,6 +76,8 @@ export function Step5Grind() {
         <BagVisualisation
           bagPhotoUrl={state.bagPhotoUrl}
           bagColourHex={state.bagColourHex}
+          bagColourName={state.bagColourName}
+          actualBagPhotoUrl={state.actualBagPhotoUrl}
           labelFileURL={state.labelFileURL}
           size="medium"
         />
@@ -85,6 +87,8 @@ export function Step5Grind() {
       <BagVisualisation
         bagPhotoUrl={state.bagPhotoUrl}
         bagColourHex={state.bagColourHex}
+        bagColourName={state.bagColourName}
+        actualBagPhotoUrl={state.actualBagPhotoUrl}
         labelFileURL={state.labelFileURL}
         size="small"
         collapsible

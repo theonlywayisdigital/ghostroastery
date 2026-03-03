@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Figtree, Inter } from "next/font/google";
+import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
 
 const figtree = Figtree({
@@ -18,8 +19,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Ghost Roasting UK | White Label Coffee Roasting",
-    template: "%s | Ghost Roasting UK",
+    default: "Ghost Roastery | White Label Coffee Roasting",
+    template: "%s | Ghost Roastery",
   },
   description:
     "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service. Launch your coffee brand with zero barriers.",
@@ -33,21 +34,21 @@ export const metadata: Metadata = {
     "coffee fulfillment service UK",
     "wholesale specialty coffee UK",
   ],
-  authors: [{ name: "Ghost Roasting UK" }],
-  creator: "Ghost Roasting UK",
-  metadataBase: new URL("https://ghostroasting.co.uk"),
+  authors: [{ name: "Ghost Roastery" }],
+  creator: "Ghost Roastery",
+  metadataBase: new URL("https://ghostroastery.com"),
   openGraph: {
     type: "website",
     locale: "en_GB",
-    url: "https://ghostroasting.co.uk",
-    siteName: "Ghost Roasting UK",
-    title: "Ghost Roasting UK | White Label Coffee Roasting",
+    url: "https://ghostroastery.com",
+    siteName: "Ghost Roastery",
+    title: "Ghost Roastery | White Label Coffee Roasting",
     description:
       "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ghost Roasting UK | White Label Coffee Roasting",
+    title: "Ghost Roastery | White Label Coffee Roasting",
     description:
       "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service.",
   },
@@ -65,7 +66,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${figtree.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );

@@ -1,5 +1,8 @@
 import { defineType, defineField } from "sanity";
 
+// DEPRECATED: Roast profiles now managed in Supabase (roast_profiles table).
+// This schema is kept so existing Sanity documents don't break the Studio.
+// Do not use in new code.
 export const roastProfiles = defineType({
   name: "roastProfiles",
   title: "Roast Profiles",

@@ -1,5 +1,5 @@
--- Ghost Roasting UK - Initial Database Schema
--- Run this in your Supabase SQL Editor
+-- Ghost Roastery - Initial Database Schema
+-- Idempotent: safe to re-run on a partially migrated database
 
 -- Enable UUID extension (usually already enabled)
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -18,86 +18,59 @@ CREATE TABLE IF NOT EXISTS public.users (
 -- Enable RLS
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
--- Users can read their own data
+-- Policies (idempotent: drop if exists, then create)
+DROP POLICY IF EXISTS "Users can view own profile" ON public.users;
 CREATE POLICY "Users can view own profile"
   ON public.users
   FOR SELECT
   USING (auth.uid() = id);
 
--- Users can update their own data
+DROP POLICY IF EXISTS "Users can update own profile" ON public.users;
 CREATE POLICY "Users can update own profile"
   ON public.users
   FOR UPDATE
   USING (auth.uid() = id);
 
--- Users can insert their own profile (on signup)
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.users;
 CREATE POLICY "Users can insert own profile"
   ON public.users
   FOR INSERT
   WITH CHECK (auth.uid() = id);
 
 -- ============================================
--- DELIVERY ADDRESSES TABLE
+-- ORDER NUMBER SEQUENCE
 -- ============================================
-CREATE TABLE IF NOT EXISTS public.delivery_addresses (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  label TEXT NOT NULL,
-  line1 TEXT NOT NULL,
-  line2 TEXT,
-  city TEXT NOT NULL,
-  postcode TEXT NOT NULL,
-  is_default BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
-);
+CREATE SEQUENCE IF NOT EXISTS order_number_seq START 1001;
 
--- Enable RLS
-ALTER TABLE public.delivery_addresses ENABLE ROW LEVEL SECURITY;
-
--- Users can read their own addresses
-CREATE POLICY "Users can view own addresses"
-  ON public.delivery_addresses
-  FOR SELECT
-  USING (auth.uid() = user_id);
-
--- Users can insert their own addresses
-CREATE POLICY "Users can insert own addresses"
-  ON public.delivery_addresses
-  FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
--- Users can update their own addresses
-CREATE POLICY "Users can update own addresses"
-  ON public.delivery_addresses
-  FOR UPDATE
-  USING (auth.uid() = user_id);
-
--- Users can delete their own addresses
-CREATE POLICY "Users can delete own addresses"
-  ON public.delivery_addresses
-  FOR DELETE
-  USING (auth.uid() = user_id);
-
--- Index for faster lookups
-CREATE INDEX idx_delivery_addresses_user_id ON public.delivery_addresses(user_id);
+CREATE OR REPLACE FUNCTION generate_order_number()
+RETURNS TEXT AS $$
+DECLARE
+  seq_val INTEGER;
+BEGIN
+  seq_val := nextval('order_number_seq');
+  RETURN 'GR-' || EXTRACT(YEAR FROM NOW())::TEXT || '-' || LPAD(seq_val::TEXT, 4, '0');
+END;
+$$ LANGUAGE plpgsql;
 
 -- ============================================
 -- ORDERS TABLE
 -- ============================================
 CREATE TABLE IF NOT EXISTS public.orders (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  order_number TEXT NOT NULL UNIQUE,
-  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
-  bag_style TEXT NOT NULL,
+  order_number TEXT NOT NULL UNIQUE DEFAULT generate_order_number(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  customer_email TEXT NOT NULL DEFAULT '',
+  customer_name TEXT,
   bag_colour TEXT NOT NULL,
   bag_size TEXT NOT NULL CHECK (bag_size IN ('250g', '500g', '1kg')),
   roast_profile TEXT NOT NULL,
   grind TEXT NOT NULL,
-  quantity INTEGER NOT NULL CHECK (quantity >= 25 AND quantity <= 150),
+  quantity INTEGER NOT NULL CHECK (quantity >= 10 AND quantity <= 100),
   price_per_bag DECIMAL(10, 2) NOT NULL,
   total_price DECIMAL(10, 2) NOT NULL,
   label_file_url TEXT,
-  delivery_address_id UUID NOT NULL REFERENCES public.delivery_addresses(id),
+  delivery_address JSONB,
+  stripe_session_id TEXT,
   stripe_payment_id TEXT,
   payment_status TEXT DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed')),
   order_status TEXT DEFAULT 'Pending' CHECK (order_status IN ('Pending', 'In Production', 'Dispatched', 'Delivered')),
@@ -105,32 +78,48 @@ CREATE TABLE IF NOT EXISTS public.orders (
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
+-- Add missing columns if table already existed with partial schema
+DO $$ BEGIN
+  ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS customer_email TEXT NOT NULL DEFAULT '';
+  ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS customer_name TEXT;
+  ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS delivery_address JSONB;
+  ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS stripe_session_id TEXT;
+END $$;
+
 -- Enable RLS
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 
--- Users can read their own orders
+-- Policies (idempotent)
+DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
 CREATE POLICY "Users can view own orders"
   ON public.orders
   FOR SELECT
   USING (auth.uid() = user_id);
 
--- Only service role can insert orders (via API)
+DROP POLICY IF EXISTS "Service role can insert orders" ON public.orders;
 CREATE POLICY "Service role can insert orders"
   ON public.orders
   FOR INSERT
   WITH CHECK (true);
 
--- Users can view orders (but only their own via SELECT policy)
--- Service role can update orders (for status updates)
+DROP POLICY IF EXISTS "Service role can update orders" ON public.orders;
 CREATE POLICY "Service role can update orders"
   ON public.orders
   FOR UPDATE
   USING (true);
 
--- Indexes for faster lookups
-CREATE INDEX idx_orders_user_id ON public.orders(user_id);
-CREATE INDEX idx_orders_order_number ON public.orders(order_number);
-CREATE INDEX idx_orders_created_at ON public.orders(created_at DESC);
+-- Indexes (idempotent)
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON public.orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_order_number ON public.orders(order_number);
+CREATE INDEX IF NOT EXISTS idx_orders_stripe_session_id ON public.orders(stripe_session_id);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON public.orders(created_at DESC);
+
+-- Unique constraint on stripe_session_id for idempotent order creation
+DO $$ BEGIN
+  ALTER TABLE public.orders ADD CONSTRAINT orders_stripe_session_unique UNIQUE (stripe_session_id);
+EXCEPTION
+  WHEN duplicate_table THEN NULL;
+END $$;
 
 -- ============================================
 -- FUNCTION: Auto-update updated_at
@@ -143,7 +132,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger for orders table
+-- Trigger for orders table (idempotent)
+DROP TRIGGER IF EXISTS update_orders_updated_at ON public.orders;
 CREATE TRIGGER update_orders_updated_at
   BEFORE UPDATE ON public.orders
   FOR EACH ROW
@@ -172,34 +162,14 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
   EXECUTE FUNCTION public.handle_new_user();
 
 -- ============================================
--- FUNCTION: Ensure only one default address
--- ============================================
-CREATE OR REPLACE FUNCTION ensure_single_default_address()
-RETURNS TRIGGER AS $$
-BEGIN
-  IF NEW.is_default = TRUE THEN
-    UPDATE public.delivery_addresses
-    SET is_default = FALSE
-    WHERE user_id = NEW.user_id AND id != NEW.id;
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER ensure_single_default
-  AFTER INSERT OR UPDATE ON public.delivery_addresses
-  FOR EACH ROW
-  WHEN (NEW.is_default = TRUE)
-  EXECUTE FUNCTION ensure_single_default_address();
-
--- ============================================
 -- GRANT PERMISSIONS
 -- ============================================
--- Grant usage on schema
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
-
--- Grant access to tables
 GRANT SELECT, INSERT, UPDATE ON public.users TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.delivery_addresses TO authenticated;
 GRANT SELECT ON public.orders TO authenticated;
 GRANT INSERT, UPDATE ON public.orders TO service_role;
+GRANT SELECT ON public.orders TO service_role;
+GRANT USAGE, SELECT ON SEQUENCE order_number_seq TO service_role;
+
+-- Reload PostgREST schema cache
+NOTIFY pgrst, 'reload schema';

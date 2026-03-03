@@ -31,7 +31,7 @@ export function CaseStudySnippet({ caseStudy }: CaseStudySnippetProps) {
     return (
       <Section dark>
         <FadeIn>
-          <SectionHeader title="Built with Ghost Roasting UK" />
+          <SectionHeader title="Built with Ghost Roastery" />
         </FadeIn>
 
         <FadeIn delay={0.2}>
@@ -60,7 +60,7 @@ export function CaseStudySnippet({ caseStudy }: CaseStudySnippetProps) {
   return (
     <Section dark>
       <FadeIn>
-        <SectionHeader title="Built with Ghost Roasting UK" />
+        <SectionHeader title="Built with Ghost Roastery" />
       </FadeIn>
 
       <FadeIn delay={0.2}>

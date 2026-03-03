@@ -8,14 +8,14 @@ import { ContactForm } from "@/components/contact";
 import { Palette, Package } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Ghost Roasting UK",
+  title: "Contact Us | Ghost Roastery",
   description:
-    "Get in touch with Ghost Roasting UK. Not sure which service is right for you? Drop us a message and we'll point you in the right direction.",
+    "Get in touch with Ghost Roastery. Not sure which service is right for you? Drop us a message and we'll point you in the right direction.",
   openGraph: {
-    title: "Contact Us | Ghost Roasting UK",
+    title: "Contact Us | Ghost Roastery",
     description:
-      "Get in touch with Ghost Roasting UK. We're here to help you launch your coffee brand.",
-    url: "https://ghostroasting.co.uk/contact",
+      "Get in touch with Ghost Roastery. We're here to help you launch your coffee brand.",
+    url: "https://ghostroastery.com/contact",
   },
 };
 

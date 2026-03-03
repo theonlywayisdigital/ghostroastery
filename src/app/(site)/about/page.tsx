@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/Button";
 import { Coffee, Leaf, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Us | Ghost Roasting UK",
+  title: "About Us | Ghost Roastery",
   description:
     "We're a UK-based ghost roasting service helping businesses launch and grow their own coffee brands. Specialty grade, small batch, ethically sourced.",
   openGraph: {
-    title: "About Us | Ghost Roasting UK",
+    title: "About Us | Ghost Roastery",
     description:
       "We're a UK-based ghost roasting service helping businesses launch and grow their own coffee brands.",
-    url: "https://ghostroasting.co.uk/about",
+    url: "https://ghostroastery.com/about",
   },
 };
 
@@ -67,7 +67,7 @@ export default function AboutPage() {
             <p>
               Coffee is one of the most consumed products in the world. But
               launching a coffee brand has always meant either owning a roastery
-              or compromising on quality. We built Ghost Roasting UK to change
+              or compromising on quality. We built Ghost Roastery to change
               that.
             </p>
             <p>
@@ -79,7 +79,7 @@ export default function AboutPage() {
             <p>
               We proved the model worked by building our own brand first. Off
               Your Bean is a real, live, shoppable coffee brand built entirely
-              through Ghost Roasting UK. If we can do it for ourselves, we can
+              through Ghost Roastery. If we can do it for ourselves, we can
               do it for you.
             </p>
           </div>

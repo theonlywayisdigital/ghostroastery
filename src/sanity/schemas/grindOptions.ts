@@ -1,5 +1,8 @@
 import { defineType, defineField } from "sanity";
 
+// DEPRECATED: Grind options now managed in Supabase (grind_options table).
+// This schema is kept so existing Sanity documents don't break the Studio.
+// Do not use in new code.
 export const grindOptions = defineType({
   name: "grindOptions",
   title: "Grind Options",

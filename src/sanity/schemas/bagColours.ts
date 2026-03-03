@@ -9,7 +9,7 @@ export const bagColours = defineType({
       name: "name",
       title: "Name",
       type: "string",
-      description: "e.g. Midnight Black",
+      description: "e.g. Black Matt",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -28,6 +28,15 @@ export const bagColours = defineType({
       title: "Bag Photo",
       type: "image",
       description: "The product photo for this bag colour (use same angle/position for all colours)",
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
+      name: "actualBagPhoto",
+      title: "Actual Bag Photo",
+      type: "image",
+      description: "Photo of the real bag (without label) to show customers the actual finish",
       options: {
         hotspot: true,
       },

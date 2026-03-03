@@ -22,14 +22,14 @@ import {
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Wholesale Coffee | Ghost Roasting UK",
+  title: "Wholesale Coffee | Ghost Roastery",
   description:
     "Coffee at scale. Your way. For businesses that need volume, consistency and flexibility. 150+ bags per order. Branded or unbranded.",
   openGraph: {
-    title: "Wholesale Coffee | Ghost Roasting UK",
+    title: "Wholesale Coffee | Ghost Roastery",
     description:
       "Coffee at scale. Your way. For businesses that need volume, consistency and flexibility.",
-    url: "https://ghostroasting.co.uk/wholesale",
+    url: "https://ghostroastery.com/wholesale",
   },
 };
 
@@ -37,13 +37,13 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Service",
-  name: "Ghost Roasting UK Wholesale",
+  name: "Ghost Roastery Wholesale",
   description:
     "Wholesale coffee roasting service for businesses needing 150+ bags per order",
   provider: {
     "@type": "Organization",
-    name: "Ghost Roasting UK",
-    url: "https://ghostroasting.co.uk",
+    name: "Ghost Roastery",
+    url: "https://ghostroastery.com",
   },
   areaServed: {
     "@type": "Country",

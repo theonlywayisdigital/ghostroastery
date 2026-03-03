@@ -23,22 +23,22 @@ function RoastIndicator({ level }: { level: number }) {
 }
 
 export function Step4RoastProfile() {
-  const { state, dispatch, roastProfiles, siteSettings } = useBuilder();
+  const { state, dispatch, roastProfiles, builderSettings } = useBuilder();
 
   const handleSelect = (profile: (typeof roastProfiles)[0]) => {
     dispatch({
       type: "SET_ROAST_PROFILE",
-      slug: profile.slug.current,
+      slug: profile.slug,
       name: profile.name,
       descriptor: profile.descriptor,
     });
   };
 
   const heading =
-    siteSettings.builderCopy?.step4Heading ||
+    builderSettings.step4Heading ||
     "What does your coffee taste like?";
   const subheading =
-    siteSettings.builderCopy?.step4Subheading ||
+    builderSettings.step4Subheading ||
     "This is the roast profile your beans will be roasted to.";
 
   return (
@@ -50,8 +50,8 @@ export function Step4RoastProfile() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-2xl">
           {roastProfiles.map((profile, index) => (
             <SelectionCard
-              key={profile._id}
-              selected={state.roastProfile === profile.slug.current}
+              key={profile.id}
+              selected={state.roastProfile === profile.slug}
               onClick={() => handleSelect(profile)}
               delay={index * 0.1}
             >
@@ -89,8 +89,9 @@ export function Step4RoastProfile() {
         <BagVisualisation
           bagPhotoUrl={state.bagPhotoUrl}
           bagColourHex={state.bagColourHex}
+          bagColourName={state.bagColourName}
+          actualBagPhotoUrl={state.actualBagPhotoUrl}
           labelFileURL={state.labelFileURL}
-          
           size="medium"
         />
       </div>
@@ -99,8 +100,9 @@ export function Step4RoastProfile() {
       <BagVisualisation
         bagPhotoUrl={state.bagPhotoUrl}
         bagColourHex={state.bagColourHex}
+        bagColourName={state.bagColourName}
+        actualBagPhotoUrl={state.actualBagPhotoUrl}
         labelFileURL={state.labelFileURL}
-        
         size="small"
         collapsible
       />
