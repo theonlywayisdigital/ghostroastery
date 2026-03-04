@@ -26,6 +26,9 @@ export async function POST(request: Request) {
     const customerEmail = formData.get("customerEmail") as string;
     const userId = (formData.get("userId") as string) || null;
     const labelFile = formData.get("labelFile") as File | null;
+    const labelPdfUrl = (formData.get("labelPdfUrl") as string) || null;
+    const labelId = (formData.get("labelId") as string) || null;
+    const labelPreviewUrl = (formData.get("labelPreviewUrl") as string) || null;
 
     // Validate required fields
     if (!bagSize || !bagColour || !roastProfile || !grind || !quantity) {
@@ -98,7 +101,7 @@ export async function POST(request: Request) {
     const serverTotalPrice = serverPricePerBag * quantity;
     const shippingCost = priceResult.shippingCost || 0;
 
-    // Upload label file to Sanity if provided
+    // Upload label file to Sanity if provided, or use existing URL from Label Maker
     let labelFileUrl: string | null = null;
     if (labelFile && labelFile.size > 0) {
       try {
@@ -112,6 +115,9 @@ export async function POST(request: Request) {
         console.error("Label file upload failed:", uploadError);
         // Continue without label — don't block checkout
       }
+    } else if (labelPdfUrl) {
+      // Label created via Label Maker — already uploaded to Supabase storage
+      labelFileUrl = labelPdfUrl;
     }
 
     // Create Stripe Checkout Session
@@ -160,6 +166,8 @@ export async function POST(request: Request) {
         price_per_bag: String(serverPricePerBag),
         total_price: String(serverTotalPrice),
         label_file_url: labelFileUrl || "",
+        label_id: labelId || "",
+        label_preview_url: labelPreviewUrl || "",
         user_id: userId || "",
         customer_email: customerEmail,
         pricing_bracket_id: priceResult.bracket.id,

@@ -1471,6 +1471,7 @@ export type Database = {
           id: string
           name: string
           pdf_url: string | null
+          print_url: string | null
           thumbnail_url: string | null
           updated_at: string
           user_id: string
@@ -1481,6 +1482,7 @@ export type Database = {
           id?: string
           name?: string
           pdf_url?: string | null
+          print_url?: string | null
           thumbnail_url?: string | null
           updated_at?: string
           user_id: string
@@ -1491,6 +1493,7 @@ export type Database = {
           id?: string
           name?: string
           pdf_url?: string | null
+          print_url?: string | null
           thumbnail_url?: string | null
           updated_at?: string
           user_id?: string

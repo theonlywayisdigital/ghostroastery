@@ -68,6 +68,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
       price_per_bag: parseFloat(metadata.price_per_bag),
       total_price: parseFloat(metadata.total_price),
       label_file_url: metadata.label_file_url || null,
+      label_id: metadata.label_id || null,
       delivery_address: deliveryAddress as unknown as Json,
       stripe_session_id: session.id,
       stripe_payment_id: session.payment_intent as string,

@@ -597,17 +597,8 @@ export function PropertiesPanel({
   };
   const setTextAlign = (align: string) => {
     const obj = getActiveObj() as FabricAny;
-    const canvas = fabricRef.current;
-    if (!obj || !canvas) return;
+    if (!obj) return;
     obj.set("textAlign", align);
-    // Also centre the object horizontally on canvas when "center" is clicked
-    if (align === "center") {
-      const canvasW = canvas.width ?? 1;
-      const zoom = canvas.getZoom();
-      const canvasCenterX = (canvasW / zoom) / 2;
-      const objW = (obj.width ?? 0) * (obj.scaleX ?? 1);
-      obj.set("left", canvasCenterX - objW / 2);
-    }
     applyAndUpdate();
   };
   const setCharSpacing = (val: number) => {

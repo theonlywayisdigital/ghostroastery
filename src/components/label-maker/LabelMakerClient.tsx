@@ -16,6 +16,7 @@ import {
   Eye,
   FolderOpen,
   Loader2,
+  CheckCircle,
 } from "lucide-react";
 import { LabelCanvas } from "./LabelCanvas";
 import { HorizontalRuler, VerticalRuler, RULER_SIZE } from "./Rulers";
@@ -220,14 +221,12 @@ export function LabelMakerClient({
 
   const handleDone = useCallback(() => {
     if (onExportComplete) {
-      // Builder flow: auto-export without showing the export panel
+      // Builder flow: auto-export and pass result back to parent
       setAutoExporting(true);
       const canvasImage = canvas.getCanvasImage();
       if (!canvasImage) {
         console.error("handleDone: canvas.getCanvasImage() returned null");
         setAutoExporting(false);
-        // Fallback to export panel
-        setExportOpen(true);
         return;
       }
       fetch("/api/label/export-pdf", {
@@ -250,15 +249,18 @@ export function LabelMakerClient({
         })
         .catch((err) => {
           console.error("Auto-export error:", err);
-          // Fall back to showing the export panel
-          setExportOpen(true);
         })
         .finally(() => setAutoExporting(false));
     } else {
-      // Standalone: show export panel
-      setExportOpen(true);
+      // Standalone: save label (uploads all files including print PNG, PDF, etc.)
+      if (!user) {
+        pendingSaveRef.current = true;
+        setAuthModalOpen(true);
+        return;
+      }
+      handleSave();
     }
-  }, [onExportComplete, canvas, dimensions]);
+  }, [onExportComplete, canvas, dimensions, user, handleSave]);
 
   const handleBagPreview = () => {
     const trimImage = canvas.getTrimImage();
@@ -417,13 +419,23 @@ export function LabelMakerClient({
               </button>
               <button
                 onClick={handleDone}
-                disabled={autoExporting}
+                disabled={autoExporting || (!onExportComplete && saving)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-accent text-neutral-900 font-medium rounded hover:bg-accent/90 transition-colors disabled:opacity-50"
               >
                 {autoExporting ? (
                   <>
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     Exporting...
+                  </>
+                ) : !onExportComplete && saving ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Saving...
+                  </>
+                ) : !onExportComplete && saved ? (
+                  <>
+                    <CheckCircle className="w-3.5 h-3.5" />
+                    Saved!
                   </>
                 ) : (
                   <>

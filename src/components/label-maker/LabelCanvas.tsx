@@ -1231,9 +1231,19 @@ export function LabelCanvas({
   }, [onCanvasModified]);
 
   // ─── Phase C: Get canvas as base64 PNG ───
+  // Exports the FULL canvas (trim + bleed) at 1:1 resolution (1181×1724px at 300 DPI).
   const getCanvasImage = useCallback((): string | null => {
     const canvas = fabricRef.current;
     if (!canvas) return null;
+
+    // Save current zoom so we can restore it after export
+    const prevZoom = canvas.getZoom();
+    const prevVpt = canvas.viewportTransform ? [...canvas.viewportTransform] : null;
+
+    // Reset to 1:1 zoom so export is at full 300 DPI resolution
+    canvas.setZoom(1);
+    canvas.setDimensions({ width: canvasW, height: canvasH });
+
     // Temporarily hide guides, grid, and snap lines for clean capture
     const wasGuidesVisible = guidesRef.current.map((g) => g.visible);
     const wasGridVisible = gridLinesRef.current.map((g) => g.visible);
@@ -1249,9 +1259,14 @@ export function LabelCanvas({
     // Restore visibility
     guidesRef.current.forEach((g, i) => { g.visible = wasGuidesVisible[i] ?? true; });
     gridLinesRef.current.forEach((g, i) => { g.visible = wasGridVisible[i] ?? false; });
+
+    // Restore previous zoom
+    canvas.setZoom(prevZoom);
+    if (prevVpt) canvas.viewportTransform = prevVpt as fabric.TMat2D;
+    canvas.setDimensions({ width: canvasW * prevZoom, height: canvasH * prevZoom });
     canvas.renderAll();
     return dataUrl;
-  }, []);
+  }, [canvasW, canvasH]);
 
   // ─── Phase C: Get trim-only image (excluding bleed) as base64 PNG ───
   // Returns only the 94×140mm trim area (1110×1654px) for bag mockup preview.

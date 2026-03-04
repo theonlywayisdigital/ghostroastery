@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { generateLabelPdf } from "@/lib/generateLabelPdf";
 import { createServerClient } from "@/lib/supabase";
+import sharp from "sharp";
 
 export async function POST(request: Request) {
   try {
@@ -40,13 +41,20 @@ export async function POST(request: Request) {
       bleedMm: dimensions.bleedMm ?? 3,
     });
 
+    // Embed 300 DPI metadata into print PNG
+    const printPngBuffer = await sharp(canvasPng)
+      .withMetadata({ density: 300 })
+      .png()
+      .toBuffer();
+
     // Upload to Supabase storage
     const supabase = createServerClient();
     const timestamp = Date.now();
     const pdfPath = `exports/${filename}`;
     const previewPath = `exports/preview-${timestamp}.png`;
+    const printPath = `exports/print-${timestamp}.png`;
 
-    const [pdfUpload, previewUpload] = await Promise.all([
+    const [pdfUpload, previewUpload, printUpload] = await Promise.all([
       supabase.storage
         .from("label-files")
         .upload(pdfPath, pdfBuffer, {
@@ -56,6 +64,12 @@ export async function POST(request: Request) {
       supabase.storage
         .from("label-files")
         .upload(previewPath, previewPngBuffer, {
+          contentType: "image/png",
+          upsert: true,
+        }),
+      supabase.storage
+        .from("label-files")
+        .upload(printPath, printPngBuffer, {
           contentType: "image/png",
           upsert: true,
         }),
@@ -74,6 +88,11 @@ export async function POST(request: Request) {
       // Non-fatal — continue without preview
     }
 
+    if (printUpload.error) {
+      console.error("Print PNG upload error:", printUpload.error);
+      // Non-fatal — continue without print PNG
+    }
+
     // Get public URLs
     const { data: pdfUrlData } = supabase.storage
       .from("label-files")
@@ -83,9 +102,14 @@ export async function POST(request: Request) {
       .from("label-files")
       .getPublicUrl(previewPath);
 
+    const { data: printUrlData } = supabase.storage
+      .from("label-files")
+      .getPublicUrl(printPath);
+
     return NextResponse.json({
       pdfUrl: pdfUrlData.publicUrl,
       previewPngUrl: previewUpload.error ? null : previewUrlData.publicUrl,
+      printPngUrl: printUpload.error ? null : printUrlData.publicUrl,
       filename,
     });
   } catch (error) {

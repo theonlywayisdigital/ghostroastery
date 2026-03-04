@@ -20,20 +20,15 @@ interface LabelPdfResult {
   filename: string;
 }
 
-// Crop mark settings
-const CROP_MARK_LENGTH_MM = 5;
-const CROP_MARK_OFFSET_MM = 3; // Offset from trim line
-const CROP_MARK_WIDTH = 0.25; // Points (thin line)
-
 /**
  * Generates a print-ready PDF from a Fabric.js canvas PNG export.
  *
- * Fixed print dimensions: 94mm × 140mm trim, 3mm bleed → 100mm × 146mm total.
+ * Matches the printer template (instantprint 94mm × 140mm Rectangle Sticker):
+ * - PDF page size = 100mm × 146mm (trim + 3mm bleed on all sides)
+ * - Artwork fills the entire page edge-to-edge — NO crop marks, NO white border
+ * - Image embedded at 300 DPI
  *
- * The PDF includes:
- * - Full bleed canvas image at 300 DPI
- * - Crop marks at the 94mm × 140mm trim corners
- * - Correct physical dimensions
+ * The printer handles cutting at the 94mm × 140mm trim line.
  */
 export async function generateLabelPdf(
   options: LabelPdfOptions
@@ -49,22 +44,19 @@ export async function generateLabelPdf(
 
   const totalWidthPt = mmToPt(totalWidthMm);
   const totalHeightPt = mmToPt(totalHeightMm);
-  const bleedPt = mmToPt(bleedMm);
-  const trimWidthPt = mmToPt(widthMm);
-  const trimHeightPt = mmToPt(heightMm);
 
   // Target pixel dimensions at 300 DPI
   const targetPxW = Math.round((totalWidthMm / 25.4) * 300);
   const targetPxH = Math.round((totalHeightMm / 25.4) * 300);
 
-  // Process the canvas PNG with Sharp
-  // 1. Ensure correct resolution
+  // Process the canvas PNG with Sharp — ensure correct resolution + 300 DPI metadata
   const processedPng = await sharp(canvasPng)
     .resize(targetPxW, targetPxH, { fit: "fill" })
+    .withMetadata({ density: 300 })
     .png()
     .toBuffer();
 
-  // 2. Generate preview PNG (smaller, for thumbnails)
+  // Generate preview PNG (smaller, for thumbnails)
   const previewPngBuffer = await sharp(canvasPng)
     .resize(800, Math.round(800 * (totalHeightMm / totalWidthMm)), {
       fit: "fill",
@@ -72,21 +64,16 @@ export async function generateLabelPdf(
     .png({ quality: 85 })
     .toBuffer();
 
-  // 3. Build the PDF
-  // PDF page size = total canvas (includes bleed) + extra margin for crop marks
-  const cropMarkMarginPt = mmToPt(CROP_MARK_OFFSET_MM + CROP_MARK_LENGTH_MM + 2);
-  const pageWidthPt = totalWidthPt + cropMarkMarginPt * 2;
-  const pageHeightPt = totalHeightPt + cropMarkMarginPt * 2;
-
+  // Build the PDF — page size matches artwork exactly (100mm × 146mm)
   const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
     const chunks: Buffer[] = [];
     const doc = new PDFDocument({
-      size: [pageWidthPt, pageHeightPt],
+      size: [totalWidthPt, totalHeightPt],
       margin: 0,
       info: {
         Title: `Coffee Bag Label - ${widthMm}x${heightMm}mm`,
         Author: "Ghost Roastery Label Maker",
-        Subject: "Coffee bag label",
+        Subject: "Coffee bag label - print ready",
         Creator: "Ghost Roastery (ghostroastery.com)",
       },
     });
@@ -95,59 +82,11 @@ export async function generateLabelPdf(
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
 
-    // Image origin (centred in the page, accounting for crop mark margins)
-    const imgX = cropMarkMarginPt;
-    const imgY = cropMarkMarginPt;
-
-    // Place the canvas image
-    doc.image(processedPng, imgX, imgY, {
+    // Place artwork edge-to-edge — fills the entire page
+    doc.image(processedPng, 0, 0, {
       width: totalWidthPt,
       height: totalHeightPt,
     });
-
-    // Draw crop marks at the four trim corners
-    // Trim rectangle origin relative to page
-    const trimX = imgX + bleedPt;
-    const trimY = imgY + bleedPt;
-    const trimRight = trimX + trimWidthPt;
-    const trimBottom = trimY + trimHeightPt;
-
-    const markLen = mmToPt(CROP_MARK_LENGTH_MM);
-    const markOff = mmToPt(CROP_MARK_OFFSET_MM);
-
-    doc.lineWidth(CROP_MARK_WIDTH);
-    doc.strokeColor("#000000");
-
-    // Helper: draw a line
-    const line = (x1: number, y1: number, x2: number, y2: number) => {
-      doc.moveTo(x1, y1).lineTo(x2, y2).stroke();
-    };
-
-    // Top-left corner
-    line(trimX, trimY - markOff, trimX, trimY - markOff - markLen); // vertical up
-    line(trimX - markOff, trimY, trimX - markOff - markLen, trimY); // horizontal left
-
-    // Top-right corner
-    line(trimRight, trimY - markOff, trimRight, trimY - markOff - markLen);
-    line(trimRight + markOff, trimY, trimRight + markOff + markLen, trimY);
-
-    // Bottom-left corner
-    line(trimX, trimBottom + markOff, trimX, trimBottom + markOff + markLen);
-    line(trimX - markOff, trimBottom, trimX - markOff - markLen, trimBottom);
-
-    // Bottom-right corner
-    line(
-      trimRight,
-      trimBottom + markOff,
-      trimRight,
-      trimBottom + markOff + markLen
-    );
-    line(
-      trimRight + markOff,
-      trimBottom,
-      trimRight + markOff + markLen,
-      trimBottom
-    );
 
     doc.end();
   });

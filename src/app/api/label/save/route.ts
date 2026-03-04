@@ -57,12 +57,22 @@ export async function POST(request: Request) {
     });
     console.log("[label/save] PDF generated:", filename, pdfBuffer.length);
 
-    // Generate thumbnail (400px wide)
-    const thumbnailBuffer = await sharp(canvasPng)
-      .resize(400, null, { fit: "inside" })
+    // Generate preview PNG (800px wide for thumbnails/previews)
+    const previewBuffer = await sharp(canvasPng)
+      .resize(800, null, { fit: "inside" })
       .png({ quality: 80 })
       .toBuffer();
-    console.log("[label/save] Thumbnail generated:", thumbnailBuffer.length);
+    console.log("[label/save] Preview generated:", previewBuffer.length);
+
+    // Embed 300 DPI metadata into print PNG so image viewers show correct resolution
+    const printPngBuffer = await sharp(canvasPng)
+      .withMetadata({ density: 300 })
+      .png()
+      .toBuffer();
+    console.log("[label/save] Print PNG with DPI metadata:", printPngBuffer.length);
+
+    // Prepare canvas JSON buffer
+    const canvasJsonBuffer = Buffer.from(canvasJson, "utf-8");
 
     // Determine label ID (update existing or create new)
     const id = labelId || crypto.randomUUID();
@@ -72,27 +82,54 @@ export async function POST(request: Request) {
     // Upload to storage using service role client (bypasses RLS on storage)
     const supabaseStorage = createServerClient();
 
-    const [thumbnailUpload, pdfUpload] = await Promise.all([
-      supabaseStorage.storage
-        .from("label-files")
-        .upload(`${basePath}/thumbnail.png`, thumbnailBuffer, {
-          contentType: "image/png",
-          upsert: true,
-        }),
-      supabaseStorage.storage
-        .from("label-files")
-        .upload(`${basePath}/${filename}`, pdfBuffer, {
-          contentType: "application/pdf",
-          upsert: true,
-        }),
-    ]);
+    const [previewUpload, printUpload, canvasJsonUpload, pdfUpload] =
+      await Promise.all([
+        supabaseStorage.storage
+          .from("label-files")
+          .upload(`${basePath}/preview.png`, previewBuffer, {
+            contentType: "image/png",
+            upsert: true,
+          }),
+        supabaseStorage.storage
+          .from("label-files")
+          .upload(`${basePath}/print.png`, printPngBuffer, {
+            contentType: "image/png",
+            upsert: true,
+          }),
+        supabaseStorage.storage
+          .from("label-files")
+          .upload(`${basePath}/canvas.json`, canvasJsonBuffer, {
+            contentType: "application/json",
+            upsert: true,
+          }),
+        supabaseStorage.storage
+          .from("label-files")
+          .upload(`${basePath}/label.pdf`, pdfBuffer, {
+            contentType: "application/pdf",
+            upsert: true,
+          }),
+      ]);
 
-    if (thumbnailUpload.error) {
-      console.error("[label/save] Thumbnail upload error:", thumbnailUpload.error);
+    if (previewUpload.error) {
+      console.error("[label/save] Preview upload error:", previewUpload.error);
       return NextResponse.json(
-        { error: "Failed to upload thumbnail" },
+        { error: "Failed to upload preview" },
         { status: 500 }
       );
+    }
+    if (printUpload.error) {
+      console.error("[label/save] Print PNG upload error:", printUpload.error);
+      return NextResponse.json(
+        { error: "Failed to upload print PNG" },
+        { status: 500 }
+      );
+    }
+    if (canvasJsonUpload.error) {
+      console.error(
+        "[label/save] Canvas JSON upload error:",
+        canvasJsonUpload.error
+      );
+      // Non-fatal — canvas JSON is also stored in DB
     }
     if (pdfUpload.error) {
       console.error("[label/save] PDF upload error:", pdfUpload.error);
@@ -104,12 +141,15 @@ export async function POST(request: Request) {
     console.log("[label/save] Storage uploads complete");
 
     // Get public URLs
-    const { data: thumbUrlData } = supabaseStorage.storage
+    const { data: previewUrlData } = supabaseStorage.storage
       .from("label-files")
-      .getPublicUrl(`${basePath}/thumbnail.png`);
+      .getPublicUrl(`${basePath}/preview.png`);
+    const { data: printUrlData } = supabaseStorage.storage
+      .from("label-files")
+      .getPublicUrl(`${basePath}/print.png`);
     const { data: pdfUrlData } = supabaseStorage.storage
       .from("label-files")
-      .getPublicUrl(`${basePath}/${filename}`);
+      .getPublicUrl(`${basePath}/label.pdf`);
 
     // Upsert label record (using auth client so RLS is enforced)
     console.log("[label/save] Upserting to DB...");
@@ -120,13 +160,16 @@ export async function POST(request: Request) {
           id,
           user_id: user.id,
           name: name || "Untitled Label",
-          thumbnail_url: thumbUrlData.publicUrl,
+          thumbnail_url: previewUrlData.publicUrl,
           canvas_json: JSON.parse(canvasJson),
           pdf_url: pdfUrlData.publicUrl,
+          print_url: printUrlData.publicUrl,
         },
         { onConflict: "id" }
       )
-      .select("id, name, thumbnail_url, pdf_url, created_at, updated_at")
+      .select(
+        "id, name, thumbnail_url, pdf_url, print_url, created_at, updated_at"
+      )
       .single();
 
     if (dbError) {

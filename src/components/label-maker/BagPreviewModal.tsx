@@ -108,9 +108,9 @@ export function BagPreviewModal({
           </div>
         ) : hasBagData && labelImageDataUrl ? (
           /* Side-by-side on larger screens: mockup left, actual bag right */
-          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 lg:gap-10">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 lg:gap-8">
             {/* Mockup preview */}
-            <div className="w-full max-w-[400px]">
+            <div className="w-full max-w-[420px] shrink-0">
               <BagVisualisation
                 bagPhotoUrl={selectedColour!.bagPhotoUrl}
                 bagColourHex={selectedColour!.hex}
@@ -120,10 +120,10 @@ export function BagPreviewModal({
               />
             </div>
 
-            {/* Actual bag photo — always visible, prominent */}
+            {/* Actual bag photo — smaller reference */}
             {selectedColour!.actualBagPhotoUrl && (
-              <div className="w-full max-w-[340px] border border-amber-500/30 bg-amber-500/5 rounded-xl p-5">
-                <p className="text-center text-xs font-semibold uppercase tracking-wider text-amber-400 mb-4">
+              <div className="w-full max-w-[240px] shrink-0 border border-amber-500/30 bg-amber-500/5 rounded-xl p-3">
+                <p className="text-center text-[10px] font-semibold uppercase tracking-wider text-amber-400 mb-2">
                   Actual bag finish
                 </p>
                 <img
@@ -131,8 +131,8 @@ export function BagPreviewModal({
                   alt={`Actual ${selectedColour!.name} bag`}
                   className="w-full h-auto rounded-lg shadow-lg"
                 />
-                <p className="text-center text-[11px] text-neutral-400 mt-3 leading-snug">
-                  The mock-up is for illustration only. Your printed label will be applied to this bag.
+                <p className="text-center text-[10px] text-neutral-400 mt-2 leading-snug">
+                  Mock-up is for illustration only.
                 </p>
               </div>
             )}

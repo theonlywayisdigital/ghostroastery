@@ -77,6 +77,14 @@ export function Step8Auth() {
       if (userId) formData.append("userId", userId);
       if (state.labelFile) {
         formData.append("labelFile", state.labelFile);
+      } else if (state.labelPdfUrl) {
+        formData.append("labelPdfUrl", state.labelPdfUrl);
+      }
+      if (state.savedLabelId) {
+        formData.append("labelId", state.savedLabelId);
+      }
+      if (state.labelPreviewUrl) {
+        formData.append("labelPreviewUrl", state.labelPreviewUrl);
       }
 
       const res = await fetch("/api/create-checkout", {

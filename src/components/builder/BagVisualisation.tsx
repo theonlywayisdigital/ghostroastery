@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, X, ZoomIn } from "lucide-react";
 import {
   getBagMockupConfig,
   BAG_MOCKUP_CONFIG,
@@ -297,6 +297,15 @@ function BagContent({
   const alreadyCached = bagPhotoUrl ? imageCache.has(bagPhotoUrl) : false;
   const [imageLoaded, setImageLoaded] = useState(alreadyCached);
   const [loadProgress, setLoadProgress] = useState(alreadyCached ? 100 : 0);
+  const [zoomed, setZoomed] = useState(false);
+  const localCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const combinedCanvasRef = useCallback(
+    (node: HTMLCanvasElement | null) => {
+      localCanvasRef.current = node;
+      canvasRef(node);
+    },
+    [canvasRef]
+  );
 
   const sizeClasses = {
     small: "max-w-[200px]",
@@ -383,7 +392,10 @@ function BagContent({
                 Mockup preview
               </p>
             )}
-            <div className="relative">
+            <div
+              className="relative group cursor-zoom-in"
+              onClick={() => canvasReady && setZoomed(true)}
+            >
               {!canvasReady && (
                 <div className="w-full aspect-[5/7] bg-neutral-900 rounded-lg flex flex-col items-center justify-center gap-4">
                   <div className="opacity-20">
@@ -393,12 +405,17 @@ function BagContent({
                 </div>
               )}
               <motion.canvas
-                ref={canvasRef}
+                ref={combinedCanvasRef}
                 className={`w-full h-auto rounded-lg shadow-2xl ${!canvasReady ? "absolute inset-0 opacity-0" : ""}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: canvasReady ? 1 : 0 }}
                 transition={{ duration: 0.3 }}
               />
+              {canvasReady && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 rounded-lg transition-colors">
+                  <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-80 transition-opacity drop-shadow-lg" />
+                </div>
+              )}
             </div>
 
             {bagColourName && !showSideBySide && (
@@ -434,6 +451,16 @@ function BagContent({
         {actualBagPhotoUrl && !showSideBySide && (
           <ActualBagPreview url={actualBagPhotoUrl} colourName={bagColourName} colourHex={bagColourHex} />
         )}
+
+        {/* Zoomed lightbox */}
+        <AnimatePresence>
+          {zoomed && localCanvasRef.current && (
+            <MockupLightbox
+              canvasEl={localCanvasRef.current}
+              onClose={() => setZoomed(false)}
+            />
+          )}
+        </AnimatePresence>
       </motion.div>
     );
   }
@@ -533,6 +560,61 @@ function BagContent({
 
       {actualBagPhotoUrl && !showSideBySideNoLabel && (
         <ActualBagPreview url={actualBagPhotoUrl} colourName={bagColourName} colourHex={bagColourHex} />
+      )}
+    </motion.div>
+  );
+}
+
+function MockupLightbox({
+  canvasEl,
+  onClose,
+}: {
+  canvasEl: HTMLCanvasElement;
+  onClose: () => void;
+}) {
+  const [dataUrl] = useState(() => {
+    try {
+      return canvasEl.toDataURL("image/png");
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 cursor-zoom-out"
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 p-2 rounded-full bg-neutral-800/80 text-neutral-300 hover:text-white hover:bg-neutral-700 transition-colors z-10"
+      >
+        <X className="w-5 h-5" />
+      </button>
+      {dataUrl && (
+        <motion.img
+          src={dataUrl}
+          alt="Mockup preview"
+          className="max-w-[90vw] max-h-[90vh] rounded-xl shadow-2xl"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={(e) => e.stopPropagation()}
+          style={{ cursor: "default" }}
+        />
       )}
     </motion.div>
   );

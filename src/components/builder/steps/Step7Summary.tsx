@@ -67,6 +67,12 @@ export function Step7Summary() {
         } else if (state.labelPdfUrl) {
           formData.append("labelPdfUrl", state.labelPdfUrl);
         }
+        if (state.savedLabelId) {
+          formData.append("labelId", state.savedLabelId);
+        }
+        if (state.labelPreviewUrl) {
+          formData.append("labelPreviewUrl", state.labelPreviewUrl);
+        }
 
         const res = await fetch("/api/create-checkout", {
           method: "POST",

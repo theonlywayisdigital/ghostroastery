@@ -5,6 +5,72 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@ghostroasting.co.uk";
 const FROM_EMAIL = "Ghost Roasting UK <noreply@ghostroasting.co.uk>";
 
+// ── Ghost Roastery order email types ──
+
+interface OrderEmailData {
+  orderNumber: string;
+  customerEmail: string | null;
+  customerName: string;
+  bagSize: string;
+  bagColour: string;
+  roastProfile: string;
+  grind: string;
+  quantity: number;
+  pricePerBag: number;
+  totalPrice: number;
+  labelFileUrl: string | null;
+  deliveryAddress: {
+    name: string;
+    line1: string;
+    line2?: string;
+    city: string;
+    state?: string;
+    postal_code: string;
+    country: string;
+  } | null;
+  stripeSessionId: string;
+  stripePaymentId: string;
+  turnaroundDays: string;
+}
+
+interface AdminOrderEmailData extends OrderEmailData {
+  adminEmail: string;
+}
+
+interface RoasteryOrderEmailData extends OrderEmailData {
+  roasteryEmail: string;
+}
+
+interface GhostRoasterNotificationData {
+  roasterEmail: string;
+  roasterName: string;
+  orderNumber: string;
+  brandName: string | null;
+  bagSize: string;
+  roastProfile: string;
+  grind: string;
+  quantity: number;
+  dispatchDeadline: string;
+  portalUrl: string;
+}
+
+interface AccountActivationEmailData {
+  customerEmail: string;
+  customerName: string;
+  activationLink: string;
+  portalUrl: string;
+}
+
+interface OrderStatusUpdateEmailData {
+  orderNumber: string;
+  customerEmail: string | null;
+  customerName: string;
+  newStatus: string;
+  bagSize: string;
+  roastProfile: string;
+  quantity: number;
+}
+
 interface WholesaleEnquiryEmailData {
   name: string;
   businessName: string;
@@ -153,6 +219,213 @@ export async function sendContactAdminNotification(data: ContactEmailData) {
     });
   } catch (error) {
     console.error("Error sending contact admin notification:", error);
+    throw error;
+  }
+}
+
+// ── Ghost Roastery order emails ──
+
+function formatAddress(addr: OrderEmailData["deliveryAddress"]): string {
+  if (!addr) return "Not provided";
+  return [addr.name, addr.line1, addr.line2, addr.city, addr.state, addr.postal_code, addr.country]
+    .filter(Boolean)
+    .join(", ");
+}
+
+export async function sendOrderConfirmationEmail(data: OrderEmailData) {
+  if (!data.customerEmail) return;
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.customerEmail,
+      subject: `Order confirmed — #${data.orderNumber}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #0D0D0D;">Thanks for your order, ${data.customerName}!</h1>
+          <p>Your order <strong>#${data.orderNumber}</strong> has been confirmed and is being prepared.</p>
+          <h3>Order Summary</h3>
+          <ul>
+            <li><strong>Bag size:</strong> ${data.bagSize}</li>
+            <li><strong>Colour:</strong> ${data.bagColour}</li>
+            <li><strong>Roast profile:</strong> ${data.roastProfile}</li>
+            <li><strong>Grind:</strong> ${data.grind}</li>
+            <li><strong>Quantity:</strong> ${data.quantity}</li>
+            <li><strong>Total:</strong> £${data.totalPrice.toFixed(2)}</li>
+          </ul>
+          <p><strong>Delivery to:</strong> ${formatAddress(data.deliveryAddress)}</p>
+          <p><strong>Estimated turnaround:</strong> ${data.turnaroundDays}</p>
+          <p style="margin-top: 30px;">We'll email you when your order ships. If you have any questions, just reply to this email.</p>
+          <p>Best,<br>The Ghost Roasting UK Team</p>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Error sending order confirmation email:", error);
+    throw error;
+  }
+}
+
+export async function sendAdminOrderNotification(data: AdminOrderEmailData) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.adminEmail,
+      subject: `New order #${data.orderNumber} — ${data.quantity}x ${data.bagSize}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #0D0D0D;">New Order #${data.orderNumber}</h1>
+          <h3>Customer</h3>
+          <ul>
+            <li><strong>Name:</strong> ${data.customerName}</li>
+            <li><strong>Email:</strong> <a href="mailto:${data.customerEmail}">${data.customerEmail}</a></li>
+          </ul>
+          <h3>Order Details</h3>
+          <ul>
+            <li><strong>Bag size:</strong> ${data.bagSize}</li>
+            <li><strong>Colour:</strong> ${data.bagColour}</li>
+            <li><strong>Roast profile:</strong> ${data.roastProfile}</li>
+            <li><strong>Grind:</strong> ${data.grind}</li>
+            <li><strong>Quantity:</strong> ${data.quantity}</li>
+            <li><strong>Price per bag:</strong> £${data.pricePerBag.toFixed(2)}</li>
+            <li><strong>Total:</strong> £${data.totalPrice.toFixed(2)}</li>
+            ${data.labelFileUrl ? `<li><strong>Label:</strong> <a href="${data.labelFileUrl}">View label</a></li>` : "<li><strong>Label:</strong> Not provided</li>"}
+          </ul>
+          <p><strong>Delivery to:</strong> ${formatAddress(data.deliveryAddress)}</p>
+          <p><strong>Stripe session:</strong> ${data.stripeSessionId}</p>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Error sending admin order notification:", error);
+    throw error;
+  }
+}
+
+export async function sendRoasteryOrderNotification(data: RoasteryOrderEmailData) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.roasteryEmail,
+      subject: `Roast order #${data.orderNumber} — ${data.quantity}x ${data.bagSize} ${data.roastProfile}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #0D0D0D;">New Roast Order #${data.orderNumber}</h1>
+          <h3>Roast Details</h3>
+          <ul>
+            <li><strong>Bag size:</strong> ${data.bagSize}</li>
+            <li><strong>Roast profile:</strong> ${data.roastProfile}</li>
+            <li><strong>Grind:</strong> ${data.grind}</li>
+            <li><strong>Quantity:</strong> ${data.quantity}</li>
+          </ul>
+          <p><strong>Turnaround:</strong> ${data.turnaroundDays}</p>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Error sending roastery order notification:", error);
+    throw error;
+  }
+}
+
+export async function sendGhostRoasterOrderNotification(data: GhostRoasterNotificationData) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.roasterEmail,
+      subject: `New Ghost Roastery order #${data.orderNumber} assigned to you`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #0D0D0D;">New Order Assigned</h1>
+          <p>Hi ${data.roasterName},</p>
+          <p>A new Ghost Roastery order has been assigned to you for fulfilment.</p>
+          <h3>Order Details</h3>
+          <ul>
+            <li><strong>Order:</strong> #${data.orderNumber}</li>
+            ${data.brandName ? `<li><strong>Brand:</strong> ${data.brandName}</li>` : ""}
+            <li><strong>Bag size:</strong> ${data.bagSize}</li>
+            <li><strong>Roast profile:</strong> ${data.roastProfile}</li>
+            <li><strong>Grind:</strong> ${data.grind}</li>
+            <li><strong>Quantity:</strong> ${data.quantity}</li>
+          </ul>
+          <p><strong>Dispatch by:</strong> ${data.dispatchDeadline}</p>
+          <p style="margin-top: 20px;">
+            <a href="${data.portalUrl}"
+               style="background: #D97706; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px;">
+              View in Portal
+            </a>
+          </p>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Error sending ghost roaster order notification:", error);
+    throw error;
+  }
+}
+
+export async function sendAccountActivationEmail(data: AccountActivationEmailData) {
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.customerEmail,
+      subject: "Your Ghost Roasting account is ready",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #0D0D0D;">Welcome, ${data.customerName}!</h1>
+          <p>We've created an account for you so you can track your orders and manage your labels.</p>
+          <p style="margin-top: 20px;">
+            <a href="${data.activationLink}"
+               style="background: #D97706; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px;">
+              Activate Your Account
+            </a>
+          </p>
+          <p style="margin-top: 20px; color: #666; font-size: 14px;">
+            This link will sign you in automatically. You can then set a password in your account settings.
+          </p>
+          <p>Best,<br>The Ghost Roasting UK Team</p>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Error sending account activation email:", error);
+    throw error;
+  }
+}
+
+export async function sendOrderStatusUpdateEmail(data: OrderStatusUpdateEmailData) {
+  if (!data.customerEmail) return;
+
+  const statusMessages: Record<string, string> = {
+    "In Production": "Your coffee is now being roasted and prepared.",
+    Dispatched: "Your order has been dispatched and is on its way!",
+    Delivered: "Your order has been delivered. Enjoy your coffee!",
+  };
+
+  const message = statusMessages[data.newStatus] || `Your order status has been updated to: ${data.newStatus}.`;
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: data.customerEmail,
+      subject: `Order #${data.orderNumber} — ${data.newStatus}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #0D0D0D;">Order Update</h1>
+          <p>Hi ${data.customerName},</p>
+          <p>${message}</p>
+          <h3>Order #${data.orderNumber}</h3>
+          <ul>
+            <li><strong>Bag size:</strong> ${data.bagSize}</li>
+            <li><strong>Roast profile:</strong> ${data.roastProfile}</li>
+            <li><strong>Quantity:</strong> ${data.quantity}</li>
+            <li><strong>Status:</strong> ${data.newStatus}</li>
+          </ul>
+          <p>Best,<br>The Ghost Roasting UK Team</p>
+        </div>
+      `,
+    });
+  } catch (error) {
+    console.error("Error sending order status update email:", error);
     throw error;
   }
 }
