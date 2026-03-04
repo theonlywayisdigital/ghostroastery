@@ -11,6 +11,8 @@ import { builderSettings } from "./builderSettings";
 import { faq } from "./faq";
 import { labelTemplate } from "./labelTemplate";
 import { svgElement } from "./svgElement";
+import { roasterFeature } from "./roasterFeature";
+import { roastersPageSettings } from "./roastersPageSettings";
 
 export const schemaTypes = [
   // Content
@@ -31,6 +33,10 @@ export const schemaTypes = [
 
   // Business
   wholesaleEnquiry,
+
+  // Roasters site
+  roasterFeature,
+  roastersPageSettings,
 
   // Settings
   siteSettings,

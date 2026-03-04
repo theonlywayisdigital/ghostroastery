@@ -1,0 +1,603 @@
+"use client";
+
+import { useState, useRef, useCallback, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  ShoppingCart,
+  Store,
+  Receipt,
+  Mail,
+  Share2,
+  Zap,
+  Sparkles,
+  BookOpen,
+  Users,
+  Info,
+  LifeBuoy,
+  Shield,
+  FileText,
+  ArrowRight,
+  CalendarCheck,
+  Newspaper,
+  ShoppingBag,
+  ClipboardList,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
+
+const PLATFORM_URL = "https://platform.ghostroastery.com";
+const HOVER_DELAY = 150;
+
+/* ── Mega-menu data ────────────────────────────────────── */
+
+const productsSections = [
+  {
+    title: "Sales Suite",
+    badge: "Free",
+    allHref: "/features/sales",
+    items: [
+      { icon: ClipboardList, label: "Order Tracking", desc: "Track every order from roast to doorstep", href: "/features/order-tracking" },
+      { icon: ShoppingCart, label: "Wholesale", desc: "Manage wholesale accounts and orders", href: "/features/wholesale" },
+      { icon: Store, label: "Storefront", desc: "Your branded online coffee shop", href: "/features/storefront" },
+      { icon: Receipt, label: "Invoicing", desc: "Automated invoicing and payment tracking", href: "/features/invoices" },
+    ],
+  },
+  {
+    title: "Marketing Suite",
+    badge: "Free",
+    allHref: "/features/marketing",
+    items: [
+      { icon: Mail, label: "Email Campaigns", desc: "Beautiful emails that drive repeat orders", href: "/features/email-campaigns" },
+      { icon: Share2, label: "Social Scheduling", desc: "Plan and publish across all channels", href: "/features/social-scheduling" },
+      { icon: Zap, label: "Automations", desc: "Set it and forget it workflows", href: "/features/automations" },
+      { icon: Sparkles, label: "AI Studio", desc: "AI-powered copy, images and insights", href: "/features/ai-studio" },
+    ],
+  },
+  {
+    title: "Marketplace",
+    badge: null,
+    allHref: "/features/marketplace",
+    comingSoon: true,
+    items: [
+      { icon: ShoppingBag, label: "Marketplace", desc: "Source supplies at trade prices", href: "#", comingSoon: true },
+    ],
+  },
+];
+
+const moreSections = [
+  {
+    title: "Resources",
+    items: [
+      { icon: BookOpen, label: "Case Studies", desc: "See how roasters grow with us", href: "/case-studies" },
+      { icon: Newspaper, label: "Blog", desc: "Tips, guides and industry insights", href: "/blog" },
+      { icon: LifeBuoy, label: "Support", desc: "Get help from our team", href: "https://ghostroastery.com/contact", external: true },
+    ],
+  },
+  {
+    title: "Company",
+    items: [
+      { icon: Info, label: "About", desc: "Our mission and story", href: "https://ghostroastery.com/about", external: true },
+      { icon: Users, label: "Partner Program", desc: "Earn by roasting for other brands", href: "/partner-program" },
+    ],
+  },
+  {
+    title: "Legal",
+    items: [
+      { icon: Shield, label: "Privacy Policy", desc: "How we handle your data", href: "https://ghostroastery.com/privacy", external: true },
+      { icon: FileText, label: "Terms & Conditions", desc: "Platform terms of service", href: "https://ghostroastery.com/terms", external: true },
+    ],
+  },
+];
+
+/* ── CTA panel (shared by both mega menus) ─────────────── */
+
+function MegaCTAPanel() {
+  return (
+    <div className="flex flex-col gap-3 pl-8 border-l border-neutral-200 min-w-[220px]">
+      <p className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-1">
+        Get started
+      </p>
+      <a
+        href={`${PLATFORM_URL}/demo`}
+        className="flex items-center gap-3 px-4 py-3 rounded-lg border border-neutral-200 hover:border-accent hover:bg-accent-muted transition-colors group"
+      >
+        <CalendarCheck className="h-5 w-5 text-accent shrink-0" />
+        <div>
+          <p className="text-sm font-semibold text-neutral-900 group-hover:text-accent transition-colors">
+            Book a Demo
+          </p>
+          <p className="text-xs text-neutral-500">See the platform in action</p>
+        </div>
+      </a>
+      <a
+        href={`${PLATFORM_URL}/signup`}
+        className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors group"
+      >
+        <ArrowRight className="h-5 w-5 shrink-0" />
+        <div>
+          <p className="text-sm font-semibold">Join the Platform</p>
+          <p className="text-xs text-white/70">Free to get started</p>
+        </div>
+      </a>
+    </div>
+  );
+}
+
+/* ── Mega-menu trigger + panel ─────────────────────────── */
+
+function MegaMenuTrigger({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const show = useCallback(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setOpen(true);
+  }, []);
+
+  const hide = useCallback(() => {
+    timeoutRef.current = setTimeout(() => setOpen(false), HOVER_DELAY);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative"
+      onMouseEnter={show}
+      onMouseLeave={hide}
+    >
+      {/* Trigger */}
+      <button
+        className={cn(
+          "flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-md transition-colors",
+          open
+            ? "text-neutral-900 bg-neutral-100"
+            : "text-neutral-900 hover:bg-neutral-100"
+        )}
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+      >
+        {label}
+        <ChevronDown
+          className={cn(
+            "h-3.5 w-3.5 transition-transform duration-200",
+            open && "rotate-180"
+          )}
+        />
+      </button>
+
+      {/* Panel — full-width, anchored to the header */}
+      {open && (
+        <div className="fixed left-0 right-0 top-[79px] z-50">
+          <div className="bg-white border-b border-neutral-200 shadow-lg">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              {children}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Badge ─────────────────────────────────────────────── */
+
+function FreeBadge() {
+  return (
+    <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-200">
+      Free
+    </span>
+  );
+}
+
+/* ── Menu item (HubSpot style — icon, title, description) ─ */
+
+function MenuItem({
+  icon: Icon,
+  label,
+  desc,
+  href,
+  external,
+  comingSoon,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  desc: string;
+  href: string;
+  external?: boolean;
+  comingSoon?: boolean;
+}) {
+  if (comingSoon) {
+    return (
+      <div className="flex gap-3 px-3 py-2.5 rounded-lg opacity-40 cursor-default">
+        <Icon className="h-5 w-5 text-neutral-400 shrink-0 mt-0.5" />
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-neutral-400">
+              {label}
+            </span>
+            <span className="text-[10px] font-semibold text-neutral-400 uppercase">
+              Coming Soon
+            </span>
+          </div>
+          <p className="text-xs text-neutral-400 mt-0.5">{desc}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const className =
+    "flex gap-3 px-3 py-2.5 rounded-lg hover:bg-neutral-50 transition-colors group";
+
+  const content = (
+    <>
+      <Icon className="h-5 w-5 text-neutral-900 group-hover:text-accent transition-colors shrink-0 mt-0.5" />
+      <div>
+        <p className="text-sm font-semibold text-neutral-900 group-hover:text-accent transition-colors">
+          {label}
+        </p>
+        <p className="text-xs text-neutral-500 mt-0.5">{desc}</p>
+      </div>
+    </>
+  );
+
+  if (external) {
+    return (
+      <a href={href} className={className}>
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className={className}>
+      {content}
+    </Link>
+  );
+}
+
+/* ── Main component ────────────────────────────────────── */
+
+interface RoastersNavbarProps {
+  logoUrl?: string | null;
+}
+
+export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
+
+  const toggleAccordion = (key: string) =>
+    setMobileAccordion((prev) => (prev === key ? null : key));
+
+  return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200">
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 lg:h-20">
+          {/* Logo */}
+          <Link href="/" className="flex-shrink-0 flex items-center">
+            {logoUrl ? (
+              <Image
+                src={logoUrl}
+                alt="Ghost Roastery"
+                width={400}
+                height={100}
+                className="h-20 lg:h-[100px] w-auto invert"
+                priority
+              />
+            ) : (
+              <span className="text-xl lg:text-2xl font-black tracking-tight text-neutral-900 hover:text-accent transition-colors">
+                GHOST ROASTERY
+              </span>
+            )}
+          </Link>
+
+          {/* ─── Desktop Navigation ─── */}
+          <div className="hidden lg:flex items-center justify-center flex-1 px-8">
+            <div className="flex items-center gap-1">
+              {/* Products mega menu */}
+              <MegaMenuTrigger label="Products">
+                <div className="flex gap-8">
+                  {/* Product sections */}
+                  <div className="flex-1 grid grid-cols-3 gap-8">
+                    {productsSections.map((section) => (
+                      <div key={section.title}>
+                        <div className="flex items-center mb-4">
+                          <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider">
+                            {section.title}
+                          </h3>
+                          {section.badge && <FreeBadge />}
+                          {"comingSoon" in section && section.comingSoon && (
+                            <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-500 border border-neutral-200">
+                              Coming Soon
+                            </span>
+                          )}
+                        </div>
+                        <div className="space-y-1">
+                          {section.items.map((item) => (
+                            <MenuItem
+                              key={item.label}
+                              icon={item.icon}
+                              label={item.label}
+                              desc={item.desc}
+                              href={item.href}
+                              comingSoon={"comingSoon" in item && item.comingSoon}
+                            />
+                          ))}
+                        </div>
+                        {!("comingSoon" in section && section.comingSoon) && (
+                          <Link
+                            href={section.allHref}
+                            className="flex items-center gap-1 px-3 mt-3 text-xs font-semibold text-accent hover:underline"
+                          >
+                            All {section.title} features
+                            <ArrowRight className="h-3 w-3" />
+                          </Link>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* CTA panel */}
+                  <MegaCTAPanel />
+                </div>
+              </MegaMenuTrigger>
+
+              {/* Pricing — plain link */}
+              <Link
+                href="/pricing"
+                className="px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-100 transition-colors rounded-md"
+              >
+                Pricing
+              </Link>
+
+              {/* More mega menu */}
+              <MegaMenuTrigger label="More">
+                <div className="flex gap-8">
+                  <div className="flex-1 grid grid-cols-3 gap-8">
+                    {moreSections.map((section) => (
+                      <div key={section.title}>
+                        <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-4">
+                          {section.title}
+                        </h3>
+                        <div className="space-y-1">
+                          {section.items.map((item) => (
+                            <MenuItem
+                              key={item.label}
+                              icon={item.icon}
+                              label={item.label}
+                              desc={item.desc}
+                              href={item.href}
+                              external={"external" in item && item.external}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* CTA panel */}
+                  <MegaCTAPanel />
+                </div>
+              </MegaMenuTrigger>
+            </div>
+          </div>
+
+          {/* ─── Desktop CTA ─── */}
+          <div className="hidden lg:flex items-center gap-3">
+            <a href={`${PLATFORM_URL}/login`}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-neutral-900 hover:bg-neutral-100"
+              >
+                Sign In
+              </Button>
+            </a>
+            <a href={`${PLATFORM_URL}/signup`}>
+              <Button variant="primary" size="sm">
+                Start Free
+              </Button>
+            </a>
+          </div>
+
+          {/* ─── Mobile menu button ─── */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="lg:hidden p-2 rounded-md text-neutral-900 hover:bg-neutral-100 transition-colors"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
+
+        {/* ─── Mobile Navigation ─── */}
+        <div
+          className={cn(
+            "lg:hidden overflow-hidden transition-all duration-300 ease-in-out",
+            mobileOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+          )}
+        >
+          <div className="py-4 space-y-1 border-t border-neutral-200">
+            {/* Products accordion */}
+            <button
+              onClick={() => toggleAccordion("products")}
+              className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
+            >
+              Products
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 text-neutral-400 transition-transform duration-200",
+                  mobileAccordion === "products" && "rotate-180"
+                )}
+              />
+            </button>
+            {mobileAccordion === "products" && (
+              <div className="pl-4 space-y-4 py-2">
+                {productsSections.map((section) => (
+                  <div key={section.title}>
+                    <div className="flex items-center px-4 mb-1">
+                      <p className="text-xs font-semibold text-neutral-900 uppercase tracking-wider">
+                        {section.title}
+                      </p>
+                      {section.badge && <FreeBadge />}
+                      {"comingSoon" in section && section.comingSoon && (
+                        <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-500 border border-neutral-200">
+                          Coming Soon
+                        </span>
+                      )}
+                    </div>
+                    {section.items.map((item) => {
+                      const Icon = item.icon;
+                      const isDisabled =
+                        "comingSoon" in item && item.comingSoon;
+                      if (isDisabled) {
+                        return (
+                          <div
+                            key={item.label}
+                            className="flex items-center gap-3 px-4 py-2.5 opacity-40"
+                          >
+                            <Icon className="h-4 w-4 text-neutral-400" />
+                            <span className="text-sm text-neutral-400">
+                              {item.label}
+                            </span>
+                            <span className="text-[10px] font-semibold text-neutral-400 uppercase">
+                              Coming Soon
+                            </span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          onClick={() => setMobileOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
+                        >
+                          <Icon className="h-4 w-4 text-neutral-900" />
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                    {!("comingSoon" in section && section.comingSoon) && (
+                      <Link
+                        href={section.allHref}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-1 px-4 mt-2 text-xs font-semibold text-accent"
+                      >
+                        All {section.title} features
+                        <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Pricing link */}
+            <Link
+              href="/pricing"
+              onClick={() => setMobileOpen(false)}
+              className="block px-4 py-3 text-base font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
+            >
+              Pricing
+            </Link>
+
+            {/* More accordion */}
+            <button
+              onClick={() => toggleAccordion("more")}
+              className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
+            >
+              More
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 text-neutral-400 transition-transform duration-200",
+                  mobileAccordion === "more" && "rotate-180"
+                )}
+              />
+            </button>
+            {mobileAccordion === "more" && (
+              <div className="pl-4 py-2 space-y-4">
+                {moreSections.map((section) => (
+                  <div key={section.title}>
+                    <p className="text-xs font-semibold text-neutral-900 uppercase tracking-wider px-4 mb-1">
+                      {section.title}
+                    </p>
+                    {section.items.map((item) => {
+                      const Icon = item.icon;
+                      const isExternal =
+                        "external" in item && item.external;
+                      const props = {
+                        className:
+                          "flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors",
+                        onClick: () => setMobileOpen(false),
+                      };
+
+                      if (isExternal) {
+                        return (
+                          <a key={item.label} href={item.href} {...props}>
+                            <Icon className="h-4 w-4 text-neutral-900" />
+                            {item.label}
+                          </a>
+                        );
+                      }
+
+                      return (
+                        <Link key={item.label} href={item.href} {...props}>
+                          <Icon className="h-4 w-4 text-neutral-900" />
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Mobile CTAs */}
+            <div className="pt-4 px-4 space-y-3">
+              <a
+                href={`${PLATFORM_URL}/login`}
+                onClick={() => setMobileOpen(false)}
+              >
+                <Button
+                  variant="outline"
+                  className="w-full text-neutral-900 border-neutral-300"
+                >
+                  Sign In
+                </Button>
+              </a>
+              <a
+                href={`${PLATFORM_URL}/signup`}
+                onClick={() => setMobileOpen(false)}
+              >
+                <Button variant="primary" className="w-full">
+                  Start Free
+                </Button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+  );
+}

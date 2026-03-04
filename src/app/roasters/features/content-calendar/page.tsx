@@ -1,0 +1,93 @@
+import { Metadata } from "next";
+import { CalendarDays, ArrowRight, CheckCircle2 } from "lucide-react";
+
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "Content Calendar",
+  description:
+    "Plan, create, and schedule all your content from a single calendar view. Stay organised and consistent.",
+};
+
+const PLATFORM_URL = "https://platform.ghostroastery.com";
+
+const benefits = [
+  "Visual calendar showing all scheduled content across channels",
+  "Drag and drop to reschedule posts and campaigns",
+  "Plan email campaigns, social posts, and promotions in one view",
+  "Set reminders for upcoming launches and seasonal events",
+  "Collaborate with your team on content planning",
+  "Filter by channel, status, or content type",
+];
+
+export default function ContentCalendarPage() {
+  return (
+    <>
+      {/* Hero */}
+      <section className="py-20 lg:py-28 bg-neutral-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-4">
+            Marketing Suite
+          </p>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 mb-6">
+            Content Calendar
+          </h1>
+          <p className="text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto mb-3">
+            Plan, create, and schedule all your marketing content from one
+            calendar. See everything at a glance — email campaigns, social
+            posts, promotions, and product launches — so nothing slips through
+            the cracks.
+          </p>
+          <p className="text-sm font-medium text-accent">
+            Included free on every plan
+          </p>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="py-16 lg:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl font-black text-neutral-900 mb-10 text-center">
+            What you get
+          </h2>
+          {/* Screenshot placeholder */}
+          <div className="relative aspect-video rounded-2xl overflow-hidden bg-neutral-100 border border-neutral-200 mb-12">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-sm text-neutral-400 font-medium">
+                Screenshot coming soon
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            {benefits.map((benefit) => (
+              <div key={benefit} className="flex items-start gap-3 p-4">
+                <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+                <span className="text-neutral-700">{benefit}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 lg:py-28 bg-neutral-900 text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-6">
+            Grow your coffee brand today
+          </h2>
+          <p className="text-lg text-neutral-300 max-w-xl mx-auto mb-10">
+            Create your free account and start reaching more customers with
+            powerful marketing tools.
+          </p>
+          <a
+            href={PLATFORM_URL}
+            className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+          >
+            Get Started Free
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </a>
+        </div>
+      </section>
+    </>
+  );
+}

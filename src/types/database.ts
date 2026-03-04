@@ -3853,3 +3853,25 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
+// Row type aliases for tables used across the app
+export type Order = Database["public"]["Tables"]["orders"]["Row"];
+export type User = Database["public"]["Tables"]["users"]["Row"];
+
+// Row type alias for delivery_addresses table (extended with fields used at runtime)
+export type DeliveryAddress = Database["public"]["Tables"]["delivery_addresses"]["Row"] & {
+  name?: string;
+  postal_code?: string;
+  country?: string;
+};
+
+// Custom types for JSON columns
+export interface DeliveryAddressJson {
+  name: string;
+  label?: string;
+  line1: string;
+  line2?: string | null;
+  city: string;
+  postcode?: string;
+  postal_code?: string;
+}

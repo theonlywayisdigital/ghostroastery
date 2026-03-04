@@ -80,9 +80,9 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
           ? {
               name: deliveryAddress.name,
               line1: deliveryAddress.line1,
-              line2: deliveryAddress.line2,
+              line2: deliveryAddress.line2 ?? undefined,
               city: deliveryAddress.city,
-              postalCode: deliveryAddress.postal_code,
+              postalCode: deliveryAddress.postal_code || deliveryAddress.postcode || "",
             }
           : null
       }

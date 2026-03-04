@@ -120,7 +120,7 @@ export function OrderCard({ order }: OrderCardProps) {
               <p className="font-semibold text-foreground">{order.order_number}</p>
               <p className="text-xs text-neutral-500">{createdDate}</p>
             </div>
-            <OrderStatusBadge status={order.order_status} />
+            <OrderStatusBadge status={order.order_status || "Pending"} />
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-sm mb-4">

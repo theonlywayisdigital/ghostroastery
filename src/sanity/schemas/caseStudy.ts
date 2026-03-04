@@ -125,6 +125,20 @@ export const caseStudy = defineType({
       initialValue: false,
     }),
     defineField({
+      name: "audience",
+      title: "Audience",
+      type: "string",
+      description: "Which site(s) should display this case study",
+      options: {
+        list: [
+          { title: "Consumer Site", value: "consumer" },
+          { title: "Roasters Site", value: "roaster" },
+          { title: "Both", value: "both" },
+        ],
+      },
+      initialValue: "both",
+    }),
+    defineField({
       name: "seoTitle",
       title: "SEO Title",
       type: "string",

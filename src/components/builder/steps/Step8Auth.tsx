@@ -223,7 +223,8 @@ export function Step8Auth() {
 
     if (data.user) {
       // Save delivery address as default
-      await supabase.from("delivery_addresses").insert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.from("delivery_addresses") as any).insert({
         user_id: data.user.id,
         label: "Default",
         name: signUpName,

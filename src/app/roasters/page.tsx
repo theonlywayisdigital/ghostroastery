@@ -1,0 +1,466 @@
+import { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  ArrowRight,
+  Package,
+  Play,
+  CalendarCheck,
+  Truck,
+  BadgeCheck,
+  HandCoins,
+} from "lucide-react";
+import { client, urlFor } from "@/sanity/lib/client";
+import {
+  roastersPageSettingsQuery,
+  roasterCaseStudiesQuery,
+  roasterBlogPostsQuery,
+} from "@/sanity/lib/queries";
+import { ProductsCarousel } from "@/components/roasters/ProductsCarousel";
+
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "Ghost Roastery Platform | For Coffee Roasters",
+  description:
+    "The all-in-one platform for coffee roasters. Sell online, manage wholesale orders, and grow your roasting business.",
+};
+
+const PLATFORM_URL = "https://platform.ghostroastery.com";
+
+/* ── Types ─────────────────────────────────────────────── */
+
+interface CaseStudy {
+  _id: string;
+  brandName: string;
+  slug: { current: string };
+  summary: string;
+  logo?: { asset: { _ref: string } };
+  isPlaceholder?: boolean;
+}
+
+interface BlogPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  category?: string;
+  publishedAt: string;
+  featuredImage?: { asset: { _ref: string }; alt?: string };
+}
+
+const categoryLabels: Record<string, string> = {
+  industry: "Industry Insights",
+  guides: "How-To Guides",
+  business: "Business Tips",
+  coffee: "Coffee Knowledge",
+};
+
+/* ── Page ──────────────────────────────────────────────── */
+
+export default async function RoastersHomePage() {
+  const [settings, caseStudies, blogPosts] = await Promise.all([
+    client.fetch(roastersPageSettingsQuery).catch(() => null),
+    client.fetch<CaseStudy[]>(roasterCaseStudiesQuery).catch(() => []),
+    client.fetch<BlogPost[]>(roasterBlogPostsQuery).catch(() => []),
+  ]);
+
+  const headline =
+    settings?.heroHeadline || "Grow your roastery. We handle the rest.";
+  const subheadline =
+    settings?.heroSubheadline ||
+    "The all-in-one platform to sell online, manage wholesale, and scale your coffee business.";
+
+  const liveCaseStudies = caseStudies.filter((cs) => !cs.isPlaceholder);
+  const latestPosts = blogPosts.slice(0, 3);
+
+  return (
+    <>
+      {/* ═══════════════════════════════════════════════════
+          1. HERO
+      ═══════════════════════════════════════════════════ */}
+      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-neutral-50">
+        <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 via-transparent to-white" />
+        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 lg:py-28">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 text-neutral-900">
+            {headline.split(".")[0]}.
+            <br />
+            <span className="text-accent">
+              {headline.split(".").slice(1).join(".").trim() ||
+                "We handle the rest."}
+            </span>
+          </h1>
+          <p className="text-lg sm:text-xl md:text-2xl text-neutral-600 max-w-2xl mx-auto mb-10">
+            {subheadline}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href={`${PLATFORM_URL}/signup`}
+              className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+            >
+              Start Free
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </a>
+            <a
+              href={`${PLATFORM_URL}/demo`}
+              className="inline-flex items-center px-8 py-4 border-2 border-neutral-300 text-neutral-700 font-semibold text-lg rounded-lg hover:border-neutral-400 hover:bg-white transition-colors"
+            >
+              <CalendarCheck className="mr-2 w-5 h-5" />
+              Book a Demo
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          2. VIDEO PLACEHOLDER
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-16 lg:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-200 shadow-xl">
+              {/* Placeholder — replace with real video embed */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                <div className="w-20 h-20 rounded-full bg-accent/90 flex items-center justify-center mb-4 hover:bg-accent transition-colors cursor-pointer">
+                  <Play className="w-8 h-8 ml-1" />
+                </div>
+                <p className="text-lg font-semibold">See the platform in action</p>
+                <p className="text-sm text-neutral-400 mt-1">2 minute overview</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          3. CTA STRIP #1
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-12 bg-accent">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                Everything you need to sell coffee online
+              </h2>
+              <p className="text-white/80 mt-1">
+                No monthly fees. No commission on storefront sales. Free forever.
+              </p>
+            </div>
+            <a
+              href={`${PLATFORM_URL}/signup`}
+              className="inline-flex items-center px-8 py-4 bg-white text-accent font-semibold text-lg rounded-lg hover:bg-neutral-50 transition-colors shrink-0"
+            >
+              Start Free
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          4. PRODUCTS — SALES & MARKETING CAROUSEL
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">
+              Powerful tools for{" "}
+              <span className="text-accent">modern roasters</span>
+            </h2>
+            <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
+              Everything you need to sell coffee and grow your brand — in one platform.
+            </p>
+          </div>
+          <ProductsCarousel />
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          5. CTA STRIP #2
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-12 bg-neutral-900">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                Ready to grow your roastery?
+              </h2>
+              <p className="text-neutral-400 mt-1">
+                Join hundreds of roasters already selling more coffee with less effort.
+              </p>
+            </div>
+            <div className="flex items-center gap-4 shrink-0">
+              <a
+                href={`${PLATFORM_URL}/signup`}
+                className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+              >
+                Start Free
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          6. CASE STUDIES
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">
+              Roaster <span className="text-accent">success stories</span>
+            </h2>
+            <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
+              See how roasters are growing their businesses with Ghost Roastery Platform.
+            </p>
+          </div>
+
+          {liveCaseStudies.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {liveCaseStudies.slice(0, 3).map((cs) => (
+                <Link
+                  key={cs._id}
+                  href={`/case-studies/${cs.slug.current}`}
+                  className="group bg-white rounded-xl border border-neutral-200 p-8 hover:shadow-lg transition-shadow flex flex-col"
+                >
+                  {cs.logo && (
+                    <div className="h-16 mb-6 flex items-center">
+                      <Image
+                        src={urlFor(cs.logo).height(64).url()}
+                        alt={cs.brandName}
+                        width={160}
+                        height={64}
+                        className="h-12 w-auto object-contain"
+                      />
+                    </div>
+                  )}
+                  <h3 className="text-xl font-bold text-neutral-900 group-hover:text-accent transition-colors">
+                    {cs.brandName}
+                  </h3>
+                  <p className="mt-2 text-neutral-600 text-sm flex-1">
+                    {cs.summary}
+                  </p>
+                  <div className="mt-4 flex items-center text-accent font-semibold text-sm">
+                    Read story
+                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            /* Empty state — placeholder cards */
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {["Your Roastery Here", "Coming Soon", "Coming Soon"].map(
+                (label, i) => (
+                  <div
+                    key={i}
+                    className="bg-neutral-50 rounded-xl border border-neutral-200 border-dashed p-8 flex flex-col items-center justify-center text-center min-h-[240px]"
+                  >
+                    <p className="text-sm font-semibold text-neutral-400 uppercase tracking-wider">
+                      {label}
+                    </p>
+                    <p className="mt-2 text-sm text-neutral-500">
+                      {i === 0
+                        ? "We're collecting success stories from our early roasters."
+                        : "Case studies launching soon."}
+                    </p>
+                  </div>
+                )
+              )}
+            </div>
+          )}
+
+          <div className="text-center mt-12">
+            <Link
+              href="/case-studies"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline"
+            >
+              View all case studies
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          7. BLOG — LATEST 3 POSTS
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-neutral-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">
+              Latest from the <span className="text-accent">blog</span>
+            </h2>
+            <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
+              Tips, guides, and industry insights to help you sell more coffee.
+            </p>
+          </div>
+
+          {latestPosts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {latestPosts.map((post) => (
+                <Link
+                  key={post._id}
+                  href={`/blog/${post.slug.current}`}
+                  className="group bg-white rounded-xl border border-neutral-200 overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  {post.featuredImage ? (
+                    <div className="aspect-[16/9] relative overflow-hidden">
+                      <Image
+                        src={urlFor(post.featuredImage).width(600).height(338).url()}
+                        alt={post.featuredImage.alt || post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-[16/9] bg-neutral-100 flex items-center justify-center">
+                      <p className="text-sm text-neutral-400">No image</p>
+                    </div>
+                  )}
+                  <div className="p-6">
+                    {post.category && (
+                      <span className="text-xs font-semibold text-accent uppercase tracking-wider">
+                        {categoryLabels[post.category] || post.category}
+                      </span>
+                    )}
+                    <h3 className="mt-2 text-lg font-bold text-neutral-900 group-hover:text-accent transition-colors">
+                      {post.title}
+                    </h3>
+                    <p className="mt-2 text-neutral-600 text-sm line-clamp-2">
+                      {post.excerpt}
+                    </p>
+                    {post.publishedAt && (
+                      <time className="block mt-3 text-xs text-neutral-500">
+                        {new Date(post.publishedAt).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </time>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            /* Empty state — placeholder cards */
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                "Getting Started with Your Online Coffee Shop",
+                "5 Ways to Grow Your Wholesale Business",
+                "Email Marketing for Coffee Roasters",
+              ].map((title, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-xl border border-neutral-200 overflow-hidden"
+                >
+                  <div className="aspect-[16/9] bg-neutral-100 flex items-center justify-center">
+                    <p className="text-sm text-neutral-400">Coming Soon</p>
+                  </div>
+                  <div className="p-6">
+                    <span className="text-xs font-semibold text-accent uppercase tracking-wider">
+                      {["How-To Guides", "Business Tips", "Industry Insights"][i]}
+                    </span>
+                    <h3 className="mt-2 text-lg font-bold text-neutral-900">
+                      {title}
+                    </h3>
+                    <p className="mt-2 text-neutral-500 text-sm">
+                      Article coming soon. Stay tuned for insights and tips.
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="text-center mt-12">
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline"
+            >
+              View all posts
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          8. PARTNER PROGRAM
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-neutral-900 text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-3">
+              Partner Program
+            </p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-4">
+              Earn more by roasting for{" "}
+              <span className="text-accent">other brands</span>
+            </h2>
+            <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+              Join our ghost roasting network. We send you the orders — you roast
+              and ship. Guaranteed volume, zero marketing overhead.
+            </p>
+          </div>
+
+          {/* How it works */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl mx-auto mb-16">
+            {[
+              {
+                icon: BadgeCheck,
+                step: "01",
+                title: "Apply & Get Verified",
+                desc: "Tell us about your roastery. We verify your capacity, equipment, and quality standards.",
+              },
+              {
+                icon: Package,
+                step: "02",
+                title: "Receive Orders",
+                desc: "Orders from brands in your territory land directly in your dashboard.",
+              },
+              {
+                icon: Truck,
+                step: "03",
+                title: "Roast & Ship",
+                desc: "Roast to spec, print shipping labels, and dispatch within the deadline.",
+              },
+              {
+                icon: HandCoins,
+                step: "04",
+                title: "Get Paid",
+                desc: "Payouts processed automatically. Transparent rates with no hidden fees.",
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.step} className="text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-7 h-7 text-accent" />
+                  </div>
+                  <p className="text-xs font-bold text-accent tracking-wider mb-2">
+                    STEP {item.step}
+                  </p>
+                  <h3 className="text-lg font-bold mb-2">{item.title}</h3>
+                  <p className="text-sm text-neutral-400">{item.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="text-center">
+            <Link
+              href="/partner-program"
+              className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+            >
+              Learn About the Partner Program
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

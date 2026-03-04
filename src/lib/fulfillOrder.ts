@@ -234,8 +234,8 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
           .eq("id", order.id);
 
         // Record platform fee ledger entry
-        supabase
-          .from("platform_fee_ledger")
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase.from("platform_fee_ledger") as any)
           .insert({
             roaster_id: partnerMatch.roasterId,
             order_type: "ghost_roastery",
@@ -248,7 +248,8 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
             stripe_payment_id: order.stripe_payment_id,
             status: "collected",
           })
-          .then(({ error: ledgerError }) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .then(({ error: ledgerError }: any) => {
             if (ledgerError) console.error("Failed to write ledger entry:", ledgerError);
           });
 

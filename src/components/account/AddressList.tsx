@@ -45,8 +45,8 @@ export function AddressList() {
     if (!user) return;
 
     if (editingAddress) {
-      const { error } = await supabase
-        .from("delivery_addresses")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase.from("delivery_addresses") as any)
         .update({
           label: data.label,
           name: data.name,
@@ -64,7 +64,8 @@ export function AddressList() {
       }
       toast({ title: "Address updated", variant: "success" });
     } else {
-      const { error } = await supabase.from("delivery_addresses").insert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase.from("delivery_addresses") as any).insert({
         user_id: user.id,
         label: data.label,
         name: data.name,

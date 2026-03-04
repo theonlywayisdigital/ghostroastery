@@ -202,6 +202,79 @@ export const svgElementsQuery = groq`
   }
 `;
 
+// ── Roasters Site ────────────────────────────────────────────
+
+// Roaster Features
+export const roasterFeaturesQuery = groq`
+  *[_type == "roasterFeature" && isActive == true] | order(category asc, order asc) {
+    _id,
+    title,
+    slug,
+    description,
+    category,
+    icon,
+    screenshot,
+    order
+  }
+`;
+
+// Roasters Page Settings (singleton)
+export const roastersPageSettingsQuery = groq`
+  *[_id == "roastersPageSettings"][0] {
+    heroHeadline,
+    heroSubheadline,
+    heroCta,
+    platformHighlights,
+    partnerProgramContent,
+    pricingIntro
+  }
+`;
+
+// Blog posts for roasters site
+export const roasterBlogPostsQuery = groq`
+  *[_type == "blogPost" && audience in ["roaster", "both"]] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    category,
+    author,
+    publishedAt,
+    featuredImage
+  }
+`;
+
+// Case studies for roasters site
+export const roasterCaseStudiesQuery = groq`
+  *[_type == "caseStudy" && audience in ["roaster", "both"]] | order(isPlaceholder asc) {
+    _id,
+    brandName,
+    slug,
+    summary,
+    logo,
+    liveURL,
+    isPlaceholder
+  }
+`;
+
+// FAQs for roaster pricing
+export const roasterFaqsQuery = groq`
+  *[_type == "faq" && category == "roaster-pricing"] | order(order asc) {
+    _id,
+    question,
+    answer
+  }
+`;
+
+// FAQs for roaster features page
+export const roasterFeaturesFaqsQuery = groq`
+  *[_type == "faq" && category == "roaster-features"] | order(order asc) {
+    _id,
+    question,
+    answer
+  }
+`;
+
 // Wholesale Enquiries (admin only)
 export const wholesaleEnquiriesQuery = groq`
   *[_type == "wholesaleEnquiry"] | order(submittedAt desc) {
