@@ -3,7 +3,7 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@ghostroasting.co.uk";
-const FROM_EMAIL = "Ghost Roasting UK <noreply@ghostroasting.co.uk>";
+const FROM_EMAIL = "Ghost Roasting UK <noreply@ghostroastery.com>";
 
 // ── Ghost Roastery order email types ──
 
