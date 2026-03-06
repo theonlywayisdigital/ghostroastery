@@ -102,7 +102,12 @@ export const blogPostBySlugQuery = groq`
     publishedAt,
     featuredImage,
     seoTitle,
-    seoDescription
+    seoDescription,
+    funnelStage,
+    campaign,
+    targetKeyword,
+    ctaType,
+    ctaUrl
   }
 `;
 
@@ -226,7 +231,24 @@ export const roastersPageSettingsQuery = groq`
     heroCta,
     platformHighlights,
     partnerProgramContent,
-    pricingIntro
+    pricingIntro,
+    videoSectionTitle,
+    videoSectionSubtitle,
+    ctaStrip1Headline,
+    ctaStrip1Subtitle,
+    toolsSectionTitle,
+    toolsSectionSubtitle,
+    toolsSectionDescription,
+    ctaStrip2Headline,
+    ctaStrip2Subtitle,
+    caseStudiesSectionTitle,
+    caseStudiesSectionSubtitle,
+    blogSectionTitle,
+    blogSectionSubtitle,
+    partnerSectionLabel,
+    partnerSectionTitle,
+    partnerSectionSubtitle,
+    partnerSteps
   }
 `;
 
@@ -290,5 +312,295 @@ export const wholesaleEnquiriesQuery = groq`
     message,
     status,
     submittedAt
+  }
+`;
+
+// ── Customer Site Singletons ────────────────────────────────────
+
+export const customerHomePageQuery = groq`
+  *[_id == "customerHomePage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    heroPrimaryCta,
+    heroPrimaryCtaHref,
+    heroSecondaryCta,
+    heroSecondaryCtaHref,
+    howItWorksTitle,
+    howItWorksSteps,
+    trustSignals,
+    productPathsTitle,
+    productPaths,
+    pricingSectionTitle,
+    pricingSectionSubtitle,
+    pricingSectionFootnote,
+    pricingSectionCta,
+    caseStudySectionTitle,
+    finalCtaHeadline,
+    finalCtaPrimaryCta,
+    finalCtaPrimaryHref,
+    finalCtaSecondaryCta,
+    finalCtaSecondaryHref
+  }
+`;
+
+export const customerAboutPageQuery = groq`
+  *[_id == "customerAboutPage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    storyTitle,
+    storyBody,
+    valuesTitle,
+    values,
+    proofCtaTitle,
+    proofCtaDescription,
+    proofCtaButtonText,
+    proofCtaButtonHref
+  }
+`;
+
+export const customerHowItWorksPageQuery = groq`
+  *[_id == "customerHowItWorksPage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    stepsTitle,
+    steps,
+    ctaTitle,
+    ctaDescription,
+    ctaButtonText,
+    ctaButtonHref
+  }
+`;
+
+export const customerOurCoffeePageQuery = groq`
+  *[_id == "customerOurCoffeePage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    highlightsTitle,
+    highlights,
+    ctaTitle,
+    ctaDescription,
+    ctaButtonText,
+    ctaButtonHref
+  }
+`;
+
+export const customerRoastingProcessPageQuery = groq`
+  *[_id == "customerRoastingProcessPage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    stagesTitle,
+    stages,
+    ctaTitle,
+    ctaDescription,
+    ctaButtonText,
+    ctaButtonHref
+  }
+`;
+
+export const customerBrandsPageQuery = groq`
+  *[_id == "customerBrandsPage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    placeholderTitle,
+    placeholderCopy,
+    ctaButtonText,
+    ctaButtonHref
+  }
+`;
+
+export const customerPartnersPageQuery = groq`
+  *[_id == "customerPartnersPage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    sectionTitle,
+    description,
+    placeholderNote,
+    ctaButtonText,
+    ctaButtonHref
+  }
+`;
+
+export const customerSupportPageQuery = groq`
+  *[_id == "customerSupportPage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    optionsTitle,
+    supportOptions
+  }
+`;
+
+export const customerWholesalePageQuery = groq`
+  *[_id == "customerWholesalePage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    businessTypesTitle,
+    businessTypes,
+    featuresTitle,
+    features,
+    formTitle,
+    formSubtitle,
+    faqTitle
+  }
+`;
+
+export const customerContactPageQuery = groq`
+  *[_id == "customerContactPage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    pathCards,
+    pathCardsFootnote,
+    formTitle,
+    formSubtitle
+  }
+`;
+
+export const customerBlogSettingsQuery = groq`
+  *[_id == "customerBlogSettings"][0] {
+    heroHeadline,
+    heroSubheadline,
+    latestPostsTitle,
+    emptyStateMessage
+  }
+`;
+
+// Customer legal pages
+export const customerLegalPageBySlugQuery = groq`
+  *[_type == "customerLegalPage" && slug.current == $slug][0] {
+    title,
+    slug,
+    heroHeadline,
+    heroSubheadline,
+    body,
+    lastUpdated
+  }
+`;
+
+// Consumer blog posts (filtered by audience)
+export const consumerBlogPostsQuery = groq`
+  *[_type == "blogPost" && audience in ["consumer", "both"]] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    category,
+    author,
+    publishedAt,
+    featuredImage,
+    funnelStage,
+    campaign
+  }
+`;
+
+// All consumer blog slugs (for generateStaticParams)
+export const consumerBlogSlugsQuery = groq`
+  *[_type == "blogPost" && audience in ["consumer", "both"]] {
+    "slug": slug.current
+  }
+`;
+
+// Consumer case studies (filtered by audience)
+export const consumerCaseStudiesQuery = groq`
+  *[_type == "caseStudy" && audience in ["consumer", "both"]] | order(isPlaceholder asc) {
+    _id,
+    brandName,
+    slug,
+    summary,
+    logo,
+    liveURL,
+    isPlaceholder
+  }
+`;
+
+// ── Roaster Site Singletons ────────────────────────────────────
+
+export const roasterFeaturesPageQuery = groq`
+  *[_id == "roasterFeaturesPage"][0] {
+    heroHeadline,
+    heroAccentText,
+    heroSubheadline,
+    heroCtaText,
+    salesSuiteTitle,
+    salesSuiteSubtitle,
+    marketingSuiteTitle,
+    marketingSuiteSubtitle,
+    marketplaceTitle,
+    marketplaceCopy,
+    faqTitle,
+    ctaHeadline,
+    ctaDescription,
+    ctaButtonText
+  }
+`;
+
+export const roasterPricingPageQuery = groq`
+  *[_id == "roasterPricingPage"][0] {
+    heroHeadline,
+    heroSubheadline,
+    faqTitle,
+    ctaHeadline,
+    ctaDescription,
+    ctaButtonText
+  }
+`;
+
+export const roasterPartnerProgramPageQuery = groq`
+  *[_id == "roasterPartnerProgramPage"][0] {
+    heroHeadline,
+    heroAccentText,
+    heroSubheadline,
+    heroCtaText,
+    stepsTitle,
+    steps,
+    benefitsTitle,
+    benefits,
+    requirementsTitle,
+    requirements,
+    additionalContent,
+    ctaHeadline,
+    ctaDescription,
+    ctaButtonText
+  }
+`;
+
+export const roasterProductsCarouselQuery = groq`
+  *[_id == "roasterProductsCarousel"][0] {
+    suites[] {
+      key,
+      label,
+      tagline,
+      description,
+      features[] {
+        icon,
+        title,
+        description,
+        href
+      }
+    }
+  }
+`;
+
+// Roaster feature detail by slug
+export const roasterFeatureDetailBySlugQuery = groq`
+  *[_type == "roasterFeatureDetail" && slug.current == $slug][0] {
+    slug,
+    suite,
+    heroDescription,
+    includedNote,
+    benefits,
+    screenshot,
+    benefitsTitle,
+    ctaHeadline,
+    ctaDescription,
+    ctaButtonText,
+    comingSoon,
+    "featureTitle": feature->title,
+    "featureIcon": feature->icon
+  }
+`;
+
+// All feature detail slugs (for generateStaticParams)
+export const allRoasterFeatureDetailSlugsQuery = groq`
+  *[_type == "roasterFeatureDetail"] {
+    "slug": slug.current
   }
 `;

@@ -62,6 +62,7 @@ export const blogPost = defineType({
                     validation: (Rule) =>
                       Rule.uri({
                         scheme: ["http", "https", "mailto", "tel"],
+                        allowRelative: true,
                       }),
                   },
                 ],
@@ -158,6 +159,54 @@ export const blogPost = defineType({
       rows: 2,
       validation: (Rule) => Rule.max(160),
     }),
+    defineField({
+      name: "funnelStage",
+      title: "Funnel Stage",
+      type: "string",
+      options: {
+        list: [
+          { title: "Top of Funnel (Awareness)", value: "tofu" },
+          { title: "Middle of Funnel (Consideration)", value: "mofu" },
+          { title: "Bottom of Funnel (Decision)", value: "bofu" },
+        ],
+      },
+    }),
+    defineField({
+      name: "campaign",
+      title: "Campaign",
+      type: "string",
+      options: {
+        list: [
+          { title: "Brand Builder", value: "brand-builder" },
+          { title: "Wholesale", value: "wholesale" },
+          { title: "General", value: "general" },
+        ],
+      },
+    }),
+    defineField({
+      name: "targetKeyword",
+      title: "Target Keyword",
+      type: "string",
+      description: "Primary keyword this post targets",
+    }),
+    defineField({
+      name: "ctaType",
+      title: "CTA Type",
+      type: "string",
+      options: {
+        list: [
+          { title: "Build Your Brand \u2192", value: "build" },
+          { title: "Wholesale Enquiry \u2192", value: "wholesale" },
+          { title: "Learn More \u2192", value: "learn" },
+        ],
+      },
+    }),
+    defineField({
+      name: "ctaUrl",
+      title: "CTA URL",
+      type: "string",
+      description: "Override CTA destination (defaults based on ctaType)",
+    }),
   ],
   preview: {
     select: {
@@ -165,11 +214,17 @@ export const blogPost = defineType({
       author: "author",
       media: "featuredImage",
       date: "publishedAt",
+      funnelStage: "funnelStage",
+      campaign: "campaign",
     },
-    prepare({ title, author, media, date }) {
+    prepare({ title, author, media, date, funnelStage, campaign }) {
+      const parts = [author];
+      if (funnelStage) parts.push(funnelStage.toUpperCase());
+      if (campaign) parts.push(campaign);
+      parts.push(date ? new Date(date).toLocaleDateString() : "Draft");
       return {
         title,
-        subtitle: `${author} • ${date ? new Date(date).toLocaleDateString() : "Draft"}`,
+        subtitle: parts.join(" \u2022 "),
         media,
       };
     },
