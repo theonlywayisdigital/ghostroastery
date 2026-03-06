@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, SpinnerGap } from "@phosphor-icons/react";
 import { useBuilder } from "../BuilderContext";
 import { StepHeading } from "../StepHeading";
 import { createBrowserClient } from "@/lib/supabase";
@@ -126,7 +126,7 @@ export function Step8Auth() {
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <SpinnerGap size={20} weight="duotone" className="animate-spin" />
                 Redirecting to checkout…
               </>
             ) : (
@@ -143,7 +143,7 @@ export function Step8Auth() {
               onClick={() => dispatch({ type: "PREV_STEP" })}
               className="flex items-center gap-2 px-4 py-3 text-neutral-400 hover:text-foreground transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft size={20} weight="duotone" />
               Back
             </button>
           </div>
@@ -362,7 +362,7 @@ export function Step8Auth() {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <SpinnerGap size={20} weight="duotone" className="animate-spin" />
                   Signing in…
                 </>
               ) : (
@@ -509,7 +509,7 @@ export function Step8Auth() {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <SpinnerGap size={20} weight="duotone" className="animate-spin" />
                   Creating account…
                 </>
               ) : (
@@ -543,7 +543,7 @@ export function Step8Auth() {
             onClick={() => dispatch({ type: "PREV_STEP" })}
             className="flex items-center gap-2 px-4 py-3 text-neutral-400 hover:text-foreground transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft size={20} weight="duotone" />
             Back
           </button>
         </div>

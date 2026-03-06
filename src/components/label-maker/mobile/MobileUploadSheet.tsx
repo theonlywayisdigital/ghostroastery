@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
-import { Upload, Camera, ImageIcon, AlertTriangle, CheckCircle } from "lucide-react";
+import { UploadSimple, Camera, Image as ImageIcon, Warning, CheckCircle } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 interface MobileUploadSheetProps {
@@ -135,7 +135,7 @@ export function MobileUploadSheet({
           onClick={() => logoInputRef.current?.click()}
           className="flex flex-col items-center justify-center gap-2 px-3 py-4 bg-accent text-neutral-900 font-medium text-xs rounded-xl active:bg-accent/80 transition-colors"
         >
-          <Upload className="w-5 h-5" />
+          <UploadSimple size={20} weight="duotone" />
           Upload Logo
         </button>
         <input
@@ -151,7 +151,7 @@ export function MobileUploadSheet({
           onClick={() => cameraInputRef.current?.click()}
           className="flex flex-col items-center justify-center gap-2 px-3 py-4 bg-neutral-800 text-neutral-300 font-medium text-xs rounded-xl border border-neutral-700 active:border-accent transition-colors"
         >
-          <Camera className="w-5 h-5" />
+          <Camera size={20} weight="duotone" />
           Take Photo
         </button>
         <input
@@ -174,12 +174,12 @@ export function MobileUploadSheet({
       >
         {uploading ? (
           <div className="animate-pulse">
-            <Upload className="w-8 h-8 text-neutral-400 mb-2" />
+            <UploadSimple size={40} weight="duotone" className="text-white mb-2" />
             <p className="text-xs text-neutral-400">Processing...</p>
           </div>
         ) : (
           <>
-            <ImageIcon className="w-8 h-8 text-neutral-500 mb-2" />
+            <ImageIcon size={40} weight="duotone" className="text-white mb-2" />
             <p className="text-xs text-neutral-300">
               Browse files
             </p>
@@ -200,7 +200,7 @@ export function MobileUploadSheet({
       {/* Error */}
       {error && (
         <div className="flex items-center gap-2 p-3 bg-red-950/50 border border-red-800 rounded-lg text-xs text-red-400">
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+          <Warning size={14} weight="duotone" className="shrink-0" />
           {error}
         </div>
       )}
@@ -209,7 +209,7 @@ export function MobileUploadSheet({
       {lastUpload && (
         <div className="bg-neutral-800 rounded-xl p-3 space-y-2">
           <div className="flex items-center gap-2">
-            <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
+            <CheckCircle size={14} weight="duotone" className="text-green-500 shrink-0" />
             <span className="text-xs text-neutral-300 truncate">
               {lastUpload.name}
             </span>

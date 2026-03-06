@@ -4,33 +4,62 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Menu,
+  List,
   X,
-  ChevronDown,
+  CaretDown,
   ShoppingCart,
-  Store,
+  Storefront,
   Receipt,
-  Mail,
-  Share2,
-  Zap,
-  Sparkles,
+  Envelope,
+  ShareNetwork,
+  Lightning,
+  Sparkle,
   BookOpen,
   Users,
   Info,
-  LifeBuoy,
-  Shield,
+  Lifebuoy,
+  ShieldCheck,
   FileText,
   ArrowRight,
   CalendarCheck,
   Newspaper,
   ShoppingBag,
-  ClipboardList,
-} from "lucide-react";
+  ClipboardText,
+} from "@phosphor-icons/react";
+import type { IconWeight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
 const PLATFORM_URL = "https://platform.ghostroastery.com";
+const CONSUMER_URL = "https://ghostroastery.com";
 const HOVER_DELAY = 150;
+
+/* ── Top Bar ───────────────────────────────────────────── */
+
+function TopBar({ onDismiss }: { onDismiss: () => void }) {
+  return (
+    <div className="bg-neutral-900">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center h-8 relative">
+        <a
+          href={CONSUMER_URL}
+          className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors"
+        >
+          Looking for white label coffee?{" "}
+          <span className="font-semibold text-accent hover:underline">
+            Visit Ghost Roastery &rarr;
+          </span>
+        </a>
+        <button
+          onClick={onDismiss}
+          className="absolute right-4 p-1 text-neutral-500 hover:text-neutral-300 transition-colors"
+          aria-label="Dismiss"
+        >
+          <X size={14} />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 /* ── Mega-menu data ────────────────────────────────────── */
 
@@ -40,9 +69,9 @@ const productsSections = [
     badge: "Free",
     allHref: "/features/sales",
     items: [
-      { icon: ClipboardList, label: "Order Tracking", desc: "Track every order from roast to doorstep", href: "/features/order-tracking" },
+      { icon: ClipboardText, label: "Order Tracking", desc: "Track every order from roast to doorstep", href: "/features/order-tracking" },
       { icon: ShoppingCart, label: "Wholesale", desc: "Manage wholesale accounts and orders", href: "/features/wholesale" },
-      { icon: Store, label: "Storefront", desc: "Your branded online coffee shop", href: "/features/storefront" },
+      { icon: Storefront, label: "Storefront", desc: "Your branded online coffee shop", href: "/features/storefront" },
       { icon: Receipt, label: "Invoicing", desc: "Automated invoicing and payment tracking", href: "/features/invoices" },
     ],
   },
@@ -51,10 +80,10 @@ const productsSections = [
     badge: "Free",
     allHref: "/features/marketing",
     items: [
-      { icon: Mail, label: "Email Campaigns", desc: "Beautiful emails that drive repeat orders", href: "/features/email-campaigns" },
-      { icon: Share2, label: "Social Scheduling", desc: "Plan and publish across all channels", href: "/features/social-scheduling" },
-      { icon: Zap, label: "Automations", desc: "Set it and forget it workflows", href: "/features/automations" },
-      { icon: Sparkles, label: "AI Studio", desc: "AI-powered copy, images and insights", href: "/features/ai-studio" },
+      { icon: Envelope, label: "Email Campaigns", desc: "Beautiful emails that drive repeat orders", href: "/features/email-campaigns" },
+      { icon: ShareNetwork, label: "Social Scheduling", desc: "Plan and publish across all channels", href: "/features/social-scheduling" },
+      { icon: Lightning, label: "Automations", desc: "Set it and forget it workflows", href: "/features/automations" },
+      { icon: Sparkle, label: "AI Studio", desc: "AI-powered copy, images and insights", href: "/features/ai-studio" },
     ],
   },
   {
@@ -74,7 +103,7 @@ const moreSections = [
     items: [
       { icon: BookOpen, label: "Case Studies", desc: "See how roasters grow with us", href: "/case-studies" },
       { icon: Newspaper, label: "Blog", desc: "Tips, guides and industry insights", href: "/blog" },
-      { icon: LifeBuoy, label: "Support", desc: "Get help from our team", href: "https://ghostroastery.com/contact", external: true },
+      { icon: Lifebuoy, label: "Support", desc: "Get help from our team", href: "https://ghostroastery.com/contact", external: true },
     ],
   },
   {
@@ -87,7 +116,7 @@ const moreSections = [
   {
     title: "Legal",
     items: [
-      { icon: Shield, label: "Privacy Policy", desc: "How we handle your data", href: "https://ghostroastery.com/privacy", external: true },
+      { icon: ShieldCheck, label: "Privacy Policy", desc: "How we handle your data", href: "https://ghostroastery.com/privacy", external: true },
       { icon: FileText, label: "Terms & Conditions", desc: "Platform terms of service", href: "https://ghostroastery.com/terms", external: true },
     ],
   },
@@ -105,7 +134,7 @@ function MegaCTAPanel() {
         href={`${PLATFORM_URL}/demo`}
         className="flex items-center gap-3 px-4 py-3 rounded-lg border border-neutral-200 hover:border-accent hover:bg-accent-muted transition-colors group"
       >
-        <CalendarCheck className="h-5 w-5 text-accent shrink-0" />
+        <CalendarCheck weight="duotone" size={24} className="text-accent shrink-0" />
         <div>
           <p className="text-sm font-semibold text-neutral-900 group-hover:text-accent transition-colors">
             Book a Demo
@@ -117,7 +146,7 @@ function MegaCTAPanel() {
         href={`${PLATFORM_URL}/signup`}
         className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors group"
       >
-        <ArrowRight className="h-5 w-5 shrink-0" />
+        <ArrowRight weight="duotone" size={24} className="shrink-0" />
         <div>
           <p className="text-sm font-semibold">Join the Platform</p>
           <p className="text-xs text-white/70">Free to get started</p>
@@ -132,9 +161,11 @@ function MegaCTAPanel() {
 function MegaMenuTrigger({
   label,
   children,
+  hasTopBar,
 }: {
   label: string;
   children: React.ReactNode;
+  hasTopBar?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -174,9 +205,11 @@ function MegaMenuTrigger({
         aria-expanded={open}
       >
         {label}
-        <ChevronDown
+        <CaretDown
+          weight="duotone"
+          size={14}
           className={cn(
-            "h-3.5 w-3.5 transition-transform duration-200",
+            "transition-transform duration-200",
             open && "rotate-180"
           )}
         />
@@ -184,7 +217,10 @@ function MegaMenuTrigger({
 
       {/* Panel — full-width, anchored to the header */}
       {open && (
-        <div className="fixed left-0 right-0 top-[79px] z-50">
+        <div className={cn(
+          "fixed left-0 right-0 z-50",
+          hasTopBar ? "top-[calc(2rem+79px)]" : "top-[79px]"
+        )}>
           <div className="bg-white border-b border-neutral-200 shadow-lg">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
               {children}
@@ -216,7 +252,7 @@ function MenuItem({
   external,
   comingSoon,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; weight?: IconWeight; size?: number }>;
   label: string;
   desc: string;
   href: string;
@@ -226,7 +262,7 @@ function MenuItem({
   if (comingSoon) {
     return (
       <div className="flex gap-3 px-3 py-2.5 rounded-lg opacity-40 cursor-default">
-        <Icon className="h-5 w-5 text-neutral-400 shrink-0 mt-0.5" />
+        <Icon weight="duotone" size={24} className="text-neutral-400 shrink-0 mt-0.5" />
         <div>
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold text-neutral-400">
@@ -247,7 +283,7 @@ function MenuItem({
 
   const content = (
     <>
-      <Icon className="h-5 w-5 text-neutral-900 group-hover:text-accent transition-colors shrink-0 mt-0.5" />
+      <Icon weight="duotone" size={24} className="text-neutral-900 group-hover:text-accent transition-colors shrink-0 mt-0.5" />
       <div>
         <p className="text-sm font-semibold text-neutral-900 group-hover:text-accent transition-colors">
           {label}
@@ -278,40 +314,44 @@ interface RoastersNavbarProps {
   logoUrl?: string | null;
 }
 
-export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
+export function RoastersNavbar({ }: RoastersNavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
+  const [topBarVisible, setTopBarVisible] = useState(true);
 
   const toggleAccordion = (key: string) =>
     setMobileAccordion((prev) => (prev === key ? null : key));
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200">
+    <>
+    {topBarVisible && (
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <TopBar onDismiss={() => setTopBarVisible(false)} />
+      </div>
+    )}
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200 transition-[margin] duration-200",
+      topBarVisible && "mt-8"
+    )}>
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center">
-            {logoUrl ? (
-              <Image
-                src={logoUrl}
-                alt="Ghost Roastery"
-                width={400}
-                height={100}
-                className="h-20 lg:h-[100px] w-auto invert"
-                priority
-              />
-            ) : (
-              <span className="text-xl lg:text-2xl font-black tracking-tight text-neutral-900 hover:text-accent transition-colors">
-                GHOST ROASTERY
-              </span>
-            )}
+            <Image
+              src="/ghost-roastery-platform-logo.png"
+              alt="Ghost Roastery Platform"
+              width={400}
+              height={100}
+              className="h-14 lg:h-[80px] w-auto"
+              priority
+            />
           </Link>
 
           {/* ─── Desktop Navigation ─── */}
           <div className="hidden lg:flex items-center justify-center flex-1 px-8">
             <div className="flex items-center gap-1">
               {/* Products mega menu */}
-              <MegaMenuTrigger label="Products">
+              <MegaMenuTrigger label="Products" hasTopBar={topBarVisible}>
                 <div className="flex gap-8">
                   {/* Product sections */}
                   <div className="flex-1 grid grid-cols-3 gap-8">
@@ -346,7 +386,7 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
                             className="flex items-center gap-1 px-3 mt-3 text-xs font-semibold text-accent hover:underline"
                           >
                             All {section.title} features
-                            <ArrowRight className="h-3 w-3" />
+                            <ArrowRight weight="duotone" size={16} />
                           </Link>
                         )}
                       </div>
@@ -367,7 +407,7 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
               </Link>
 
               {/* More mega menu */}
-              <MegaMenuTrigger label="More">
+              <MegaMenuTrigger label="More" hasTopBar={topBarVisible}>
                 <div className="flex gap-8">
                   <div className="flex-1 grid grid-cols-3 gap-8">
                     {moreSections.map((section) => (
@@ -423,9 +463,9 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
             {mobileOpen ? (
-              <X className="h-6 w-6" />
+              <X weight="duotone" size={24} />
             ) : (
-              <Menu className="h-6 w-6" />
+              <List weight="duotone" size={28} />
             )}
           </button>
         </div>
@@ -444,9 +484,11 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
               className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
             >
               Products
-              <ChevronDown
+              <CaretDown
+                weight="duotone"
+                size={16}
                 className={cn(
-                  "h-4 w-4 text-neutral-400 transition-transform duration-200",
+                  "text-neutral-400 transition-transform duration-200",
                   mobileAccordion === "products" && "rotate-180"
                 )}
               />
@@ -476,7 +518,7 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
                             key={item.label}
                             className="flex items-center gap-3 px-4 py-2.5 opacity-40"
                           >
-                            <Icon className="h-4 w-4 text-neutral-400" />
+                            <Icon weight="duotone" size={20} className="text-neutral-400" />
                             <span className="text-sm text-neutral-400">
                               {item.label}
                             </span>
@@ -493,7 +535,7 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
                           onClick={() => setMobileOpen(false)}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
                         >
-                          <Icon className="h-4 w-4 text-neutral-900" />
+                          <Icon weight="duotone" size={20} className="text-neutral-900" />
                           {item.label}
                         </Link>
                       );
@@ -505,7 +547,7 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
                         className="flex items-center gap-1 px-4 mt-2 text-xs font-semibold text-accent"
                       >
                         All {section.title} features
-                        <ArrowRight className="h-3 w-3" />
+                        <ArrowRight weight="duotone" size={16} />
                       </Link>
                     )}
                   </div>
@@ -528,9 +570,11 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
               className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
             >
               More
-              <ChevronDown
+              <CaretDown
+                weight="duotone"
+                size={16}
                 className={cn(
-                  "h-4 w-4 text-neutral-400 transition-transform duration-200",
+                  "text-neutral-400 transition-transform duration-200",
                   mobileAccordion === "more" && "rotate-180"
                 )}
               />
@@ -555,7 +599,7 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
                       if (isExternal) {
                         return (
                           <a key={item.label} href={item.href} {...props}>
-                            <Icon className="h-4 w-4 text-neutral-900" />
+                            <Icon weight="duotone" size={20} className="text-neutral-900" />
                             {item.label}
                           </a>
                         );
@@ -563,7 +607,7 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
 
                       return (
                         <Link key={item.label} href={item.href} {...props}>
-                          <Icon className="h-4 w-4 text-neutral-900" />
+                          <Icon weight="duotone" size={20} className="text-neutral-900" />
                           {item.label}
                         </Link>
                       );
@@ -599,5 +643,12 @@ export function RoastersNavbar({ logoUrl }: RoastersNavbarProps) {
         </div>
       </nav>
     </header>
+
+    {/* Spacer to push content below the fixed header */}
+    <div className={cn(
+      "transition-[height] duration-200",
+      topBarVisible ? "h-24 lg:h-28" : "h-16 lg:h-20"
+    )} />
+    </>
   );
 }

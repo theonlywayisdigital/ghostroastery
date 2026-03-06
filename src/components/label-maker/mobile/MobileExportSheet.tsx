@@ -3,12 +3,12 @@
 import { useState, useCallback } from "react";
 import {
   Download,
-  Loader2,
+  SpinnerGap,
   CheckCircle,
-  AlertTriangle,
+  Warning,
   FileText,
-  ExternalLink,
-} from "lucide-react";
+  ArrowSquareOut,
+} from "@phosphor-icons/react";
 import type { LabelDimensions } from "../types";
 import { MobileBottomSheet } from "./MobileBottomSheet";
 
@@ -105,7 +105,7 @@ export function MobileExportSheet({
       <div className="space-y-4">
         {/* CMYK Warning */}
         <div className="flex gap-2 p-3 bg-amber-950/30 border border-amber-800/50 rounded-xl">
-          <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <Warning size={16} weight="duotone" className="text-amber-400 shrink-0 mt-0.5" />
           <div>
             <p className="text-xs text-amber-300 font-medium">Colour Note</p>
             <p className="text-[10px] text-amber-400/80 mt-0.5">
@@ -148,7 +148,7 @@ export function MobileExportSheet({
             onClick={handleExport}
             className="w-full flex items-center justify-center gap-2 px-4 py-3.5 bg-accent text-neutral-900 text-sm font-semibold rounded-xl active:bg-accent/80 transition-colors"
           >
-            <Download className="w-4 h-4" />
+            <Download size={16} weight="duotone" />
             Generate Print-Ready PDF
           </button>
         )}
@@ -156,7 +156,7 @@ export function MobileExportSheet({
         {/* Exporting */}
         {state === "exporting" && (
           <div className="text-center py-6">
-            <Loader2 className="w-8 h-8 text-accent mx-auto mb-3 animate-spin" />
+            <SpinnerGap size={32} weight="duotone" className="text-accent mx-auto mb-3 animate-spin" />
             <p className="text-xs text-neutral-300">
               Generating your print-ready PDF...
             </p>
@@ -170,7 +170,7 @@ export function MobileExportSheet({
         {state === "error" && (
           <div className="space-y-3">
             <div className="flex items-center gap-2 p-3 bg-red-950/50 border border-red-800 rounded-xl text-xs text-red-400">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <Warning size={16} weight="duotone" className="shrink-0" />
               {error || "Export failed. Please try again."}
             </div>
             <button
@@ -186,7 +186,7 @@ export function MobileExportSheet({
         {state === "success" && result && (
           <div className="space-y-3">
             <div className="flex items-center gap-2 p-3 bg-green-950/30 border border-green-800/50 rounded-xl">
-              <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
+              <CheckCircle size={16} weight="duotone" className="text-green-400 shrink-0" />
               <div>
                 <p className="text-xs text-green-300 font-medium">
                   PDF exported successfully
@@ -212,7 +212,7 @@ export function MobileExportSheet({
                 onClick={handleDownload}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-accent text-neutral-900 text-xs font-semibold rounded-xl active:bg-accent/80 transition-colors"
               >
-                <Download className="w-4 h-4" />
+                <Download size={16} weight="duotone" />
                 Download PDF
               </button>
               <a
@@ -221,7 +221,7 @@ export function MobileExportSheet({
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-1 px-4 py-3 bg-neutral-700 text-neutral-300 text-xs rounded-xl active:bg-neutral-600 transition-colors"
               >
-                <ExternalLink className="w-3.5 h-3.5" />
+                <ArrowSquareOut size={14} weight="duotone" />
                 Open
               </a>
             </div>

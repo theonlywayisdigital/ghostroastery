@@ -2,7 +2,7 @@
 
 import { useState, useMemo, type ReactNode } from "react";
 import { motion } from "framer-motion";
-import { Loader2, CheckCircle2 } from "lucide-react";
+import { SpinnerGap, CheckCircle } from "@phosphor-icons/react";
 import { createBrowserClient } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
@@ -62,7 +62,7 @@ export function AccountAuthGuard({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-neutral-500" />
+        <SpinnerGap size={32} weight="duotone" className="animate-spin text-neutral-500" />
       </div>
     );
   }
@@ -153,7 +153,7 @@ export function AccountAuthGuard({
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-6" />
+          <CheckCircle size={64} weight="duotone" className="text-green-500 mx-auto mb-6" />
           <h1 className="text-3xl font-black mb-3">Check Your Email</h1>
           <p className="text-neutral-400 mb-2">
             We&apos;ve sent a confirmation link to
@@ -281,7 +281,7 @@ export function AccountAuthGuard({
           >
             {authLoading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <SpinnerGap size={20} weight="duotone" className="animate-spin" />
                 Signing in…
               </>
             ) : (
@@ -363,7 +363,7 @@ export function AccountAuthGuard({
           >
             {authLoading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <SpinnerGap size={20} weight="duotone" className="animate-spin" />
                 Creating account…
               </>
             ) : (

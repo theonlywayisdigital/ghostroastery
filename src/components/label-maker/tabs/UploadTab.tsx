@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
-import { Upload, ImageIcon, AlertTriangle, CheckCircle } from "lucide-react";
+import { UploadSimple, Image as ImageIcon, Warning, CheckCircle } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 interface UploadTabProps {
@@ -137,7 +137,7 @@ export function UploadTab({ onAddImage, onUploadLogo }: UploadTabProps) {
         onClick={() => logoInputRef.current?.click()}
         className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-accent text-neutral-900 font-medium text-xs rounded-lg hover:bg-accent/90 transition-colors"
       >
-        <Upload className="w-4 h-4" />
+        <UploadSimple size={16} weight="duotone" />
         Upload Logo
       </button>
       <input
@@ -166,12 +166,12 @@ export function UploadTab({ onAddImage, onUploadLogo }: UploadTabProps) {
       >
         {uploading ? (
           <div className="animate-pulse">
-            <Upload className="w-8 h-8 text-neutral-400 mb-2" />
+            <UploadSimple size={40} weight="duotone" className="text-white mb-2" />
             <p className="text-xs text-neutral-400">Processing...</p>
           </div>
         ) : (
           <>
-            <ImageIcon className="w-8 h-8 text-neutral-500 mb-2" />
+            <ImageIcon size={40} weight="duotone" className="text-white mb-2" />
             <p className="text-xs text-neutral-300">
               Drop an image here or click to browse
             </p>
@@ -192,7 +192,7 @@ export function UploadTab({ onAddImage, onUploadLogo }: UploadTabProps) {
       {/* Error */}
       {error && (
         <div className="flex items-center gap-2 p-2 bg-red-950/50 border border-red-800 rounded text-xs text-red-400">
-          <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+          <Warning size={14} weight="duotone" className="shrink-0" />
           {error}
         </div>
       )}
@@ -201,7 +201,7 @@ export function UploadTab({ onAddImage, onUploadLogo }: UploadTabProps) {
       {lastUpload && (
         <div className="bg-neutral-900 rounded-lg p-3 space-y-2">
           <div className="flex items-center gap-2">
-            <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
+            <CheckCircle size={14} weight="duotone" className="text-green-500 shrink-0" />
             <span className="text-xs text-neutral-300 truncate">
               {lastUpload.name}
             </span>

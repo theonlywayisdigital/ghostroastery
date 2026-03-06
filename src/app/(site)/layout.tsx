@@ -21,7 +21,7 @@ export default async function SiteLayout({
     <>
       <GoogleAnalytics />
       <Navbar logoUrl={logoUrl} />
-      <main className="min-h-screen pt-16 lg:pt-20">{children}</main>
+      <main className="min-h-screen">{children}</main>
       <Footer logoUrl={logoUrl} />
       <CookieBanner />
     </>

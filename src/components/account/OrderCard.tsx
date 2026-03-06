@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Package, ChevronDown, Download } from "lucide-react";
+import { Package, CaretDown, DownloadSimple } from "@phosphor-icons/react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { OrderStatusBadge } from "./OrderStatusBadge";
@@ -42,7 +42,7 @@ function ReorderDropdown({ orderId }: { orderId: string }) {
           onClick={() => setOpen(!open)}
           className="px-2 border border-neutral-600 rounded-r-lg hover:bg-neutral-800 transition-colors"
         >
-          <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
+          <CaretDown size={14} weight="duotone" className="text-white" />
         </button>
       </div>
 
@@ -88,7 +88,7 @@ function MockupThumbnail({ order }: { order: Order }) {
   // Placeholder for legacy orders
   return (
     <div className="w-16 h-16 rounded-lg bg-neutral-800 flex items-center justify-center shrink-0">
-      <Package className="w-7 h-7 text-neutral-500" />
+      <Package size={32} weight="duotone" className="text-white" />
     </div>
   );
 }
@@ -181,7 +181,7 @@ export function OrderCard({ order }: OrderCardProps) {
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-accent hover:underline"
             >
-              <Download className="w-4 h-4" />
+              <DownloadSimple size={20} weight="duotone" />
               Download mockup
             </a>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Loader2, MapPin, Plus } from "lucide-react";
+import { SpinnerGap, MapPin, Plus } from "@phosphor-icons/react";
 import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/Button";
 import { FadeIn } from "@/components/ui/FadeIn";
@@ -129,7 +129,7 @@ export function AddressList() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Loader2 className="w-6 h-6 animate-spin text-neutral-500" />
+        <SpinnerGap size={24} weight="duotone" className="animate-spin text-neutral-500" />
       </div>
     );
   }
@@ -167,7 +167,7 @@ export function AddressList() {
           disabled={addresses.length >= 5}
           className="flex items-center gap-2"
         >
-          <Plus className="w-4 h-4" />
+          <Plus size={20} weight="duotone" />
           Add Address
         </Button>
       </div>
@@ -176,7 +176,7 @@ export function AddressList() {
         <FadeIn>
           <div className="text-center py-16">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-neutral-800 flex items-center justify-center">
-              <MapPin className="w-8 h-8 text-neutral-500" />
+              <MapPin size={40} weight="duotone" className="text-white" />
             </div>
             <h3 className="text-lg font-semibold mb-2">No addresses yet</h3>
             <p className="text-neutral-400 mb-6">

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Download, Loader2 } from "lucide-react";
+import { X, DownloadSimple, SpinnerGap } from "@phosphor-icons/react";
 
 interface TemplateEmailModalProps {
   open: boolean;
@@ -89,9 +89,9 @@ export function TemplateEmailModal({ open, onClose }: TemplateEmailModalProps) {
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-1.5 text-neutral-400 hover:text-foreground hover:bg-neutral-700 rounded-lg transition-colors"
+                  className="p-1.5 text-white hover:text-foreground hover:bg-neutral-700 rounded-lg transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <X size={16} weight="duotone" />
                 </button>
               </div>
 
@@ -132,9 +132,9 @@ export function TemplateEmailModal({ open, onClose }: TemplateEmailModalProps) {
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent text-neutral-900 rounded-lg font-semibold hover:opacity-90 transition-all disabled:opacity-50"
                 >
                   {submitting ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <SpinnerGap size={16} weight="duotone" className="animate-spin" />
                   ) : (
-                    <Download className="w-4 h-4" />
+                    <DownloadSimple size={20} weight="duotone" />
                   )}
                   {submitting ? "Downloading..." : "Download Template"}
                 </button>

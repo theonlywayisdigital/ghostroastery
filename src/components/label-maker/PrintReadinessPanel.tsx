@@ -3,12 +3,12 @@
 import { useState, useCallback } from "react";
 import {
   CheckCircle,
-  AlertTriangle,
+  Warning,
   XCircle,
-  Loader2,
+  SpinnerGap,
   X,
   ShieldCheck,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import type { LabelDimensions } from "./types";
 
@@ -98,16 +98,16 @@ export function PrintReadinessPanel({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-neutral-700">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-accent" />
+            <ShieldCheck size={24} weight="duotone" className="text-accent" />
             <h2 className="text-sm font-semibold text-foreground">
               Print Readiness Check
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded hover:bg-neutral-700 text-neutral-400 hover:text-foreground transition-colors"
+            className="p-1 rounded hover:bg-neutral-700 text-white hover:text-foreground transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X size={16} weight="duotone" />
           </button>
         </div>
 
@@ -115,7 +115,7 @@ export function PrintReadinessPanel({
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {!results && !loading && !error && (
             <div className="text-center py-6">
-              <ShieldCheck className="w-10 h-10 text-neutral-600 mx-auto mb-3" />
+              <ShieldCheck size={48} weight="duotone" className="text-white mx-auto mb-3" />
               <p className="text-xs text-neutral-400 mb-4">
                 Check your design for potential print issues before exporting.
               </p>
@@ -130,7 +130,7 @@ export function PrintReadinessPanel({
 
           {loading && (
             <div className="text-center py-8">
-              <Loader2 className="w-8 h-8 text-accent mx-auto mb-3 animate-spin" />
+              <SpinnerGap size={32} weight="duotone" className="text-accent mx-auto mb-3 animate-spin" />
               <p className="text-xs text-neutral-400">
                 Checking your design...
               </p>
@@ -139,7 +139,7 @@ export function PrintReadinessPanel({
 
           {error && (
             <div className="flex items-center gap-2 p-3 bg-red-950/50 border border-red-800 rounded-lg text-xs text-red-400">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <Warning size={16} weight="duotone" className="shrink-0" />
               {error}
               <button
                 onClick={runCheck}
@@ -189,7 +189,7 @@ export function PrintReadinessPanel({
                 <ResultSection
                   title="Errors"
                   items={results.errors}
-                  icon={<XCircle className="w-3.5 h-3.5 text-red-400" />}
+                  icon={<XCircle size={14} weight="duotone" className="text-red-400" />}
                   colour="red"
                 />
               )}
@@ -199,7 +199,7 @@ export function PrintReadinessPanel({
                 <ResultSection
                   title="Warnings"
                   items={results.warnings}
-                  icon={<AlertTriangle className="w-3.5 h-3.5 text-amber-400" />}
+                  icon={<Warning size={14} weight="duotone" className="text-amber-400" />}
                   colour="amber"
                 />
               )}
@@ -209,7 +209,7 @@ export function PrintReadinessPanel({
                 <ResultSection
                   title="Passed"
                   items={results.passed}
-                  icon={<CheckCircle className="w-3.5 h-3.5 text-green-400" />}
+                  icon={<CheckCircle size={14} weight="duotone" className="text-green-400" />}
                   colour="green"
                 />
               )}

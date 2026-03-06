@@ -281,6 +281,21 @@ h1, h2, h3, h4, h5, h6 {
   --neutral-900: #0D0D0D;
 }
 
+/* ── Phosphor duotone icon styling ────────────────────── */
+/* Phosphor v2 duotone icons render a background shape at opacity="0.2"
+   and a foreground path at full opacity, both using fill="currentColor".
+   We tint the background shape with the accent colour. */
+
+/* Duotone fill layer — accent colour at 35% on both themes */
+svg > path[opacity="0.2"],
+svg > rect[opacity="0.2"],
+svg > circle[opacity="0.2"],
+svg > ellipse[opacity="0.2"],
+svg > polygon[opacity="0.2"] {
+  fill: var(--accent);
+  opacity: 0.35;
+}
+
 /* Skeleton loading animation */
 @keyframes shimmer {
   0% {

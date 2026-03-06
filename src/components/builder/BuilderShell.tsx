@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowLeft, ArrowRight } from "lucide-react";
+import { X, ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 import { useBuilder } from "./BuilderContext";
 import { ProgressBar } from "./ProgressBar";
 import { ExitModal } from "./ExitModal";
@@ -65,7 +65,7 @@ export function BuilderShell({ children }: BuilderShellProps) {
             className="flex items-center gap-2 text-neutral-400 hover:text-foreground transition-colors"
           >
             <span className="text-sm">Exit</span>
-            <X className="w-5 h-5" />
+            <X size={24} weight="duotone" />
           </button>
         </div>
 
@@ -111,7 +111,7 @@ export function BuilderShell({ children }: BuilderShellProps) {
                 whileHover={{ x: -4 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft size={24} weight="duotone" />
                 <span>Back</span>
               </motion.button>
             ) : (
@@ -132,7 +132,7 @@ export function BuilderShell({ children }: BuilderShellProps) {
                 whileTap={canContinue ? { scale: 0.98 } : {}}
               >
                 <span>{stepConfig.continueLabel || "Continue"}</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight size={24} weight="duotone" />
               </motion.button>
             )}
           </div>

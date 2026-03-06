@@ -3,20 +3,20 @@
 import { useCallback, useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
-  Upload,
+  UploadSimple,
   X,
   Palette,
-  Download,
+  DownloadSimple,
   Info,
-  MessageCircle,
+  ChatCircle,
   CheckCircle,
   FolderOpen,
-  Loader2,
-  AlertTriangle,
-  Pencil,
-  LogIn,
-  ExternalLink,
-} from "lucide-react";
+  SpinnerGap,
+  Warning,
+  PencilSimple,
+  SignIn,
+  ArrowSquareOut,
+} from "@phosphor-icons/react";
 import { useBuilder } from "../BuilderContext";
 import { StepHeading } from "../StepHeading";
 import { BagVisualisation } from "../BagVisualisation";
@@ -260,7 +260,7 @@ export function Step3Label() {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-accent" />
+                  <CheckCircle size={20} weight="duotone" className="text-accent" />
                   <span className="text-sm font-medium text-foreground">
                     Label attached
                   </span>
@@ -269,14 +269,14 @@ export function Step3Label() {
                   onClick={handleRemoveFile}
                   className="p-1.5 text-neutral-400 hover:text-red-500 transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <X size={16} weight="duotone" />
                 </button>
               </div>
 
               {state.labelFile && (
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-accent/20 rounded flex items-center justify-center">
-                    <Upload className="w-4 h-4 text-accent" />
+                    <UploadSimple size={20} weight="duotone" className="text-accent" />
                   </div>
                   <div>
                     <p className="text-sm text-foreground truncate max-w-[200px]">
@@ -311,7 +311,7 @@ export function Step3Label() {
               {/* Upload warnings */}
               {uploadWarning && (
                 <div className="mt-3 flex items-start gap-2 p-2 bg-amber-950/30 border border-amber-800/50 rounded-lg">
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                  <Warning size={14} weight="duotone" className="text-amber-400 shrink-0 mt-0.5" />
                   <p className="text-[11px] text-amber-400">{uploadWarning}</p>
                 </div>
               )}
@@ -338,7 +338,7 @@ export function Step3Label() {
                   : "text-neutral-400 hover:text-foreground"
               }`}
             >
-              <FolderOpen className="w-3.5 h-3.5" />
+              <FolderOpen size={14} weight="duotone" />
               Saved Labels
             </button>
           </div>
@@ -355,7 +355,7 @@ export function Step3Label() {
                 transition={{ delay: 0.1 }}
               >
                 <div className="w-10 h-10 shrink-0 bg-accent rounded-lg flex items-center justify-center">
-                  <Palette className="w-5 h-5 text-neutral-900" />
+                  <Palette size={24} weight="duotone" className="text-neutral-900" />
                 </div>
                 <div className="flex-1">
                   <p className="text-foreground font-semibold mb-0.5">
@@ -383,7 +383,7 @@ export function Step3Label() {
                     className="w-full group flex items-start gap-4 p-5 rounded-xl border border-neutral-700 hover:border-neutral-600 hover:bg-neutral-900/50 transition-colors text-left"
                   >
                     <div className="w-10 h-10 shrink-0 bg-neutral-800 rounded-lg flex items-center justify-center">
-                      <Upload className="w-5 h-5 text-neutral-300" />
+                      <UploadSimple size={24} weight="duotone" className="text-white" />
                     </div>
                     <div className="flex-1">
                       <p className="text-foreground font-medium mb-0.5">
@@ -408,14 +408,14 @@ export function Step3Label() {
                         }}
                         className="p-1 text-neutral-400 hover:text-foreground"
                       >
-                        <X className="w-4 h-4" />
+                        <X size={16} weight="duotone" />
                       </button>
                     </div>
 
                     {/* Upload error */}
                     {uploadError && (
                       <div className="flex items-start gap-2 p-3 bg-red-950/30 border border-red-800/50 rounded-lg">
-                        <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                        <Warning size={20} weight="duotone" className="text-red-400 shrink-0 mt-0.5" />
                         <p className="text-xs text-red-400">{uploadError}</p>
                       </div>
                     )}
@@ -428,14 +428,14 @@ export function Step3Label() {
                     >
                       {uploading ? (
                         <>
-                          <Loader2 className="w-8 h-8 text-neutral-500 mb-2 animate-spin" />
+                          <SpinnerGap size={32} weight="duotone" className="text-neutral-500 mb-2 animate-spin" />
                           <p className="text-sm text-neutral-400">
                             Validating...
                           </p>
                         </>
                       ) : (
                         <>
-                          <Upload className="w-8 h-8 text-neutral-500 mb-2" />
+                          <UploadSimple size={40} weight="duotone" className="text-white mb-2" />
                           <p className="text-sm text-foreground font-medium">
                             Drag and drop here
                           </p>
@@ -463,7 +463,7 @@ export function Step3Label() {
                       onClick={() => setTemplateEmailOpen(true)}
                       className="flex items-center gap-2 text-xs text-neutral-400 hover:text-accent transition-colors"
                     >
-                      <Download className="w-3.5 h-3.5" />
+                      <DownloadSimple size={16} weight="duotone" />
                       Download blank template PDF
                     </button>
 
@@ -472,7 +472,7 @@ export function Step3Label() {
                       href="/design-services"
                       className="flex items-center gap-2 text-xs text-neutral-400 hover:text-accent transition-colors"
                     >
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <ArrowSquareOut size={16} weight="duotone" />
                       Need help with your label? We offer design services.
                     </a>
                   </div>
@@ -488,7 +488,7 @@ export function Step3Label() {
                 transition={{ delay: 0.3 }}
               >
                 <div className="w-10 h-10 shrink-0 bg-neutral-800 rounded-lg flex items-center justify-center">
-                  <MessageCircle className="w-5 h-5 text-neutral-400" />
+                  <ChatCircle size={24} weight="duotone" className="text-white" />
                 </div>
                 <div className="flex-1">
                   <p className="text-neutral-300 font-medium mb-0.5">
@@ -512,7 +512,7 @@ export function Step3Label() {
             >
               {!user ? (
                 <div className="flex flex-col items-center py-12 text-center">
-                  <LogIn className="w-8 h-8 text-neutral-500 mb-3" />
+                  <SignIn size={40} weight="duotone" className="text-white mb-3" />
                   <p className="text-sm text-neutral-300 mb-1">
                     Sign in to access your saved labels
                   </p>
@@ -522,11 +522,11 @@ export function Step3Label() {
                 </div>
               ) : loadingLabels ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-6 h-6 text-neutral-500 animate-spin" />
+                  <SpinnerGap size={24} weight="duotone" className="text-neutral-500 animate-spin" />
                 </div>
               ) : savedLabels.length === 0 ? (
                 <div className="flex flex-col items-center py-12 text-center">
-                  <FolderOpen className="w-8 h-8 text-neutral-500 mb-3" />
+                  <FolderOpen size={40} weight="duotone" className="text-white mb-3" />
                   <p className="text-sm text-neutral-300 mb-1">
                     No saved labels yet
                   </p>
@@ -588,13 +588,13 @@ export function Step3Label() {
                         className="absolute top-1.5 right-1.5 p-1.5 bg-neutral-900/80 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity text-neutral-400 hover:text-accent"
                         title="Edit in Label Maker"
                       >
-                        <Pencil className="w-3 h-3" />
+                        <PencilSimple size={12} weight="duotone" />
                       </button>
 
                       {/* Selected indicator */}
                       {state.savedLabelId === label.id && (
                         <div className="absolute top-1.5 left-1.5">
-                          <CheckCircle className="w-5 h-5 text-accent" />
+                          <CheckCircle size={24} weight="duotone" className="text-accent" />
                         </div>
                       )}
                     </div>
@@ -612,7 +612,7 @@ export function Step3Label() {
             transition={{ delay: 0.4 }}
           >
             <div className="flex items-start gap-2">
-              <Info className="w-4 h-4 text-neutral-400 mt-0.5" />
+              <Info size={20} weight="duotone" className="text-white mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-foreground">
                   Label dimensions

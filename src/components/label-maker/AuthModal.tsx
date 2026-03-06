@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Loader2, CheckCircle2 } from "lucide-react";
+import { X, SpinnerGap, CheckCircle } from "@phosphor-icons/react";
 import { createBrowserClient } from "@/lib/supabase";
 
 type AuthTab = "signin" | "signup";
@@ -162,16 +162,16 @@ export function AuthModal({ open, onClose, onAuthSuccess }: AuthModalProps) {
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-1.5 text-neutral-400 hover:text-foreground hover:bg-neutral-700 rounded-lg transition-colors"
+                  className="p-1.5 text-white hover:text-foreground hover:bg-neutral-700 rounded-lg transition-colors"
                 >
-                  <X className="w-5 h-5" />
+                  <X size={20} weight="duotone" />
                 </button>
               </div>
 
               <div className="px-6 pb-6">
                 {signUpSuccess ? (
                   <div className="text-center py-6">
-                    <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                    <CheckCircle size={56} weight="duotone" className="text-green-500 mx-auto mb-4" />
                     <h3 className="text-lg font-bold mb-2">Check Your Email</h3>
                     <p className="text-sm text-neutral-400 mb-1">
                       We&apos;ve sent a confirmation link to
@@ -265,7 +265,7 @@ export function AuthModal({ open, onClose, onAuthSuccess }: AuthModalProps) {
                         >
                           {authLoading ? (
                             <>
-                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <SpinnerGap size={16} weight="duotone" className="animate-spin" />
                               Signing in...
                             </>
                           ) : (
@@ -318,7 +318,7 @@ export function AuthModal({ open, onClose, onAuthSuccess }: AuthModalProps) {
                         >
                           {authLoading ? (
                             <>
-                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <SpinnerGap size={16} weight="duotone" className="animate-spin" />
                               Creating account...
                             </>
                           ) : (

@@ -1,7 +1,7 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+import { X } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 interface ConfirmDialogProps {
@@ -32,8 +32,8 @@ export function ConfirmDialog({
             <Dialog.Title className="text-lg font-semibold text-foreground">
               {title}
             </Dialog.Title>
-            <Dialog.Close className="text-neutral-500 hover:text-foreground transition-colors">
-              <X className="w-5 h-5" />
+            <Dialog.Close className="text-white hover:text-foreground transition-colors">
+              <X size={20} weight="duotone" />
             </Dialog.Close>
           </div>
           <Dialog.Description className="text-sm text-neutral-400 mb-6">

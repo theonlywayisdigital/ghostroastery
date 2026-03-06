@@ -1,13 +1,13 @@
 "use client";
 
 import {
-  LayoutTemplate,
+  Layout,
   Shapes,
-  Type,
-  ImageIcon,
-  Sparkles,
+  TextT,
+  Image as ImageIcon,
+  Sparkle,
   SlidersHorizontal,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 export type MobileToolTab =
@@ -28,16 +28,16 @@ const TABS: { id: MobileToolTab; label: string; icon: React.ReactNode }[] = [
   {
     id: "templates",
     label: "Templates",
-    icon: <LayoutTemplate className="w-5 h-5" />,
+    icon: <Layout size={20} weight="duotone" />,
   },
   {
     id: "elements",
     label: "Elements",
-    icon: <Shapes className="w-5 h-5" />,
+    icon: <Shapes size={20} weight="duotone" />,
   },
-  { id: "text", label: "Text", icon: <Type className="w-5 h-5" /> },
-  { id: "upload", label: "Upload", icon: <ImageIcon className="w-5 h-5" /> },
-  { id: "ai", label: "AI", icon: <Sparkles className="w-5 h-5" /> },
+  { id: "text", label: "Text", icon: <TextT size={20} weight="duotone" /> },
+  { id: "upload", label: "Upload", icon: <ImageIcon size={20} weight="duotone" /> },
+  { id: "ai", label: "AI", icon: <Sparkle size={20} weight="duotone" /> },
 ];
 
 export function MobileToolbar({
@@ -52,7 +52,7 @@ export function MobileToolbar({
         {
           id: "properties" as MobileToolTab,
           label: "Properties",
-          icon: <SlidersHorizontal className="w-5 h-5" />,
+          icon: <SlidersHorizontal size={20} weight="duotone" />,
         },
       ]
     : TABS;

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { PortableText, type PortableTextBlock } from "@portabletext/react";
 import { client, urlFor } from "@/sanity/lib/client";
 import { blogPostBySlugQuery } from "@/sanity/lib/queries";
@@ -112,7 +112,7 @@ export default async function RoastersBlogPostPage({ params }: PageProps) {
             href="/blog"
             className="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-900 transition-colors mb-8"
           >
-            <ArrowLeft className="w-4 h-4 mr-1" />
+            <ArrowLeft className="mr-1" size={20} weight="duotone" />
             Back to Blog
           </Link>
           {post.category && (

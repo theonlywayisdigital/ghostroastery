@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Pencil, Loader2 } from "lucide-react";
+import { PencilSimple, SpinnerGap } from "@phosphor-icons/react";
 import { useBuilder } from "../BuilderContext";
 import { StepHeading } from "../StepHeading";
 import { BagVisualisation } from "../BagVisualisation";
@@ -25,7 +25,7 @@ function SummaryRow({ label, value, step, onEdit }: SummaryRowProps) {
         onClick={() => onEdit(step)}
         className="flex items-center gap-1 text-sm text-accent hover:underline"
       >
-        <Pencil className="w-3 h-3" />
+        <PencilSimple size={12} weight="duotone" />
         Edit
       </button>
     </div>
@@ -244,7 +244,7 @@ export function Step7Summary() {
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <SpinnerGap size={20} weight="duotone" className="animate-spin" />
                 Redirecting…
               </>
             ) : (

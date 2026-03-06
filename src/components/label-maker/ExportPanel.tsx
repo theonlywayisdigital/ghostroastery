@@ -3,13 +3,13 @@
 import { useState, useCallback } from "react";
 import {
   Download,
-  Loader2,
+  SpinnerGap,
   CheckCircle,
-  AlertTriangle,
+  Warning,
   X,
   FileText,
-  ExternalLink,
-} from "lucide-react";
+  ArrowSquareOut,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import type { LabelDimensions } from "./types";
 
@@ -109,16 +109,16 @@ export function ExportPanel({
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-neutral-700">
           <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-accent" />
+            <FileText size={24} weight="duotone" className="text-accent" />
             <h2 className="text-sm font-semibold text-foreground">
               Export Label PDF
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded hover:bg-neutral-700 text-neutral-400 hover:text-foreground transition-colors"
+            className="p-1 rounded hover:bg-neutral-700 text-white hover:text-foreground transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X size={16} weight="duotone" />
           </button>
         </div>
 
@@ -126,7 +126,7 @@ export function ExportPanel({
         <div className="p-4 space-y-4">
           {/* CMYK Warning */}
           <div className="flex gap-2 p-3 bg-amber-950/30 border border-amber-800/50 rounded-lg">
-            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <Warning size={16} weight="duotone" className="text-amber-400 shrink-0 mt-0.5" />
             <div>
               <p className="text-xs text-amber-300 font-medium">
                 Colour Note
@@ -178,7 +178,7 @@ export function ExportPanel({
               onClick={handleExport}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-accent text-neutral-900 text-sm font-semibold rounded-lg hover:bg-accent/90 transition-colors"
             >
-              <Download className="w-4 h-4" />
+              <Download size={20} weight="duotone" />
               Generate Print-Ready PDF
             </button>
           )}
@@ -186,7 +186,7 @@ export function ExportPanel({
           {/* State: Exporting */}
           {state === "exporting" && (
             <div className="text-center py-4">
-              <Loader2 className="w-8 h-8 text-accent mx-auto mb-3 animate-spin" />
+              <SpinnerGap size={32} weight="duotone" className="text-accent mx-auto mb-3 animate-spin" />
               <p className="text-xs text-neutral-300">
                 Generating your print-ready PDF...
               </p>
@@ -200,7 +200,7 @@ export function ExportPanel({
           {state === "error" && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 p-3 bg-red-950/50 border border-red-800 rounded-lg text-xs text-red-400">
-                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <Warning size={16} weight="duotone" className="shrink-0" />
                 {error || "Export failed. Please try again."}
               </div>
               <button
@@ -216,7 +216,7 @@ export function ExportPanel({
           {state === "success" && result && (
             <div className="space-y-3">
               <div className="flex items-center gap-2 p-3 bg-green-950/30 border border-green-800/50 rounded-lg">
-                <CheckCircle className="w-4 h-4 text-green-400 shrink-0" />
+                <CheckCircle size={16} weight="duotone" className="text-green-400 shrink-0" />
                 <div>
                   <p className="text-xs text-green-300 font-medium">
                     PDF exported successfully
@@ -243,7 +243,7 @@ export function ExportPanel({
                   onClick={handleDownload}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-accent text-neutral-900 text-xs font-semibold rounded-lg hover:bg-accent/90 transition-colors"
                 >
-                  <Download className="w-4 h-4" />
+                  <Download size={20} weight="duotone" />
                   Download PDF
                 </button>
                 <a
@@ -252,7 +252,7 @@ export function ExportPanel({
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-1 px-3 py-2.5 bg-neutral-700 text-neutral-300 text-xs rounded-lg hover:bg-neutral-600 transition-colors"
                 >
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ArrowSquareOut size={14} weight="duotone" />
                   Open
                 </a>
               </div>
@@ -263,7 +263,7 @@ export function ExportPanel({
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-700 text-neutral-300 text-xs font-medium rounded-lg hover:bg-neutral-600 transition-colors"
                 >
                   Go to My Account
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ArrowSquareOut size={14} weight="duotone" />
                 </a>
               )}
             </div>

@@ -4,20 +4,19 @@ import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  Undo2,
-  Redo2,
-  Grid3X3,
+  ArrowCounterClockwise,
+  ArrowClockwise,
+  GridFour,
   Ruler,
-  Magnet,
-  RotateCcw,
+  MagnetStraight,
   ShieldCheck,
-  Save,
+  FloppyDisk,
   ArrowRight,
   Eye,
   FolderOpen,
-  Loader2,
+  SpinnerGap,
   CheckCircle,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { LabelCanvas } from "./LabelCanvas";
 import { HorizontalRuler, VerticalRuler, RULER_SIZE } from "./Rulers";
 import { LeftPanel } from "./LeftPanel";
@@ -321,13 +320,13 @@ export function LabelMakerClient({
             {/* Centre: Tools */}
             <div className="flex items-center gap-1">
               <ToolbarButton
-                icon={<Undo2 className="w-4 h-4" />}
+                icon={<ArrowCounterClockwise size={16} weight="duotone" />}
                 label="Undo"
                 onClick={canvas.undo}
                 disabled={!canvas.canUndoState}
               />
               <ToolbarButton
-                icon={<Redo2 className="w-4 h-4" />}
+                icon={<ArrowClockwise size={16} weight="duotone" />}
                 label="Redo"
                 onClick={canvas.redo}
                 disabled={!canvas.canRedoState}
@@ -353,19 +352,19 @@ export function LabelMakerClient({
               <div className="w-px h-5 bg-neutral-700 mx-1" />
 
               <ToolbarButton
-                icon={<Ruler className="w-4 h-4" />}
+                icon={<Ruler size={16} weight="duotone" />}
                 label="Guides"
                 onClick={canvas.toggleGuides}
                 active={canvas.guidesVisible}
               />
               <ToolbarButton
-                icon={<Grid3X3 className="w-4 h-4" />}
+                icon={<GridFour size={16} weight="duotone" />}
                 label="Grid"
                 onClick={canvas.toggleGrid}
                 active={canvas.gridVisible}
               />
               <ToolbarButton
-                icon={<Magnet className="w-4 h-4" />}
+                icon={<MagnetStraight size={16} weight="duotone" />}
                 label="Snap"
                 onClick={canvas.toggleSnap}
                 active={canvas.snapEnabled}
@@ -378,21 +377,21 @@ export function LabelMakerClient({
                 onClick={() => setPrintCheckOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-400 hover:text-foreground hover:bg-neutral-700 rounded transition-colors"
               >
-                <ShieldCheck className="w-3.5 h-3.5" />
+                <ShieldCheck size={14} weight="duotone" />
                 Check print readiness
               </button>
               <button
                 onClick={handleBagPreview}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-400 hover:text-foreground hover:bg-neutral-700 rounded transition-colors"
               >
-                <Eye className="w-3.5 h-3.5" />
+                <Eye size={14} weight="duotone" />
                 Preview on bag
               </button>
               <button
                 onClick={handleStartFresh}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-400 hover:text-foreground hover:bg-neutral-700 rounded transition-colors"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
+                <ArrowCounterClockwise size={14} weight="duotone" />
                 Start fresh
               </button>
 
@@ -402,7 +401,7 @@ export function LabelMakerClient({
                 onClick={() => setSavedLabelsOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-400 hover:text-foreground hover:bg-neutral-700 rounded transition-colors"
               >
-                <FolderOpen className="w-3.5 h-3.5" />
+                <FolderOpen size={14} weight="duotone" />
                 My Labels
               </button>
               <button
@@ -411,9 +410,9 @@ export function LabelMakerClient({
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-400 hover:text-foreground hover:bg-neutral-700 rounded transition-colors disabled:opacity-50"
               >
                 {saving ? (
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <SpinnerGap size={14} weight="duotone" className="animate-spin" />
                 ) : (
-                  <Save className="w-3.5 h-3.5" />
+                  <FloppyDisk size={14} weight="duotone" />
                 )}
                 {saved ? "Saved!" : saving ? "Saving..." : "Save"}
               </button>
@@ -424,23 +423,23 @@ export function LabelMakerClient({
               >
                 {autoExporting ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <SpinnerGap size={14} weight="duotone" className="animate-spin" />
                     Exporting...
                   </>
                 ) : !onExportComplete && saving ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <SpinnerGap size={14} weight="duotone" className="animate-spin" />
                     Saving...
                   </>
                 ) : !onExportComplete && saved ? (
                   <>
-                    <CheckCircle className="w-3.5 h-3.5" />
+                    <CheckCircle size={14} weight="duotone" />
                     Saved!
                   </>
                 ) : (
                   <>
                     Done
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight size={14} weight="duotone" />
                   </>
                 )}
               </button>

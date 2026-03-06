@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Package, Coffee, Truck, Download } from "lucide-react";
+import { Package, Coffee, Truck, DownloadSimple } from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -75,7 +75,7 @@ function TimelineStep({
     >
       <div className="flex flex-col items-center">
         <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
-          <Icon className="w-5 h-5 text-accent" />
+          <Icon size={20} weight="duotone" className="text-accent" />
         </div>
         {index < 2 && <div className="w-px h-8 bg-neutral-700 my-2" />}
       </div>
@@ -159,7 +159,7 @@ export function SuccessClient({
               rel="noopener noreferrer"
               className="flex items-center gap-2 mt-4 text-sm text-accent hover:underline"
             >
-              <Download className="w-4 h-4" />
+              <DownloadSimple size={16} weight="duotone" />
               Download your mockup
             </a>
           </motion.div>

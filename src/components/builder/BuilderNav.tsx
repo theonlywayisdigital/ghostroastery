@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 
 interface BuilderNavProps {
   currentStep: number;
@@ -31,7 +31,7 @@ export function BuilderNav({
             whileHover={{ x: -4 }}
             whileTap={{ scale: 0.98 }}
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft size={24} weight="duotone" />
             <span>Back</span>
           </motion.button>
         ) : (
@@ -51,7 +51,7 @@ export function BuilderNav({
           whileTap={continueDisabled ? {} : { scale: 0.98 }}
         >
           <span>{continueLabel}</span>
-          <ArrowRight className="w-5 h-5" />
+          <ArrowRight size={24} weight="duotone" />
         </motion.button>
       </div>
     </div>

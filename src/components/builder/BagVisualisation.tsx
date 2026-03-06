@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, ChevronUp, X, ZoomIn } from "lucide-react";
+import { CaretDown, CaretUp, X, MagnifyingGlassPlus } from "@phosphor-icons/react";
 import {
   getBagMockupConfig,
   BAG_MOCKUP_CONFIG,
@@ -222,7 +222,7 @@ export function BagVisualisation({
           className="w-full flex items-center justify-center gap-2 py-3 text-neutral-400 hover:text-foreground transition-colors"
         >
           <span>{isExpanded ? "Hide" : "Show"} bag preview</span>
-          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {isExpanded ? <CaretUp size={16} weight="duotone" /> : <CaretDown size={16} weight="duotone" />}
         </button>
         <AnimatePresence>
           {isExpanded && (
@@ -413,7 +413,7 @@ function BagContent({
               />
               {canvasReady && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 rounded-lg transition-colors">
-                  <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-80 transition-opacity drop-shadow-lg" />
+                  <MagnifyingGlassPlus size={40} weight="duotone" className="text-white opacity-0 group-hover:opacity-80 transition-opacity drop-shadow-lg" />
                 </div>
               )}
             </div>
@@ -599,9 +599,9 @@ function MockupLightbox({
     >
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 p-2 rounded-full bg-neutral-800/80 text-neutral-300 hover:text-white hover:bg-neutral-700 transition-colors z-10"
+        className="absolute top-4 right-4 p-2 rounded-full bg-neutral-800/80 text-white hover:text-white hover:bg-neutral-700 transition-colors z-10"
       >
-        <X className="w-5 h-5" />
+        <X size={20} weight="duotone" />
       </button>
       {dataUrl && (
         <motion.img

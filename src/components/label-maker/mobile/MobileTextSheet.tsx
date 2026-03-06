@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { FONT_LIBRARY } from "../types";
 
@@ -132,7 +132,7 @@ export function MobileTextSheet({
 
         {/* Search */}
         <div className="relative mb-2">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-neutral-500" />
+          <MagnifyingGlass size={14} weight="duotone" className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
           <input
             type="text"
             value={fontSearch}

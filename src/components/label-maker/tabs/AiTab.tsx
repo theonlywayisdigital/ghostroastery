@@ -2,16 +2,16 @@
 
 import { useState, useCallback } from "react";
 import {
-  ImageIcon,
+  Image as ImageIcon,
   Palette,
-  LayoutList,
-  PenLine,
-  Sparkles,
-  Loader2,
-  RefreshCw,
+  ListDashes,
+  PenNib,
+  Sparkle,
+  SpinnerGap,
+  ArrowsClockwise,
   Plus,
-  AlertTriangle,
-} from "lucide-react";
+  Warning,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 type AiSection = "background" | "palette" | "layout" | "copy" | null;
@@ -48,10 +48,10 @@ const TONE_OPTIONS = [
 ];
 
 const SECTIONS: { id: AiSection & string; label: string; icon: React.ReactNode }[] = [
-  { id: "background", label: "Background", icon: <ImageIcon className="w-3.5 h-3.5" /> },
-  { id: "palette", label: "Palette", icon: <Palette className="w-3.5 h-3.5" /> },
-  { id: "layout", label: "Review", icon: <LayoutList className="w-3.5 h-3.5" /> },
-  { id: "copy", label: "Copy", icon: <PenLine className="w-3.5 h-3.5" /> },
+  { id: "background", label: "Background", icon: <ImageIcon size={14} weight="duotone" /> },
+  { id: "palette", label: "Palette", icon: <Palette size={14} weight="duotone" /> },
+  { id: "layout", label: "Review", icon: <ListDashes size={14} weight="duotone" /> },
+  { id: "copy", label: "Copy", icon: <PenNib size={14} weight="duotone" /> },
 ];
 
 export function AiTab({
@@ -67,7 +67,7 @@ export function AiTab({
     <div className="p-3">
       {/* Section selector */}
       <div className="flex items-center gap-1 mb-3">
-        <Sparkles className="w-3.5 h-3.5 text-accent" />
+        <Sparkle size={14} weight="duotone" className="text-accent" />
         <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider">
           AI Tools
         </span>
@@ -191,12 +191,12 @@ function BackgroundGenerator({
       >
         {loading ? (
           <>
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <SpinnerGap size={14} weight="duotone" className="animate-spin" />
             Generating...
           </>
         ) : (
           <>
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkle size={14} weight="duotone" />
             Generate Backgrounds
           </>
         )}
@@ -210,7 +210,7 @@ function BackgroundGenerator({
 
       {error && (
         <div className="flex items-center gap-2 p-2 bg-red-950/50 border border-red-800 rounded text-[10px] text-red-400">
-          <AlertTriangle className="w-3 h-3 shrink-0" />
+          <Warning size={12} weight="duotone" className="shrink-0" />
           <span className="flex-1">{error}</span>
           <button
             onClick={generate}
@@ -233,7 +233,7 @@ function BackgroundGenerator({
               disabled={loading}
               className="text-[10px] text-accent hover:underline flex items-center gap-1"
             >
-              <RefreshCw className="w-3 h-3" />
+              <ArrowsClockwise size={12} weight="duotone" />
               Regenerate
             </button>
           </div>
@@ -312,12 +312,12 @@ function PaletteSuggester({
       >
         {loading ? (
           <>
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <SpinnerGap size={14} weight="duotone" className="animate-spin" />
             Analysing...
           </>
         ) : (
           <>
-            <Palette className="w-3.5 h-3.5" />
+            <Palette size={14} weight="duotone" />
             Suggest colours from my logo
           </>
         )}
@@ -325,7 +325,7 @@ function PaletteSuggester({
 
       {error && (
         <div className="flex items-center gap-2 p-2 bg-red-950/50 border border-red-800 rounded text-[10px] text-red-400">
-          <AlertTriangle className="w-3 h-3 shrink-0" />
+          <Warning size={12} weight="duotone" className="shrink-0" />
           <span className="flex-1">{error}</span>
           <button
             onClick={suggestFromLogo}
@@ -416,12 +416,12 @@ function LayoutReviewer({
       >
         {loading ? (
           <>
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <SpinnerGap size={14} weight="duotone" className="animate-spin" />
             Reviewing...
           </>
         ) : (
           <>
-            <LayoutList className="w-3.5 h-3.5" />
+            <ListDashes size={14} weight="duotone" />
             Review my layout
           </>
         )}
@@ -429,7 +429,7 @@ function LayoutReviewer({
 
       {error && (
         <div className="flex items-center gap-2 p-2 bg-red-950/50 border border-red-800 rounded text-[10px] text-red-400">
-          <AlertTriangle className="w-3 h-3 shrink-0" />
+          <Warning size={12} weight="duotone" className="shrink-0" />
           <span className="flex-1">{error}</span>
           <button
             onClick={review}
@@ -452,7 +452,7 @@ function LayoutReviewer({
               disabled={loading}
               className="text-[10px] text-accent hover:underline flex items-center gap-1"
             >
-              <RefreshCw className="w-3 h-3" />
+              <ArrowsClockwise size={12} weight="duotone" />
               Review again
             </button>
           </div>
@@ -596,12 +596,12 @@ function CopyGenerator({
       >
         {loading ? (
           <>
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <SpinnerGap size={14} weight="duotone" className="animate-spin" />
             Generating...
           </>
         ) : (
           <>
-            <PenLine className="w-3.5 h-3.5" />
+            <PenNib size={14} weight="duotone" />
             Generate label copy
           </>
         )}
@@ -609,7 +609,7 @@ function CopyGenerator({
 
       {error && (
         <div className="flex items-center gap-2 p-2 bg-red-950/50 border border-red-800 rounded text-[10px] text-red-400">
-          <AlertTriangle className="w-3 h-3 shrink-0" />
+          <Warning size={12} weight="duotone" className="shrink-0" />
           <span className="flex-1">{error}</span>
           <button
             onClick={generate}
@@ -697,7 +697,7 @@ function CopyResultItem({
           onClick={onAdd}
           className="flex items-center gap-0.5 text-[10px] text-accent hover:underline"
         >
-          <Plus className="w-3 h-3" />
+          <Plus size={12} weight="duotone" />
           Add to label
         </button>
       </div>

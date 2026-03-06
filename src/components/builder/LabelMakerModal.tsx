@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ExternalLink } from "lucide-react";
+import { X, ArrowSquareOut } from "@phosphor-icons/react";
 import { LabelMakerClient } from "@/components/label-maker/LabelMakerClient";
 
 interface LabelMakerModalProps {
@@ -63,14 +63,14 @@ export function LabelMakerModal({
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] text-neutral-400 hover:text-foreground hover:bg-neutral-800 rounded transition-colors"
                 >
-                  <ExternalLink className="w-3 h-3" />
+                  <ArrowSquareOut size={12} weight="duotone" />
                   Open in new tab
                 </a>
                 <button
                   onClick={onClose}
-                  className="p-1.5 text-neutral-400 hover:text-foreground hover:bg-neutral-800 rounded transition-colors"
+                  className="p-1.5 text-white hover:text-foreground hover:bg-neutral-800 rounded transition-colors"
                 >
-                  <X className="w-4 h-4" />
+                  <X size={16} weight="duotone" />
                 </button>
               </div>
             </div>

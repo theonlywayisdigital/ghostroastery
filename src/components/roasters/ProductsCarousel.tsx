@@ -4,17 +4,25 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   ShoppingCart,
-  Store,
+  Storefront,
   Receipt,
-  Mail,
-  Share2,
-  Zap,
-  Sparkles,
+  Envelope,
+  ShareNetwork,
+  Lightning,
+  Sparkle,
   ArrowRight,
-  Boxes,
-  ClipboardList,
-} from "lucide-react";
+  Package,
+  ClipboardText,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+
+interface CarouselCmsData {
+  suites?: Array<{
+    key: string;
+    tagline?: string;
+    description?: string;
+  }>;
+}
 
 const suites = [
   {
@@ -24,11 +32,11 @@ const suites = [
     description:
       "Manage your products, launch a branded storefront, track every order, handle wholesale accounts, and get paid automatically. Included free on every plan.",
     allHref: "/features/sales",
-    placeholderIcon: Boxes,
+    placeholderIcon: Package,
     placeholderLabel: "Sales Suite Screenshot",
     features: [
       {
-        icon: ClipboardList,
+        icon: ClipboardText,
         title: "Order Tracking",
         desc: "Track every order from placement to delivery with real-time status updates.",
         href: "/features/order-tracking",
@@ -40,7 +48,7 @@ const suites = [
         href: "/features/wholesale",
       },
       {
-        icon: Store,
+        icon: Storefront,
         title: "Storefront",
         desc: "Launch a branded online store with your own domain. Sell bags, subscriptions, and merch.",
         href: "/features/storefront",
@@ -60,29 +68,29 @@ const suites = [
     description:
       "Email campaigns, social scheduling, automations, and AI-powered content — all included free on every plan.",
     allHref: "/features/marketing",
-    placeholderIcon: Mail,
+    placeholderIcon: Envelope,
     placeholderLabel: "Marketing Suite Screenshot",
     features: [
       {
-        icon: Mail,
+        icon: Envelope,
         title: "Email Campaigns",
         desc: "Design beautiful emails that drive repeat orders. Segmentation and analytics built in.",
         href: "/features/email-campaigns",
       },
       {
-        icon: Share2,
+        icon: ShareNetwork,
         title: "Social Scheduling",
         desc: "Plan, create, and schedule social media posts across Instagram, Facebook, and LinkedIn.",
         href: "/features/social-scheduling",
       },
       {
-        icon: Zap,
+        icon: Lightning,
         title: "Automations",
         desc: "Build automated workflows — welcome sequences, abandoned carts, and re-engagement.",
         href: "/features/automations",
       },
       {
-        icon: Sparkles,
+        icon: Sparkle,
         title: "AI Studio",
         desc: "Generate product descriptions, social captions, email copy, and marketing images with AI.",
         href: "/features/ai-studio",
@@ -91,15 +99,24 @@ const suites = [
   },
 ];
 
-export function ProductsCarousel() {
+export function ProductsCarousel({ cms }: { cms?: CarouselCmsData }) {
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const resolvedSuites = suites.map((suite) => {
+    const cmsSuite = cms?.suites?.find((s) => s.key === suite.key);
+    return {
+      ...suite,
+      tagline: cmsSuite?.tagline || suite.tagline,
+      description: cmsSuite?.description || suite.description,
+    };
+  });
 
   return (
     <div>
       {/* Toggle tabs */}
       <div className="flex justify-center mb-12">
         <div className="inline-flex rounded-lg border border-neutral-200 p-1 bg-neutral-50">
-          {suites.map((suite, i) => (
+          {resolvedSuites.map((suite, i) => (
             <button
               key={suite.key}
               onClick={() => setActiveIndex(i)}
@@ -118,7 +135,7 @@ export function ProductsCarousel() {
 
       {/* Content — crossfade */}
       <div className="relative">
-        {suites.map((suite, i) => {
+        {resolvedSuites.map((suite, i) => {
           const SuiteIcon = suite.placeholderIcon;
           return (
             <div
@@ -140,7 +157,7 @@ export function ProductsCarousel() {
                 >
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <SuiteIcon className="w-16 h-16 text-neutral-300 mx-auto mb-3" />
+                      <SuiteIcon weight="duotone" size={72} className="text-neutral-300 mx-auto mb-3" />
                       <p className="text-sm text-neutral-400 font-medium">
                         {suite.placeholderLabel}
                       </p>
@@ -169,7 +186,7 @@ export function ProductsCarousel() {
                           className="flex gap-4 p-4 rounded-xl border border-neutral-200 hover:border-accent/30 hover:shadow-md transition-all group bg-white"
                         >
                           <div className="w-10 h-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0 group-hover:bg-accent group-hover:text-white transition-colors">
-                            <Icon className="w-5 h-5" />
+                            <Icon weight="duotone" size={24} />
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-neutral-900 group-hover:text-accent transition-colors">
@@ -188,7 +205,7 @@ export function ProductsCarousel() {
                     className="inline-flex items-center gap-1 mt-6 text-sm font-semibold text-accent hover:underline"
                   >
                     View all {suite.label} features
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight weight="duotone" size={20} />
                   </Link>
                 </div>
               </div>

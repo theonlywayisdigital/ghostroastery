@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useCallback, useState, type ReactNode } from "react";
-import { X } from "lucide-react";
+import { X } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 type SnapPoint = "peek" | "half" | "full";
@@ -175,9 +175,9 @@ export function MobileBottomSheet({
                 setVisible(false);
                 setTimeout(onClose, 200);
               }}
-              className="p-1 rounded-lg hover:bg-neutral-800 text-neutral-400"
+              className="p-1 rounded-lg hover:bg-neutral-800 text-white"
             >
-              <X className="w-4 h-4" />
+              <X size={16} weight="duotone" />
             </button>
           </div>
         )}

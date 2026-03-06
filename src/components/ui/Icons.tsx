@@ -1,26 +1,26 @@
 import {
   Palette,
   Tag,
-  Flame,
+  Fire,
   Truck,
   Coffee,
   ShieldCheck,
   Package,
   Clock,
   MapPin,
-  Dumbbell,
-  Building2,
-  UtensilsCrossed,
+  Barbell,
+  Buildings,
+  ForkKnife,
   Heart,
   Lightbulb,
-  Store,
-} from "lucide-react";
+  Storefront,
+} from "@phosphor-icons/react";
 
 export const Icons = {
   // How it works
   Design: Palette,
   Brand: Tag,
-  Roast: Flame,
+  Roast: Fire,
   Deliver: Truck,
 
   // Trust signals
@@ -32,12 +32,12 @@ export const Icons = {
 
   // Business types
   Cafe: Coffee,
-  Gym: Dumbbell,
-  Office: Building2,
-  Restaurant: UtensilsCrossed,
+  Gym: Barbell,
+  Office: Buildings,
+  Restaurant: ForkKnife,
   Wellness: Heart,
   Entrepreneur: Lightbulb,
-  Retail: Store,
+  Retail: Storefront,
 };
 
 export type IconName = keyof typeof Icons;
@@ -48,7 +48,7 @@ interface IconProps {
   size?: number;
 }
 
-export function Icon({ name, className, size = 24 }: IconProps) {
+export function Icon({ name, className, size = 28 }: IconProps) {
   const IconComponent = Icons[name];
-  return <IconComponent className={className} size={size} />;
+  return <IconComponent className={className} size={size} weight="duotone" />;
 }

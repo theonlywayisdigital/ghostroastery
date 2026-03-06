@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { ArrowSquareOut } from "@phosphor-icons/react";
 import { useBuilder } from "../BuilderContext";
 import { StepHeading } from "../StepHeading";
 import { BagVisualisation } from "../BagVisualisation";
@@ -200,7 +200,7 @@ export function Step6Quantity() {
                 className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-accent/15 text-accent text-sm font-medium rounded-lg hover:bg-accent/25 transition-colors"
               >
                 View wholesale options →
-                <ExternalLink className="w-4 h-4" />
+                <ArrowSquareOut size={20} weight="duotone" />
               </a>
             </motion.div>
           )}

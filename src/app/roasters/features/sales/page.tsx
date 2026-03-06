@@ -1,15 +1,15 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import {
-  Boxes,
-  ClipboardList,
-  Store,
+  Package,
+  ClipboardText,
+  Storefront,
   ShoppingCart,
   Users,
   Receipt,
-  BarChart3,
+  ChartBar,
   ArrowRight,
-} from "lucide-react";
+} from "@phosphor-icons/react/dist/ssr";
 
 export const revalidate = 3600;
 
@@ -24,50 +24,50 @@ const PLATFORM_URL = "https://platform.ghostroastery.com";
 const features = [
   {
     title: "Product Management",
-    href: "/features/product-management",
-    icon: Boxes,
+    href: "/roasters/features/product-management",
+    icon: Package,
     description:
       "Manage your coffee catalogue, blends, sizes, and pricing in one place.",
   },
   {
     title: "Order Tracking",
-    href: "/features/order-tracking",
-    icon: ClipboardList,
+    href: "/roasters/features/order-tracking",
+    icon: ClipboardText,
     description:
       "Track every order from placement to delivery with real-time status updates and customer notifications.",
   },
   {
     title: "Storefront",
-    href: "/features/storefront",
-    icon: Store,
+    href: "/roasters/features/storefront",
+    icon: Storefront,
     description:
       "Launch a branded online store with your own domain. Sell bags, subscriptions, and merchandise directly to customers.",
   },
   {
     title: "Wholesale",
-    href: "/features/wholesale",
+    href: "/roasters/features/wholesale",
     icon: ShoppingCart,
     description:
       "Manage wholesale accounts, custom pricing tiers, minimum order quantities, and repeat orders.",
   },
   {
     title: "CRM",
-    href: "/features/crm",
+    href: "/roasters/features/crm",
     icon: Users,
     description:
       "Customer profiles, purchase history, segments, and lifetime value tracking.",
   },
   {
     title: "Invoices",
-    href: "/features/invoices",
+    href: "/roasters/features/invoices",
     icon: Receipt,
     description:
       "Generate and send professional invoices automatically. Track payments, overdue balances, and export for your accountant.",
   },
   {
     title: "Analytics",
-    href: "/features/sales-analytics",
-    icon: BarChart3,
+    href: "/roasters/features/sales-analytics",
+    icon: ChartBar,
     description:
       "Sales dashboards, revenue tracking, best sellers, and customer acquisition metrics.",
   },
@@ -106,7 +106,7 @@ export default function SalesSuitePage() {
                   className="group p-6 rounded-xl border border-neutral-200 hover:border-accent/30 hover:shadow-lg transition-all duration-300 bg-white flex flex-col"
                 >
                   <div className="w-12 h-12 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-4 group-hover:bg-accent group-hover:text-white transition-colors">
-                    <Icon className="w-6 h-6" />
+                    <Icon size={28} weight="duotone" />
                   </div>
                   <h3 className="text-xl font-bold text-neutral-900 mb-2">
                     {feature.title}
@@ -116,7 +116,7 @@ export default function SalesSuitePage() {
                   </p>
                   <span className="inline-flex items-center text-accent font-semibold text-sm group-hover:gap-2 transition-all">
                     Learn more
-                    <ArrowRight className="ml-1 w-4 h-4" />
+                    <ArrowRight className="ml-1" size={20} weight="duotone" />
                   </span>
                 </Link>
               );
@@ -140,7 +140,7 @@ export default function SalesSuitePage() {
             className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
           >
             Get Started Free
-            <ArrowRight className="ml-2 w-5 h-5" />
+            <ArrowRight className="ml-2" size={24} weight="duotone" />
           </a>
         </div>
       </section>

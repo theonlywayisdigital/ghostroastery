@@ -2,25 +2,25 @@
 
 import { useState, useEffect, useCallback, useRef, type RefObject } from "react";
 import {
-  Bold,
-  Italic,
-  Underline,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
+  TextB,
+  TextItalic,
+  TextUnderline,
+  TextAlignLeft,
+  TextAlignCenter,
+  TextAlignRight,
   Copy,
-  Trash2,
+  Trash,
   ArrowUp,
   ArrowDown,
-  ChevronsUp,
-  ChevronsDown,
+  CaretDoubleUp,
+  CaretDoubleDown,
   Minus,
   Plus,
-  ChevronDown,
+  CaretDown,
   FlipHorizontal,
   FlipVertical,
   Image as ImageIcon,
-} from "lucide-react";
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { ColourPicker } from "../ColourPicker";
 import { FONT_LIBRARY, pxToMm, mmToPx, loadGoogleFont, loadGoogleFontAsync } from "../types";
@@ -317,7 +317,7 @@ export function MobilePropertiesSheet({
             onClick={() => replaceImageInputRef.current?.click()}
             className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-neutral-800 border border-neutral-700 rounded-lg text-xs text-neutral-300 active:bg-neutral-700 transition-colors"
           >
-            <ImageIcon className="w-4 h-4" />
+            <ImageIcon size={16} weight="duotone" />
             Replace Image
           </button>
         </>
@@ -328,14 +328,14 @@ export function MobilePropertiesSheet({
         {isText && (
           <>
             <QuickButton
-              icon={<Bold className="w-4 h-4" />}
+              icon={<TextB size={16} weight="duotone" />}
               active={state.fontWeight >= 700}
               onClick={() =>
                 updateProp("fontWeight", state.fontWeight >= 700 ? 400 : 700)
               }
             />
             <QuickButton
-              icon={<Italic className="w-4 h-4" />}
+              icon={<TextItalic size={16} weight="duotone" />}
               active={state.fontStyle === "italic"}
               onClick={() =>
                 updateProp(
@@ -345,23 +345,23 @@ export function MobilePropertiesSheet({
               }
             />
             <QuickButton
-              icon={<Underline className="w-4 h-4" />}
+              icon={<TextUnderline size={16} weight="duotone" />}
               active={state.underline}
               onClick={() => updateProp("underline", !state.underline)}
             />
             <div className="w-px h-6 bg-neutral-700 mx-1" />
             <QuickButton
-              icon={<AlignLeft className="w-4 h-4" />}
+              icon={<TextAlignLeft size={16} weight="duotone" />}
               active={state.textAlign === "left"}
               onClick={() => updateProp("textAlign", "left")}
             />
             <QuickButton
-              icon={<AlignCenter className="w-4 h-4" />}
+              icon={<TextAlignCenter size={16} weight="duotone" />}
               active={state.textAlign === "center"}
               onClick={() => updateProp("textAlign", "center")}
             />
             <QuickButton
-              icon={<AlignRight className="w-4 h-4" />}
+              icon={<TextAlignRight size={16} weight="duotone" />}
               active={state.textAlign === "right"}
               onClick={() => updateProp("textAlign", "right")}
             />
@@ -369,12 +369,12 @@ export function MobilePropertiesSheet({
           </>
         )}
         <QuickButton
-          icon={<Copy className="w-4 h-4" />}
+          icon={<Copy size={16} weight="duotone" />}
           onClick={onDuplicate}
           label="Duplicate"
         />
         <QuickButton
-          icon={<Trash2 className="w-4 h-4" />}
+          icon={<Trash size={16} weight="duotone" />}
           onClick={handleDelete}
           label="Delete"
           danger
@@ -394,7 +394,7 @@ export function MobilePropertiesSheet({
             <span style={{ fontFamily: state.fontFamily }}>
               {state.fontFamily}
             </span>
-            <ChevronDown className="w-3.5 h-3.5 text-neutral-500" />
+            <CaretDown size={14} weight="duotone" className="text-neutral-500" />
           </button>
 
           {showFontPicker && (
@@ -443,7 +443,7 @@ export function MobilePropertiesSheet({
               }}
               className="p-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-300 active:bg-neutral-700"
             >
-              <Minus className="w-4 h-4" />
+              <Minus size={16} weight="duotone" />
             </button>
             <span className="text-sm font-mono text-foreground min-w-[48px] text-center">
               {state.fontSize.toFixed(1)}
@@ -456,7 +456,7 @@ export function MobilePropertiesSheet({
               }}
               className="p-2 bg-neutral-800 border border-neutral-700 rounded-lg text-neutral-300 active:bg-neutral-700"
             >
-              <Plus className="w-4 h-4" />
+              <Plus size={16} weight="duotone" />
             </button>
           </div>
         </div>
@@ -480,22 +480,22 @@ export function MobilePropertiesSheet({
         </label>
         <div className="flex items-center gap-1">
           <QuickButton
-            icon={<ChevronsUp className="w-4 h-4" />}
+            icon={<CaretDoubleUp size={16} weight="duotone" />}
             onClick={bringToFront}
             label="Front"
           />
           <QuickButton
-            icon={<ArrowUp className="w-4 h-4" />}
+            icon={<ArrowUp size={16} weight="duotone" />}
             onClick={bringForward}
             label="Forward"
           />
           <QuickButton
-            icon={<ArrowDown className="w-4 h-4" />}
+            icon={<ArrowDown size={16} weight="duotone" />}
             onClick={sendBackward}
             label="Back"
           />
           <QuickButton
-            icon={<ChevronsDown className="w-4 h-4" />}
+            icon={<CaretDoubleDown size={16} weight="duotone" />}
             onClick={sendToBack}
             label="Bottom"
           />
@@ -507,9 +507,11 @@ export function MobilePropertiesSheet({
         onClick={() => setShowAdvanced(!showAdvanced)}
         className="flex items-center gap-1.5 text-[10px] text-neutral-400"
       >
-        <ChevronDown
+        <CaretDown
+          size={12}
+          weight="duotone"
           className={cn(
-            "w-3 h-3 transition-transform",
+            "transition-transform",
             showAdvanced && "rotate-180"
           )}
         />
@@ -617,7 +619,7 @@ export function MobilePropertiesSheet({
             </label>
             <div className="flex items-center gap-1">
               <QuickButton
-                icon={<FlipHorizontal className="w-4 h-4" />}
+                icon={<FlipHorizontal size={16} weight="duotone" />}
                 onClick={() => {
                   const obj = getActiveObject();
                   if (obj) updateProp("flipX", !obj.flipX);
@@ -625,7 +627,7 @@ export function MobilePropertiesSheet({
                 label="Horizontal"
               />
               <QuickButton
-                icon={<FlipVertical className="w-4 h-4" />}
+                icon={<FlipVertical size={16} weight="duotone" />}
                 onClick={() => {
                   const obj = getActiveObject();
                   if (obj) updateProp("flipY", !obj.flipY);

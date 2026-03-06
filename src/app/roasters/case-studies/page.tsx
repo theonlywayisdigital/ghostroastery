@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { client, urlFor } from "@/sanity/lib/client";
 import { roasterCaseStudiesQuery } from "@/sanity/lib/queries";
 
@@ -78,7 +78,7 @@ export default async function RoastersCaseStudiesPage() {
                   </p>
                   <div className="mt-4 flex items-center text-accent font-semibold text-sm">
                     Read story
-                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" size={20} weight="duotone" />
                   </div>
                 </Link>
               ))}
@@ -120,7 +120,7 @@ export default async function RoastersCaseStudiesPage() {
             className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
           >
             Get Started Free
-            <ArrowRight className="ml-2 w-5 h-5" />
+            <ArrowRight className="ml-2" size={24} weight="duotone" />
           </a>
         </div>
       </section>

@@ -2,13 +2,13 @@ import { Metadata } from "next";
 import {
   ArrowRight,
   Package,
-  TrendingUp,
-  Shield,
-  Zap,
-  CheckCircle2,
-} from "lucide-react";
+  TrendUp,
+  ShieldCheck,
+  Lightning,
+  CheckCircle,
+} from "@phosphor-icons/react/dist/ssr";
 import { client } from "@/sanity/lib/client";
-import { roastersPageSettingsQuery } from "@/sanity/lib/queries";
+import { roasterPartnerProgramPageQuery } from "@/sanity/lib/queries";
 import { PortableText, type PortableTextBlock } from "@portabletext/react";
 
 export const revalidate = 3600;
@@ -50,25 +50,25 @@ const steps = [
 
 const benefits = [
   {
-    icon: <TrendingUp className="w-6 h-6" />,
+    icon: <TrendUp size={28} weight="duotone" />,
     title: "Guaranteed Volume",
     description:
       "Receive a steady stream of orders from Ghost Roastery's growing customer base. Fill your roaster's spare capacity.",
   },
   {
-    icon: <Shield className="w-6 h-6" />,
+    icon: <ShieldCheck size={28} weight="duotone" />,
     title: "We Handle Marketing",
     description:
       "Our team manages all marketing, customer acquisition, and brand building. You focus on what you do best — roasting.",
   },
   {
-    icon: <Package className="w-6 h-6" />,
+    icon: <Package size={28} weight="duotone" />,
     title: "Simple Fulfilment",
     description:
       "Receive orders, print labels, and mark as dispatched. Our dashboard makes fulfilment effortless.",
   },
   {
-    icon: <Zap className="w-6 h-6" />,
+    icon: <Lightning size={28} weight="duotone" />,
     title: "Fast Payouts",
     description:
       "Transparent payout system with regular payment batches. See exactly what you've earned and when it'll arrive.",
@@ -84,10 +84,29 @@ const requirements = [
   "Commitment to consistent quality",
 ];
 
+const benefitIconMap: Record<string, React.ReactNode> = {
+  TrendUp: <TrendUp size={28} weight="duotone" />,
+  ShieldCheck: <ShieldCheck size={28} weight="duotone" />,
+  Package: <Package size={28} weight="duotone" />,
+  Lightning: <Lightning size={28} weight="duotone" />,
+};
+
 export default async function PartnerProgramPage() {
-  const settings = await client
-    .fetch(roastersPageSettingsQuery)
+  const cms = await client
+    .fetch(roasterPartnerProgramPageQuery)
     .catch(() => null);
+
+  const resolvedSteps = cms?.steps?.length ? cms.steps : steps;
+
+  const resolvedBenefits = cms?.benefits?.length
+    ? cms.benefits.map((b: { icon?: string; title: string; description: string }) => ({
+        icon: benefitIconMap[b.icon || ""] || <Package size={28} weight="duotone" />,
+        title: b.title,
+        description: b.description,
+      }))
+    : benefits;
+
+  const resolvedRequirements = cms?.requirements?.length ? cms.requirements : requirements;
 
   return (
     <>
@@ -95,19 +114,18 @@ export default async function PartnerProgramPage() {
       <section className="py-20 lg:py-28 bg-neutral-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 mb-6">
-            Ghost Roaster{" "}
-            <span className="text-accent">Partner Programme</span>
+            {cms?.heroHeadline ?? "Ghost Roaster"}{" "}
+            <span className="text-accent">{cms?.heroAccentText ?? "Partner Programme"}</span>
           </h1>
           <p className="text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto mb-10">
-            We bring the orders. You bring the craft. A partnership that fills
-            your roaster and grows your business.
+            {cms?.heroSubheadline ?? "We bring the orders. You bring the craft. A partnership that fills your roaster and grows your business."}
           </p>
           <a
             href={`${PLATFORM_URL}/signup?plan=partner`}
             className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
           >
-            Apply Now
-            <ArrowRight className="ml-2 w-5 h-5" />
+            {cms?.heroCtaText ?? "Apply Now"}
+            <ArrowRight className="ml-2" size={24} weight="duotone" />
           </a>
         </div>
       </section>
@@ -116,10 +134,10 @@ export default async function PartnerProgramPage() {
       <section className="py-20 lg:py-28 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-black text-neutral-900 text-center mb-16">
-            How it works
+            {cms?.stepsTitle ?? "How it works"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {steps.map((step) => (
+            {resolvedSteps.map((step: { step: string; title: string; description: string }) => (
               <div key={step.step} className="relative">
                 <div className="text-5xl font-black text-accent/20 mb-3">
                   {step.step}
@@ -138,10 +156,10 @@ export default async function PartnerProgramPage() {
       <section className="py-20 lg:py-28 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-black text-neutral-900 text-center mb-16">
-            Why partner with us
+            {cms?.benefitsTitle ?? "Why partner with us"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {benefits.map((benefit) => (
+            {resolvedBenefits.map((benefit: { icon: React.ReactNode; title: string; description: string }) => (
               <div
                 key={benefit.title}
                 className="p-6 rounded-xl border border-neutral-200 hover:shadow-lg transition-shadow"
@@ -160,10 +178,10 @@ export default async function PartnerProgramPage() {
       </section>
 
       {/* Sanity Rich Text Content */}
-      {settings?.partnerProgramContent && (
+      {cms?.additionalContent && (
         <section className="py-16 bg-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl prose prose-neutral prose-lg">
-            <PortableText value={settings.partnerProgramContent as PortableTextBlock[]} />
+            <PortableText value={cms.additionalContent as PortableTextBlock[]} />
           </div>
         </section>
       )}
@@ -172,12 +190,12 @@ export default async function PartnerProgramPage() {
       <section className="py-20 lg:py-28 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
           <h2 className="text-3xl sm:text-4xl font-black text-neutral-900 text-center mb-12">
-            Requirements
+            {cms?.requirementsTitle ?? "Requirements"}
           </h2>
           <div className="space-y-4">
-            {requirements.map((req) => (
+            {resolvedRequirements.map((req: string) => (
               <div key={req} className="flex items-start gap-3 p-4">
-                <CheckCircle2 className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+                <CheckCircle className="text-accent flex-shrink-0 mt-0.5" size={24} weight="duotone" />
                 <span className="text-neutral-700">{req}</span>
               </div>
             ))}
@@ -189,18 +207,17 @@ export default async function PartnerProgramPage() {
       <section className="py-20 lg:py-28 bg-neutral-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-6">
-            Ready to become a Ghost Roaster?
+            {cms?.ctaHeadline ?? "Ready to become a Ghost Roaster?"}
           </h2>
           <p className="text-lg text-neutral-300 max-w-xl mx-auto mb-10">
-            Apply today and start receiving orders within the week. No upfront
-            costs, no risk.
+            {cms?.ctaDescription ?? "Apply today and start receiving orders within the week. No upfront costs, no risk."}
           </p>
           <a
             href={`${PLATFORM_URL}/signup?plan=partner`}
             className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
           >
-            Apply Now
-            <ArrowRight className="ml-2 w-5 h-5" />
+            {cms?.ctaButtonText ?? "Apply Now"}
+            <ArrowRight className="ml-2" size={24} weight="duotone" />
           </a>
         </div>
       </section>

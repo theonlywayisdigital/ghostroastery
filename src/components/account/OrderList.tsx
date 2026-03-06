@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, ShoppingBag, Plus } from "lucide-react";
+import { SpinnerGap, ShoppingBag, Plus } from "@phosphor-icons/react";
 import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/Button";
 import { FadeIn } from "@/components/ui/FadeIn";
@@ -28,7 +28,7 @@ export function OrderList() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Loader2 className="w-6 h-6 animate-spin text-neutral-500" />
+        <SpinnerGap size={24} weight="duotone" className="animate-spin text-neutral-500" />
       </div>
     );
   }
@@ -38,7 +38,7 @@ export function OrderList() {
       <FadeIn>
         <div className="text-center py-16">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-neutral-800 flex items-center justify-center">
-            <ShoppingBag className="w-8 h-8 text-neutral-500" />
+            <ShoppingBag size={40} weight="duotone" className="text-white" />
           </div>
           <h3 className="text-lg font-semibold mb-2">No orders yet</h3>
           <p className="text-neutral-400 mb-6">
@@ -78,7 +78,7 @@ export function OrderList() {
           className="flex items-center gap-4 p-5 rounded-xl border border-dashed border-neutral-700 hover:border-accent transition-colors group"
         >
           <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-            <Plus className="w-6 h-6 text-accent" />
+            <Plus size={28} weight="duotone" className="text-accent" />
           </div>
           <div>
             <p className="font-semibold text-foreground group-hover:text-accent transition-colors">

@@ -9,15 +9,28 @@ import type { PricingData } from "@/lib/pricing";
 
 interface PricingPreviewProps {
   pricingData: PricingData;
+  sectionTitle?: string;
+  sectionSubtitle?: string;
+  footnote?: string;
+  ctaText?: string;
 }
 
-export function PricingPreview({ pricingData }: PricingPreviewProps) {
+export function PricingPreview({
+  pricingData,
+  sectionTitle,
+  sectionSubtitle,
+  footnote,
+  ctaText,
+}: PricingPreviewProps) {
   return (
     <Section>
       <FadeIn>
         <SectionHeader
-          title="Transparent pricing. No surprises."
-          subtitle="Prices include roasting, packing and labelling. Shipping calculated at checkout."
+          title={sectionTitle ?? "Transparent pricing. No surprises."}
+          subtitle={
+            sectionSubtitle ??
+            "Prices include roasting, packing and labelling. Shipping calculated at checkout."
+          }
         />
       </FadeIn>
 
@@ -29,15 +42,21 @@ export function PricingPreview({ pricingData }: PricingPreviewProps) {
 
           <div className="text-center mt-8">
             <p className="text-neutral-400 mb-6">
-              Need 100+ bags? Check out our{" "}
-              <Link href="/wholesale" className="text-accent hover:underline">
-                wholesale pricing
-              </Link>
-              .
+              {footnote ? (
+                footnote
+              ) : (
+                <>
+                  Need 100+ bags? Check out our{" "}
+                  <Link href="/wholesale" className="text-accent hover:underline">
+                    wholesale pricing
+                  </Link>
+                  .
+                </>
+              )}
             </p>
             <Link href="/build">
               <Button variant="primary" size="lg">
-                Start Your Order
+                {ctaText ?? "Start Your Order"}
               </Button>
             </Link>
           </div>

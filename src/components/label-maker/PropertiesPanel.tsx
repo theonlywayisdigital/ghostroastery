@@ -5,29 +5,29 @@ import * as fabric from "fabric";
 import {
   ArrowUp,
   ArrowDown,
-  ChevronsUp,
-  ChevronsDown,
+  CaretDoubleUp,
+  CaretDoubleDown,
   FlipHorizontal,
   FlipVertical,
-  Trash2,
+  Trash,
   Copy,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  AlignStartHorizontal,
+  TextAlignLeft,
+  TextAlignCenter,
+  TextAlignRight,
+  AlignTop,
   AlignCenterHorizontal,
-  AlignEndHorizontal,
-  AlignStartVertical,
+  AlignBottom,
+  AlignLeft,
   AlignCenterVertical,
-  AlignEndVertical,
-  Bold,
-  Italic,
-  Underline,
-  ChevronDown,
+  AlignRight,
+  TextB,
+  TextItalic,
+  TextUnderline,
+  CaretDown,
   Image as ImageIcon,
   X,
-  Search,
-} from "lucide-react";
+  MagnifyingGlass,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { pxToMm, mmToPx, FONT_LIBRARY, loadGoogleFont, loadGoogleFontAsync } from "./types";
 import { ColourPicker } from "./ColourPicker";
@@ -866,13 +866,13 @@ export function PropertiesPanel({
               Align
             </h4>
             <div className="flex items-center gap-1">
-              <LayerButton icon={<AlignStartVertical className="w-3.5 h-3.5" />} label="Align left" onClick={() => alignObjects("left")} />
-              <LayerButton icon={<AlignCenterVertical className="w-3.5 h-3.5" />} label="Align center" onClick={() => alignObjects("centerH")} />
-              <LayerButton icon={<AlignEndVertical className="w-3.5 h-3.5" />} label="Align right" onClick={() => alignObjects("right")} />
+              <LayerButton icon={<AlignLeft size={14} weight="duotone" />} label="Align left" onClick={() => alignObjects("left")} />
+              <LayerButton icon={<AlignCenterVertical size={14} weight="duotone" />} label="Align center" onClick={() => alignObjects("centerH")} />
+              <LayerButton icon={<AlignRight size={14} weight="duotone" />} label="Align right" onClick={() => alignObjects("right")} />
               <div className="w-px h-5 bg-neutral-700 mx-0.5" />
-              <LayerButton icon={<AlignStartHorizontal className="w-3.5 h-3.5" />} label="Align top" onClick={() => alignObjects("top")} />
-              <LayerButton icon={<AlignCenterHorizontal className="w-3.5 h-3.5" />} label="Align middle" onClick={() => alignObjects("centerV")} />
-              <LayerButton icon={<AlignEndHorizontal className="w-3.5 h-3.5" />} label="Align bottom" onClick={() => alignObjects("bottom")} />
+              <LayerButton icon={<AlignTop size={14} weight="duotone" />} label="Align top" onClick={() => alignObjects("top")} />
+              <LayerButton icon={<AlignCenterHorizontal size={14} weight="duotone" />} label="Align middle" onClick={() => alignObjects("centerV")} />
+              <LayerButton icon={<AlignBottom size={14} weight="duotone" />} label="Align bottom" onClick={() => alignObjects("bottom")} />
             </div>
           </div>
           <LayerSection
@@ -1145,7 +1145,7 @@ function BackgroundSection({
           onClick={() => bgInputRef.current?.click()}
           className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 bg-neutral-900 hover:bg-neutral-700 border border-neutral-700 rounded text-[10px] text-neutral-300 transition-colors"
         >
-          <ImageIcon className="w-3 h-3" />
+          <ImageIcon size={12} weight="duotone" />
           {bgState.hasImage ? "Replace BG Image" : "Upload BG Image"}
         </button>
       </div>
@@ -1215,25 +1215,25 @@ function TextSection({
           onClick={onBold}
           title="Bold"
         >
-          <Bold className="w-3.5 h-3.5" />
+          <TextB size={14} weight="duotone" />
         </ToggleBtn>
         <ToggleBtn active={info.fontStyle === "italic"} onClick={onItalic} title="Italic">
-          <Italic className="w-3.5 h-3.5" />
+          <TextItalic size={14} weight="duotone" />
         </ToggleBtn>
         <ToggleBtn active={!!info.underline} onClick={onUnderline} title="Underline">
-          <Underline className="w-3.5 h-3.5" />
+          <TextUnderline size={14} weight="duotone" />
         </ToggleBtn>
 
         <div className="w-px h-5 bg-neutral-700 mx-0.5" />
 
         <ToggleBtn active={info.textAlign === "left"} onClick={() => onAlign("left")} title="Align left">
-          <AlignLeft className="w-3.5 h-3.5" />
+          <TextAlignLeft size={14} weight="duotone" />
         </ToggleBtn>
         <ToggleBtn active={info.textAlign === "center"} onClick={() => onAlign("center")} title="Align centre">
-          <AlignCenter className="w-3.5 h-3.5" />
+          <TextAlignCenter size={14} weight="duotone" />
         </ToggleBtn>
         <ToggleBtn active={info.textAlign === "right"} onClick={() => onAlign("right")} title="Align right">
-          <AlignRight className="w-3.5 h-3.5" />
+          <TextAlignRight size={14} weight="duotone" />
         </ToggleBtn>
       </div>
 
@@ -1321,10 +1321,10 @@ function ShapeSection({
       />
       <div className="flex items-center gap-1 pt-1">
         <ToggleBtn active={!!info.flipX} onClick={onFlipX} title="Flip horizontal">
-          <FlipHorizontal className="w-3 h-3" />
+          <FlipHorizontal size={12} weight="duotone" />
         </ToggleBtn>
         <ToggleBtn active={!!info.flipY} onClick={onFlipY} title="Flip vertical">
-          <FlipVertical className="w-3 h-3" />
+          <FlipVertical size={12} weight="duotone" />
         </ToggleBtn>
       </div>
     </Section>
@@ -1374,7 +1374,7 @@ function ImageSection({
             onClick={() => replaceInputRef.current?.click()}
             className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 bg-neutral-900 hover:bg-neutral-700 border border-neutral-700 rounded text-[10px] text-neutral-300 transition-colors"
           >
-            <ImageIcon className="w-3 h-3" />
+            <ImageIcon size={12} weight="duotone" />
             Replace Image
           </button>
         </>
@@ -1389,11 +1389,11 @@ function ImageSection({
       />
       <div className="flex items-center gap-1">
         <ToggleBtn active={!!info.flipX} onClick={onFlipX} title="Flip horizontal">
-          <FlipHorizontal className="w-3 h-3" />
+          <FlipHorizontal size={12} weight="duotone" />
           <span className="text-[10px] ml-1">Flip H</span>
         </ToggleBtn>
         <ToggleBtn active={!!info.flipY} onClick={onFlipY} title="Flip vertical">
-          <FlipVertical className="w-3 h-3" />
+          <FlipVertical size={12} weight="duotone" />
           <span className="text-[10px] ml-1">Flip V</span>
         </ToggleBtn>
       </div>
@@ -1424,10 +1424,10 @@ function LayerSection({
         Layer
       </h4>
       <div className="flex items-center gap-1">
-        <LayerButton icon={<ChevronsUp className="w-3.5 h-3.5" />} label="Bring to front" onClick={bringToFront} />
-        <LayerButton icon={<ArrowUp className="w-3.5 h-3.5" />} label="Bring forward" onClick={bringForward} />
-        <LayerButton icon={<ArrowDown className="w-3.5 h-3.5" />} label="Send backward" onClick={sendBackward} />
-        <LayerButton icon={<ChevronsDown className="w-3.5 h-3.5" />} label="Send to back" onClick={sendToBack} />
+        <LayerButton icon={<CaretDoubleUp size={14} weight="duotone" />} label="Bring to front" onClick={bringToFront} />
+        <LayerButton icon={<ArrowUp size={14} weight="duotone" />} label="Bring forward" onClick={bringForward} />
+        <LayerButton icon={<ArrowDown size={14} weight="duotone" />} label="Send backward" onClick={sendBackward} />
+        <LayerButton icon={<CaretDoubleDown size={14} weight="duotone" />} label="Send to back" onClick={sendToBack} />
         <div className="flex-1" />
         {onDuplicate && (
           <button
@@ -1435,7 +1435,7 @@ function LayerSection({
             title="Duplicate"
             className="p-1.5 rounded text-neutral-400 hover:text-foreground hover:bg-neutral-700 transition-colors"
           >
-            <Copy className="w-3.5 h-3.5" />
+            <Copy size={14} weight="duotone" />
           </button>
         )}
         <button
@@ -1443,7 +1443,7 @@ function LayerSection({
           title="Delete"
           className="p-1.5 rounded text-red-400 hover:bg-red-950/50 transition-colors"
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <Trash size={14} weight="duotone" />
         </button>
       </div>
     </div>
@@ -1498,14 +1498,14 @@ function FontFamilySelector({
         style={{ fontFamily: value }}
       >
         <span className="truncate">{value}</span>
-        <ChevronDown className="w-3 h-3 text-neutral-500 shrink-0" />
+        <CaretDown size={12} weight="duotone" className="text-neutral-500 shrink-0" />
       </button>
 
       {open && (
         <div className="absolute z-50 mt-1 left-0 right-0 bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl overflow-hidden">
           {/* Search */}
           <div className="flex items-center gap-1.5 px-2 py-1.5 border-b border-neutral-700">
-            <Search className="w-3 h-3 text-neutral-500 shrink-0" />
+            <MagnifyingGlass size={12} weight="duotone" className="text-neutral-500 shrink-0" />
             <input
               ref={inputRef}
               type="text"
@@ -1516,7 +1516,7 @@ function FontFamilySelector({
             />
             {search && (
               <button onClick={() => setSearch("")} className="text-neutral-500 hover:text-neutral-300">
-                <X className="w-3 h-3" />
+                <X size={12} weight="duotone" />
               </button>
             )}
           </div>

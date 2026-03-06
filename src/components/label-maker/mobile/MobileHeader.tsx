@@ -2,20 +2,19 @@
 
 import { useState } from "react";
 import {
-  Undo2,
-  Redo2,
-  MoreHorizontal,
+  ArrowCounterClockwise,
+  ArrowClockwise,
+  DotsThree,
   Ruler,
-  Grid3X3,
-  Magnet,
-  RotateCcw,
+  GridFour,
+  MagnetStraight,
   ShieldCheck,
   Eye,
   ArrowRight,
   FolderOpen,
-  Save,
-  Loader2,
-} from "lucide-react";
+  FloppyDisk,
+  SpinnerGap,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 interface MobileHeaderProps {
@@ -82,7 +81,7 @@ export function MobileHeader({
               : "text-neutral-600"
           )}
         >
-          <Undo2 className="w-4 h-4" />
+          <ArrowCounterClockwise size={16} weight="duotone" />
         </button>
         <button
           onClick={onRedo}
@@ -94,7 +93,7 @@ export function MobileHeader({
               : "text-neutral-600"
           )}
         >
-          <Redo2 className="w-4 h-4" />
+          <ArrowClockwise size={16} weight="duotone" />
         </button>
       </div>
 
@@ -104,15 +103,15 @@ export function MobileHeader({
           onClick={onBagPreview}
           className="flex items-center gap-1 px-2 py-1.5 text-[11px] text-neutral-300 active:bg-neutral-700 rounded transition-colors"
         >
-          <Eye className="w-3.5 h-3.5" />
+          <Eye size={14} weight="duotone" />
           Preview
         </button>
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="p-2 rounded text-neutral-400 active:bg-neutral-700 transition-colors"
+            className="p-2 rounded text-white active:bg-neutral-700 transition-colors"
           >
-            <MoreHorizontal className="w-4 h-4" />
+            <DotsThree size={16} weight="duotone" />
           </button>
 
           {/* Dropdown menu */}
@@ -124,7 +123,7 @@ export function MobileHeader({
               />
               <div className="absolute right-0 top-full mt-1 z-50 w-48 bg-neutral-800 border border-neutral-700 rounded-lg shadow-xl overflow-hidden">
                 <MenuItem
-                  icon={saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  icon={saving ? <SpinnerGap size={16} weight="duotone" className="animate-spin" /> : <FloppyDisk size={16} weight="duotone" />}
                   label={saved ? "Saved!" : saving ? "Saving..." : "Save"}
                   onClick={() => {
                     onSave();
@@ -132,7 +131,7 @@ export function MobileHeader({
                   }}
                 />
                 <MenuItem
-                  icon={<FolderOpen className="w-4 h-4" />}
+                  icon={<FolderOpen size={16} weight="duotone" />}
                   label="My Labels"
                   onClick={() => {
                     onMyLabels();
@@ -141,7 +140,7 @@ export function MobileHeader({
                 />
                 <div className="h-px bg-neutral-700" />
                 <MenuItem
-                  icon={<Ruler className="w-4 h-4" />}
+                  icon={<Ruler size={16} weight="duotone" />}
                   label="Guides"
                   active={guidesVisible}
                   onClick={() => {
@@ -150,7 +149,7 @@ export function MobileHeader({
                   }}
                 />
                 <MenuItem
-                  icon={<Grid3X3 className="w-4 h-4" />}
+                  icon={<GridFour size={16} weight="duotone" />}
                   label="Grid"
                   active={gridVisible}
                   onClick={() => {
@@ -159,7 +158,7 @@ export function MobileHeader({
                   }}
                 />
                 <MenuItem
-                  icon={<Magnet className="w-4 h-4" />}
+                  icon={<MagnetStraight size={16} weight="duotone" />}
                   label="Snap to guides"
                   active={snapEnabled}
                   onClick={() => {
@@ -169,7 +168,7 @@ export function MobileHeader({
                 />
                 <div className="h-px bg-neutral-700" />
                 <MenuItem
-                  icon={<ShieldCheck className="w-4 h-4" />}
+                  icon={<ShieldCheck size={16} weight="duotone" />}
                   label="Print readiness"
                   onClick={() => {
                     onPrintCheck();
@@ -177,7 +176,7 @@ export function MobileHeader({
                   }}
                 />
                 <MenuItem
-                  icon={<Eye className="w-4 h-4" />}
+                  icon={<Eye size={16} weight="duotone" />}
                   label="Preview on bag"
                   onClick={() => {
                     onBagPreview();
@@ -186,7 +185,7 @@ export function MobileHeader({
                 />
                 <div className="h-px bg-neutral-700" />
                 <MenuItem
-                  icon={<RotateCcw className="w-4 h-4" />}
+                  icon={<ArrowCounterClockwise size={16} weight="duotone" />}
                   label="Start fresh"
                   onClick={() => {
                     onStartFresh();
@@ -206,13 +205,13 @@ export function MobileHeader({
         >
           {autoExporting ? (
             <>
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <SpinnerGap size={14} weight="duotone" className="animate-spin" />
               Exporting...
             </>
           ) : (
             <>
               Done
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight size={14} weight="duotone" />
             </>
           )}
         </button>

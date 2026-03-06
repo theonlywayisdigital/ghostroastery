@@ -28,6 +28,7 @@ export const faq = defineType({
           { title: "Wholesale", value: "wholesale" },
           { title: "General", value: "general" },
           { title: "Roaster Pricing", value: "roaster-pricing" },
+          { title: "Roaster Features", value: "roaster-features" },
         ],
       },
       initialValue: "general",

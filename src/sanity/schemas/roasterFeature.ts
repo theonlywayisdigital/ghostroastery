@@ -47,7 +47,7 @@ export const roasterFeature = defineType({
       name: "icon",
       title: "Icon Name",
       type: "string",
-      description: "Lucide icon name (e.g. 'store', 'bar-chart-3', 'megaphone')",
+      description: "Phosphor icon name (e.g. 'store', 'bar-chart-3', 'megaphone')",
     }),
     defineField({
       name: "screenshot",

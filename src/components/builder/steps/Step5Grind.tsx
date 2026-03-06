@@ -5,7 +5,7 @@ import { useBuilder } from "../BuilderContext";
 import { StepHeading } from "../StepHeading";
 import { SelectionCard } from "../SelectionCard";
 import { BagVisualisation } from "../BagVisualisation";
-import { Coffee } from "lucide-react";
+import { Coffee } from "@phosphor-icons/react";
 
 export function Step5Grind() {
   const { state, dispatch, grindOptions, builderSettings } = useBuilder();
@@ -55,7 +55,7 @@ export function Step5Grind() {
                           : "bg-neutral-800 text-neutral-400"
                       }`}
                     >
-                      <Coffee className="w-8 h-8" />
+                      <Coffee size={40} weight="duotone" />
                     </div>
                   )}
                 </div>

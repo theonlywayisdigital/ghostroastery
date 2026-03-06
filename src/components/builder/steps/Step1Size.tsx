@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
+import { ArrowSquareOut } from "@phosphor-icons/react";
 import { useBuilder } from "../BuilderContext";
 import { StepHeading } from "../StepHeading";
 import { SelectionCard } from "../SelectionCard";
@@ -76,7 +76,7 @@ export function Step1Size() {
               onClick={(e) => e.stopPropagation()}
             >
               Get a wholesale quote
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ArrowSquareOut size={16} weight="duotone" />
             </a>
           </motion.div>
         </div>

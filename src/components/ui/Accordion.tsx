@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { CaretDown } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 interface AccordionItemProps {
@@ -25,9 +25,11 @@ function AccordionItem({
         className="flex items-center justify-between w-full py-5 text-left"
       >
         <span className="text-lg font-semibold pr-4">{question}</span>
-        <ChevronDown
+        <CaretDown
+          size={20}
+          weight="duotone"
           className={cn(
-            "w-5 h-5 text-neutral-400 transition-transform duration-300 flex-shrink-0",
+            "text-white transition-transform duration-300 flex-shrink-0",
             isOpen && "rotate-180"
           )}
         />

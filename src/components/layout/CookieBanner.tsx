@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { X } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +10,7 @@ const COOKIE_CONSENT_KEY = "ghost-roasting-cookie-consent";
 
 type ConsentStatus = "pending" | "accepted" | "declined";
 
-export function CookieBanner() {
+export function CookieBanner({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const [status, setStatus] = useState<ConsentStatus>("pending");
   const [isVisible, setIsVisible] = useState(false);
 
@@ -54,14 +54,25 @@ export function CookieBanner() {
       )}
     >
       <div className="container mx-auto">
-        <div className="bg-neutral-800 border border-neutral-700 rounded-xl p-6 shadow-xl">
+        <div className={cn(
+          "rounded-xl p-6 shadow-xl border",
+          variant === "light"
+            ? "bg-white border-neutral-200"
+            : "bg-neutral-800 border-neutral-700"
+        )}>
           <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
             {/* Text Content */}
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-foreground mb-2">
+              <h3 className={cn(
+                "text-lg font-semibold mb-2",
+                variant === "light" ? "text-neutral-900" : "text-foreground"
+              )}>
                 We value your privacy
               </h3>
-              <p className="text-sm text-neutral-300">
+              <p className={cn(
+                "text-sm",
+                variant === "light" ? "text-neutral-600" : "text-neutral-300"
+              )}>
                 We use cookies to enhance your browsing experience and analyse
                 our traffic. By clicking &quot;Accept All&quot;, you consent to
                 our use of cookies.{" "}
@@ -80,7 +91,10 @@ export function CookieBanner() {
                 variant="outline"
                 size="sm"
                 onClick={handleDecline}
-                className="order-2 sm:order-1"
+                className={cn(
+                  "order-2 sm:order-1",
+                  variant === "light" && "text-neutral-700 border-neutral-300 hover:bg-neutral-50"
+                )}
               >
                 Decline
               </Button>
@@ -97,10 +111,15 @@ export function CookieBanner() {
             {/* Close button (declines) */}
             <button
               onClick={handleDecline}
-              className="absolute top-4 right-4 lg:hidden p-1 text-neutral-400 hover:text-foreground transition-colors"
+              className={cn(
+                "absolute top-4 right-4 lg:hidden p-1 transition-colors",
+                variant === "light"
+                  ? "text-neutral-400 hover:text-neutral-900"
+                  : "text-white hover:text-foreground"
+              )}
               aria-label="Close"
             >
-              <X className="h-5 w-5" />
+              <X size={20} weight="duotone" />
             </button>
           </div>
         </div>

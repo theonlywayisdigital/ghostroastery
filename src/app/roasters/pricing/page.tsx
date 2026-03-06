@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
-import { roasterFaqsQuery } from "@/sanity/lib/queries";
+import { roasterFaqsQuery, roasterPricingPageQuery } from "@/sanity/lib/queries";
 import { PricingContent } from "./PricingContent";
 
 export const revalidate = 3600;
@@ -18,7 +18,10 @@ interface FAQ {
 }
 
 export default async function PricingPage() {
-  const faqs = await client.fetch<FAQ[]>(roasterFaqsQuery).catch(() => []);
+  const [faqs, cms] = await Promise.all([
+    client.fetch<FAQ[]>(roasterFaqsQuery).catch(() => []),
+    client.fetch(roasterPricingPageQuery).catch(() => null),
+  ]);
 
-  return <PricingContent faqs={faqs} />;
+  return <PricingContent faqs={faqs} cms={cms} />;
 }

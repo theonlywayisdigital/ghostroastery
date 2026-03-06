@@ -2,17 +2,17 @@
 
 import { useState, useCallback } from "react";
 import {
-  ImageIcon,
+  Image as ImageIcon,
   Palette,
-  LayoutList,
-  PenLine,
-  Sparkles,
-  Loader2,
-  RefreshCw,
+  ListDashes,
+  PenNib,
+  Sparkle,
+  SpinnerGap,
+  ArrowsClockwise,
   Plus,
-  AlertTriangle,
-  ChevronDown,
-} from "lucide-react";
+  Warning,
+  CaretDown,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 type AiSection = "background" | "palette" | "layout" | "copy";
@@ -37,25 +37,25 @@ const SECTIONS: {
   {
     id: "background",
     label: "Generate Background",
-    icon: <ImageIcon className="w-4 h-4" />,
+    icon: <ImageIcon size={16} weight="duotone" />,
     description: "AI-generated backgrounds for your label",
   },
   {
     id: "palette",
     label: "Colour Palette",
-    icon: <Palette className="w-4 h-4" />,
+    icon: <Palette size={16} weight="duotone" />,
     description: "Get colour suggestions from your logo",
   },
   {
     id: "layout",
     label: "Layout Review",
-    icon: <LayoutList className="w-4 h-4" />,
+    icon: <ListDashes size={16} weight="duotone" />,
     description: "AI suggestions to improve your design",
   },
   {
     id: "copy",
     label: "Generate Copy",
-    icon: <PenLine className="w-4 h-4" />,
+    icon: <PenNib size={16} weight="duotone" />,
     description: "AI-written text for your coffee label",
   },
 ];
@@ -89,7 +89,7 @@ export function MobileAiSheet({
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-1.5 mb-2">
-        <Sparkles className="w-4 h-4 text-accent" />
+        <Sparkle size={16} weight="duotone" className="text-accent" />
         <span className="text-xs font-semibold text-neutral-300">
           AI-Powered Tools
         </span>
@@ -127,9 +127,11 @@ export function MobileAiSheet({
                 {section.description}
               </p>
             </div>
-            <ChevronDown
+            <CaretDown
+              size={16}
+              weight="duotone"
               className={cn(
-                "w-4 h-4 text-neutral-500 transition-transform",
+                "text-neutral-500 transition-transform",
                 expandedSection === section.id && "rotate-180"
               )}
             />
@@ -230,12 +232,12 @@ function BackgroundSection({
       >
         {loading ? (
           <>
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <SpinnerGap size={14} weight="duotone" className="animate-spin" />
             Generating...
           </>
         ) : (
           <>
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkle size={14} weight="duotone" />
             Generate
           </>
         )}
@@ -323,12 +325,12 @@ function PaletteSection({
       >
         {loading ? (
           <>
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <SpinnerGap size={14} weight="duotone" className="animate-spin" />
             Analysing...
           </>
         ) : (
           <>
-            <Palette className="w-3.5 h-3.5" />
+            <Palette size={14} weight="duotone" />
             Suggest from logo
           </>
         )}
@@ -410,12 +412,12 @@ function LayoutSection({
       >
         {loading ? (
           <>
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <SpinnerGap size={14} weight="duotone" className="animate-spin" />
             Reviewing...
           </>
         ) : (
           <>
-            <LayoutList className="w-3.5 h-3.5" />
+            <ListDashes size={14} weight="duotone" />
             Review my layout
           </>
         )}
@@ -555,12 +557,12 @@ function CopySection({
       >
         {loading ? (
           <>
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <SpinnerGap size={14} weight="duotone" className="animate-spin" />
             Generating...
           </>
         ) : (
           <>
-            <PenLine className="w-3.5 h-3.5" />
+            <PenNib size={14} weight="duotone" />
             Generate copy
           </>
         )}
@@ -624,7 +626,7 @@ function CopyResult({
           onClick={onAdd}
           className="flex items-center gap-0.5 text-[10px] text-accent"
         >
-          <Plus className="w-3 h-3" />
+          <Plus size={12} weight="duotone" />
           Add
         </button>
       </div>
@@ -644,14 +646,14 @@ function ErrorMessage({
 }) {
   return (
     <div className="flex items-center gap-2 p-2.5 bg-red-950/50 border border-red-800 rounded-lg text-[10px] text-red-400">
-      <AlertTriangle className="w-3 h-3 shrink-0" />
+      <Warning size={12} weight="duotone" className="shrink-0" />
       <span className="flex-1">{error}</span>
       <button
         onClick={onRetry}
         disabled={loading}
         className="shrink-0 flex items-center gap-1 text-accent"
       >
-        <RefreshCw className="w-3 h-3" />
+        <ArrowsClockwise size={12} weight="duotone" />
         Retry
       </button>
     </div>

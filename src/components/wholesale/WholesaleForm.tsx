@@ -14,7 +14,7 @@ import {
   bagSizeOptions,
   brandedOptions,
 } from "@/lib/validation";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle } from "@phosphor-icons/react";
 
 export function WholesaleForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,7 +58,7 @@ export function WholesaleForm() {
     return (
       <FadeIn>
         <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-8 text-center">
-          <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+          <CheckCircle size={56} weight="duotone" className="text-green-500 mx-auto mb-4" />
           <h3 className="text-2xl font-bold mb-2">Thanks for your enquiry</h3>
           <p className="text-neutral-300">
             We&apos;ll be in touch within 2 business days.

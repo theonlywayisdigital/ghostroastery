@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import * as ToastPrimitive from "@radix-ui/react-toast";
-import { X } from "lucide-react";
+import { X } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 type ToastVariant = "default" | "success" | "error";
@@ -85,8 +85,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                   </ToastPrimitive.Description>
                 )}
               </div>
-              <ToastPrimitive.Close className="text-neutral-500 hover:text-foreground transition-colors">
-                <X className="w-4 h-4" />
+              <ToastPrimitive.Close className="text-white hover:text-foreground transition-colors">
+                <X size={16} weight="duotone" />
               </ToastPrimitive.Close>
             </div>
           </ToastPrimitive.Root>

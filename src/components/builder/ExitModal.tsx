@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X } from "@phosphor-icons/react";
 
 interface ExitModalProps {
   isOpen: boolean;
@@ -40,9 +40,9 @@ export function ExitModal({ isOpen, onClose, onConfirm }: ExitModalProps) {
               {/* Close button */}
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 text-neutral-400 hover:text-foreground transition-colors"
+                className="absolute top-4 right-4 text-white hover:text-foreground transition-colors"
               >
-                <X className="w-6 h-6" />
+                <X size={24} weight="duotone" />
               </button>
 
               <h2 className="text-2xl font-bold text-foreground mb-4">

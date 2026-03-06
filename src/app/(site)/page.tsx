@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
+import { customerHomePageQuery } from "@/sanity/lib/queries";
 import { createServerClient } from "@/lib/supabase";
 import type { PricingData } from "@/lib/pricing";
 import {
@@ -123,10 +124,20 @@ async function getCaseStudy() {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function getHomePageContent(): Promise<any> {
+  try {
+    return await client.fetch(customerHomePageQuery);
+  } catch {
+    return null;
+  }
+}
+
 export default async function HomePage() {
-  const [pricingData, caseStudy] = await Promise.all([
+  const [pricingData, caseStudy, cms] = await Promise.all([
     getPricingData(),
     getCaseStudy(),
+    getHomePageContent(),
   ]);
 
   return (
@@ -135,13 +146,41 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Hero />
-      <HowItWorks />
-      <ProductPaths />
-      <PricingPreview pricingData={pricingData} />
-      <CaseStudySnippet caseStudy={caseStudy} />
-      <TrustSignals />
-      <FinalCTA />
+      <Hero
+        headline={cms?.heroHeadline}
+        subheadline={cms?.heroSubheadline}
+        primaryCta={cms?.heroPrimaryCta}
+        primaryCtaHref={cms?.heroPrimaryCtaHref}
+        secondaryCta={cms?.heroSecondaryCta}
+        secondaryCtaHref={cms?.heroSecondaryCtaHref}
+      />
+      <HowItWorks
+        title={cms?.howItWorksTitle}
+        steps={cms?.howItWorksSteps}
+      />
+      <ProductPaths
+        title={cms?.productPathsTitle}
+        paths={cms?.productPaths}
+      />
+      <PricingPreview
+        pricingData={pricingData}
+        sectionTitle={cms?.pricingSectionTitle}
+        sectionSubtitle={cms?.pricingSectionSubtitle}
+        footnote={cms?.pricingSectionFootnote}
+        ctaText={cms?.pricingSectionCta}
+      />
+      <CaseStudySnippet
+        caseStudy={caseStudy}
+        sectionTitle={cms?.caseStudySectionTitle}
+      />
+      <TrustSignals signals={cms?.trustSignals} />
+      <FinalCTA
+        headline={cms?.finalCtaHeadline}
+        primaryCta={cms?.finalCtaPrimaryCta}
+        primaryHref={cms?.finalCtaPrimaryHref}
+        secondaryCta={cms?.finalCtaSecondaryCta}
+        secondaryHref={cms?.finalCtaSecondaryHref}
+      />
     </>
   );
 }

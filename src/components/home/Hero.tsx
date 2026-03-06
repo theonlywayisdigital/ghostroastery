@@ -4,14 +4,32 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 
-export function Hero() {
+interface HeroProps {
+  headline?: string;
+  subheadline?: string;
+  primaryCta?: string;
+  primaryCtaHref?: string;
+  secondaryCta?: string;
+  secondaryCtaHref?: string;
+}
+
+export function Hero({
+  headline,
+  subheadline,
+  primaryCta,
+  primaryCtaHref,
+  secondaryCta,
+  secondaryCtaHref,
+}: HeroProps) {
+  // Split on newlines for line-by-line rendering (second line gets accent)
+  const lines = (headline ?? "Your brand.\nOur roastery.\nNobody needs to know.").split("\n");
+  const subLines = (subheadline ?? "Ghost roasted, packed and shipped across the UK.\nYour name on every bag.").split("\n");
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-background">
-        {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/30 via-transparent to-background" />
-        {/* Subtle texture pattern */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -27,11 +45,12 @@ export function Hero() {
           transition={{ duration: 0.8, ease: [0.21, 0.47, 0.32, 0.98] }}
         >
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[1.1] mb-6">
-            Your brand.
-            <br />
-            <span className="text-accent">Our roastery.</span>
-            <br />
-            Nobody needs to know.
+            {lines.map((line, i) => (
+              <span key={i}>
+                {i === 1 ? <span className="text-accent">{line}</span> : line}
+                {i < lines.length - 1 && <br />}
+              </span>
+            ))}
           </h1>
         </motion.div>
 
@@ -41,9 +60,12 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.2, ease: [0.21, 0.47, 0.32, 0.98] }}
           className="text-lg sm:text-xl md:text-2xl text-neutral-300 max-w-2xl mx-auto mb-10"
         >
-          Ghost roasted, packed and shipped across the UK.
-          <br className="hidden sm:block" />
-          Your name on every bag.
+          {subLines.map((line, i) => (
+            <span key={i}>
+              {line}
+              {i < subLines.length - 1 && <br className="hidden sm:block" />}
+            </span>
+          ))}
         </motion.p>
 
         <motion.div
@@ -52,14 +74,14 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Link href="/build">
+          <Link href={primaryCtaHref ?? "/build"}>
             <Button variant="primary" size="lg">
-              Build Your Brand
+              {primaryCta ?? "Build Your Brand"}
             </Button>
           </Link>
-          <Link href="/wholesale">
+          <Link href={secondaryCtaHref ?? "/wholesale"}>
             <Button variant="outline" size="lg">
-              Wholesale Enquiry
+              {secondaryCta ?? "Wholesale Enquiry"}
             </Button>
           </Link>
         </motion.div>

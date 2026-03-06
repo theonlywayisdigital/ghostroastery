@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import {
-  LayoutTemplate,
+  Layout,
   Shapes,
-  Type,
-  Upload,
-  Sparkles,
-} from "lucide-react";
+  TextT,
+  UploadSimple,
+  Sparkle,
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import type { LeftPanelTab, LabelDimensions } from "./types";
 import type { TemplateDefinition } from "./data/templates";
@@ -38,11 +38,11 @@ interface LeftPanelProps {
 }
 
 const TABS: { id: LeftPanelTab; label: string; icon: React.ReactNode }[] = [
-  { id: "templates", label: "Templates", icon: <LayoutTemplate className="w-4 h-4" /> },
-  { id: "elements", label: "Elements", icon: <Shapes className="w-4 h-4" /> },
-  { id: "text", label: "Text", icon: <Type className="w-4 h-4" /> },
-  { id: "upload", label: "Upload", icon: <Upload className="w-4 h-4" /> },
-  { id: "ai", label: "AI", icon: <Sparkles className="w-4 h-4" /> },
+  { id: "templates", label: "Templates", icon: <Layout size={16} weight="duotone" /> },
+  { id: "elements", label: "Elements", icon: <Shapes size={16} weight="duotone" /> },
+  { id: "text", label: "Text", icon: <TextT size={16} weight="duotone" /> },
+  { id: "upload", label: "Upload", icon: <UploadSimple size={16} weight="duotone" /> },
+  { id: "ai", label: "AI", icon: <Sparkle size={16} weight="duotone" /> },
 ];
 
 export function LeftPanel({

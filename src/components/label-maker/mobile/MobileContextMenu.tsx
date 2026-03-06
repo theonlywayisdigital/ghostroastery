@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { Copy, Trash, ArrowUp, ArrowDown } from "@phosphor-icons/react";
 
 interface MobileContextMenuProps {
   bounds: { left: number; top: number; width: number; height: number };
@@ -42,22 +42,22 @@ export function MobileContextMenu({
       }}
     >
       <ContextButton
-        icon={<Copy className="w-3.5 h-3.5" />}
+        icon={<Copy size={14} weight="duotone" />}
         label="Duplicate"
         onClick={onDuplicate}
       />
       <ContextButton
-        icon={<ArrowUp className="w-3.5 h-3.5" />}
+        icon={<ArrowUp size={14} weight="duotone" />}
         label="Forward"
         onClick={onBringForward}
       />
       <ContextButton
-        icon={<ArrowDown className="w-3.5 h-3.5" />}
+        icon={<ArrowDown size={14} weight="duotone" />}
         label="Back"
         onClick={onSendBackward}
       />
       <ContextButton
-        icon={<Trash2 className="w-3.5 h-3.5" />}
+        icon={<Trash size={14} weight="duotone" />}
         label="Delete"
         onClick={onDelete}
         danger

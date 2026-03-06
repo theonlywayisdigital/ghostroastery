@@ -1,6 +1,9 @@
 import { Metadata } from "next";
 import { client } from "@/sanity/lib/client";
-import { faqsByCategoryQuery } from "@/sanity/lib/queries";
+import {
+  faqsByCategoryQuery,
+  customerWholesalePageQuery,
+} from "@/sanity/lib/queries";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { TileCard } from "@/components/ui/Card";
@@ -8,16 +11,16 @@ import { Accordion } from "@/components/ui/Accordion";
 import { WholesaleForm } from "@/components/wholesale";
 import {
   Coffee,
-  Dumbbell,
-  Building2,
-  UtensilsCrossed,
+  Barbell,
+  Buildings,
+  ForkKnife,
   Heart,
   Lightbulb,
   Package,
   Palette,
   Truck,
-  RefreshCw,
-} from "lucide-react";
+  ArrowsClockwise,
+} from "@phosphor-icons/react/dist/ssr";
 
 export const revalidate = 3600;
 
@@ -59,17 +62,17 @@ const businessTypes = [
     description: "Your own blend, your own brand",
   },
   {
-    icon: Dumbbell,
+    icon: Barbell,
     title: "Gyms & Fitness Brands",
     description: "Add a revenue stream your members will love",
   },
   {
-    icon: Building2,
+    icon: Buildings,
     title: "Offices & Corporates",
     description: "Quality coffee under your company name",
   },
   {
-    icon: UtensilsCrossed,
+    icon: ForkKnife,
     title: "Restaurants & Hospitality",
     description: "The last thing your guests taste should be yours",
   },
@@ -102,7 +105,7 @@ const features = [
     description: "Your choice of packaging",
   },
   {
-    icon: RefreshCw,
+    icon: ArrowsClockwise,
     title: "Flexible delivery",
     description: "Schedules across the UK",
   },
@@ -131,6 +134,25 @@ const placeholderFaqs = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const businessTypeIconMap: Record<string, React.ComponentType<any>> = {
+  Coffee,
+  Barbell,
+  Buildings,
+  ForkKnife,
+  Heart,
+  Lightbulb,
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const featureIconMap: Record<string, React.ComponentType<any>> = {
+  Palette,
+  Package,
+  Coffee,
+  ArrowsClockwise,
+  Truck,
+};
+
 async function getFaqs() {
   try {
     const faqs = await client.fetch(faqsByCategoryQuery, {
@@ -142,8 +164,33 @@ async function getFaqs() {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function getWholesalePageContent(): Promise<any> {
+  try {
+    return await client.fetch(customerWholesalePageQuery);
+  } catch {
+    return null;
+  }
+}
+
 export default async function WholesalePage() {
-  const faqs = await getFaqs();
+  const [faqs, cms] = await Promise.all([getFaqs(), getWholesalePageContent()]);
+
+  const resolvedBusinessTypes = cms?.businessTypes?.length
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cms.businessTypes.map((bt: any) => ({
+        ...bt,
+        icon: businessTypeIconMap[bt.icon || ""] || Coffee,
+      }))
+    : businessTypes;
+
+  const resolvedFeatures = cms?.features?.length
+    ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      cms.features.map((f: any) => ({
+        ...f,
+        icon: featureIconMap[f.icon || ""] || Coffee,
+      }))
+    : features;
 
   return (
     <>
@@ -157,12 +204,16 @@ export default async function WholesalePage() {
         <FadeIn>
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">
-              Coffee at scale.{" "}
-              <span className="text-accent">Your way.</span>
+              {cms?.heroHeadline ?? (
+                <>
+                  Coffee at scale.{" "}
+                  <span className="text-accent">Your way.</span>
+                </>
+              )}
             </h1>
             <p className="text-xl md:text-2xl text-neutral-300">
-              For businesses that need volume, consistency and flexibility.
-              150+ bags per order. Branded or unbranded.
+              {cms?.heroSubheadline ??
+                "For businesses that need volume, consistency and flexibility. 150+ bags per order. Branded or unbranded."}
             </p>
           </div>
         </FadeIn>
@@ -171,38 +222,44 @@ export default async function WholesalePage() {
       {/* Who It's For */}
       <Section dark>
         <FadeIn>
-          <SectionHeader title="Who we work with" />
+          <SectionHeader title={cms?.businessTypesTitle ?? "Who we work with"} />
         </FadeIn>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {businessTypes.map((type, index) => (
-            <FadeIn key={type.title} delay={index * 0.1}>
-              <TileCard
-                icon={<type.icon className="w-6 h-6" />}
-                title={type.title}
-                description={type.description}
-              />
-            </FadeIn>
-          ))}
+          {resolvedBusinessTypes.map((type: typeof businessTypes[number], index: number) => {
+            const Icon = type.icon;
+            return (
+              <FadeIn key={type.title} delay={index * 0.1}>
+                <TileCard
+                  icon={<Icon size={28} weight="duotone" />}
+                  title={type.title}
+                  description={type.description}
+                />
+              </FadeIn>
+            );
+          })}
         </div>
       </Section>
 
       {/* What's Included */}
       <Section>
         <FadeIn>
-          <SectionHeader title="What you get" />
+          <SectionHeader title={cms?.featuresTitle ?? "What you get"} />
         </FadeIn>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, index) => (
-            <FadeIn key={feature.title} delay={index * 0.1}>
-              <div className="text-center">
-                <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
-                  <feature.icon className="w-7 h-7" />
+          {resolvedFeatures.map((feature: typeof features[number], index: number) => {
+            const Icon = feature.icon;
+            return (
+              <FadeIn key={feature.title} delay={index * 0.1}>
+                <div className="text-center">
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                    <Icon size={32} weight="duotone" />
+                  </div>
+                  <h3 className="text-lg font-bold mb-1">{feature.title}</h3>
+                  <p className="text-neutral-400 text-sm">{feature.description}</p>
                 </div>
-                <h3 className="text-lg font-bold mb-1">{feature.title}</h3>
-                <p className="text-neutral-400 text-sm">{feature.description}</p>
-              </div>
-            </FadeIn>
-          ))}
+              </FadeIn>
+            );
+          })}
         </div>
       </Section>
 
@@ -210,8 +267,8 @@ export default async function WholesalePage() {
       <Section dark>
         <FadeIn>
           <SectionHeader
-            title="Tell us about your order"
-            subtitle="Fill in the form below and we'll get back to you within 2 business days."
+            title={cms?.formTitle ?? "Tell us about your order"}
+            subtitle={cms?.formSubtitle ?? "Fill in the form below and we'll get back to you within 2 business days."}
           />
         </FadeIn>
         <FadeIn delay={0.2}>
@@ -226,7 +283,7 @@ export default async function WholesalePage() {
       {/* FAQ */}
       <Section>
         <FadeIn>
-          <SectionHeader title="Frequently asked questions" />
+          <SectionHeader title={cms?.faqTitle ?? "Frequently asked questions"} />
         </FadeIn>
         <FadeIn delay={0.2}>
           <div className="max-w-3xl mx-auto">

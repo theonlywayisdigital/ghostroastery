@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Check, X, ChevronRight } from "lucide-react";
+import { ArrowRight, Check, X, CaretRight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 const PLATFORM_URL = "https://platform.ghostroastery.com";
@@ -166,8 +166,8 @@ function formatPrice(monthly: number, annual: boolean) {
 }
 
 function CellContent({ value }: { value: CellValue }) {
-  if (value === true) return <Check className="w-5 h-5 text-accent mx-auto" />;
-  if (value === false) return <X className="w-4 h-4 text-neutral-300 mx-auto" />;
+  if (value === true) return <Check className="text-accent mx-auto" size={24} weight="duotone" />;
+  if (value === false) return <X className="text-neutral-300 mx-auto" size={20} weight="duotone" />;
   return <span className="text-sm text-neutral-700 font-medium">{value}</span>;
 }
 
@@ -335,9 +335,9 @@ function PricingTable({
                       <span className="text-neutral-600">{row.label}</span>
                       <span className="font-medium text-neutral-900">
                         {value === true ? (
-                          <Check className="w-4 h-4 text-accent" />
+                          <Check className="text-accent" size={20} weight="duotone" />
                         ) : value === false ? (
-                          <X className="w-4 h-4 text-neutral-300" />
+                          <X className="text-neutral-300" size={20} weight="duotone" />
                         ) : (
                           value
                         )}
@@ -410,7 +410,7 @@ const defaultFaqs: FAQ[] = [
 
 /* ── Main Component ────────────────────────────────────── */
 
-export function PricingContent({ faqs }: { faqs: FAQ[] }) {
+export function PricingContent({ faqs, cms }: { faqs: FAQ[]; cms?: any }) {
   const [annual, setAnnual] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const displayFaqs = faqs.length > 0 ? faqs : defaultFaqs;
@@ -421,11 +421,12 @@ export function PricingContent({ faqs }: { faqs: FAQ[] }) {
       <section className="py-20 lg:py-28 bg-neutral-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 mb-6">
-            Simple, <span className="text-accent">transparent</span> pricing
+            {cms?.heroHeadline ?? "Simple,"}{" "}
+            <span className="text-accent">{cms?.heroAccentText ?? "transparent"}</span>{" "}
+            pricing
           </h1>
           <p className="text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto">
-            Start free with both suites. Upgrade as you grow — no transaction
-            fees on any paid plan.
+            {cms?.heroSubheadline ?? "Start free with both suites. Upgrade as you grow — no transaction fees on any paid plan."}
           </p>
         </div>
       </section>
@@ -587,14 +588,14 @@ export function PricingContent({ faqs }: { faqs: FAQ[] }) {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-black text-neutral-900 text-center mb-12">
-              Frequently asked questions
+              {cms?.faqTitle ?? "Frequently asked questions"}
             </h2>
             <div className="divide-y divide-neutral-200 border-t border-b border-neutral-200">
               {displayFaqs.map((faq) => (
                 <details key={faq._id} className="group">
                   <summary className="flex items-center justify-between cursor-pointer py-5 text-left text-lg font-semibold text-neutral-900 hover:text-accent transition-colors">
                     {faq.question}
-                    <ChevronRight className="w-5 h-5 text-neutral-400 group-open:rotate-90 transition-transform flex-shrink-0 ml-4" />
+                    <CaretRight className="text-neutral-400 group-open:rotate-90 transition-transform flex-shrink-0 ml-4" size={24} weight="duotone" />
                   </summary>
                   <div className="pb-5 text-neutral-600 leading-relaxed">
                     {faq.answer}
@@ -610,18 +611,17 @@ export function PricingContent({ faqs }: { faqs: FAQ[] }) {
       <section className="py-20 lg:py-28 bg-neutral-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-6">
-            Start selling with zero upfront cost
+            {cms?.ctaHeadline ?? "Start selling with zero upfront cost"}
           </h2>
           <p className="text-lg text-neutral-300 max-w-xl mx-auto mb-10">
-            Both suites included free. No credit card required. Upgrade only
-            when you need more.
+            {cms?.ctaDescription ?? "Both suites included free. No credit card required. Upgrade only when you need more."}
           </p>
           <a
             href={`${PLATFORM_URL}/signup`}
             className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
           >
-            Get Started Free
-            <ArrowRight className="ml-2 w-5 h-5" />
+            {cms?.ctaButtonText ?? "Get Started Free"}
+            <ArrowRight className="ml-2" size={24} weight="duotone" />
           </a>
         </div>
       </section>

@@ -23,23 +23,22 @@ interface CaseStudySnippetProps {
       };
     }>;
   } | null;
+  sectionTitle?: string;
 }
 
-export function CaseStudySnippet({ caseStudy }: CaseStudySnippetProps) {
-  // If no case study exists yet, show a placeholder
+export function CaseStudySnippet({ caseStudy, sectionTitle }: CaseStudySnippetProps) {
+  const title = sectionTitle ?? "Built with Ghost Roastery";
+
   if (!caseStudy) {
     return (
       <Section dark>
         <FadeIn>
-          <SectionHeader title="Built with Ghost Roastery" />
+          <SectionHeader title={title} />
         </FadeIn>
-
         <FadeIn delay={0.2}>
           <div className="max-w-3xl mx-auto text-center">
             <div className="bg-neutral-800/50 border border-neutral-700 rounded-2xl p-8 md:p-12">
-              <p className="text-2xl md:text-3xl font-bold mb-4">
-                Off Your Bean
-              </p>
+              <p className="text-2xl md:text-3xl font-bold mb-4">Off Your Bean</p>
               <p className="text-neutral-400 mb-6">
                 Our proof-of-concept brand, built entirely using our ghost roasting
                 service. From concept to live store in under two weeks.
@@ -60,14 +59,12 @@ export function CaseStudySnippet({ caseStudy }: CaseStudySnippetProps) {
   return (
     <Section dark>
       <FadeIn>
-        <SectionHeader title="Built with Ghost Roastery" />
+        <SectionHeader title={title} />
       </FadeIn>
-
       <FadeIn delay={0.2}>
         <div className="max-w-4xl mx-auto">
           <div className="bg-neutral-800/50 border border-neutral-700 rounded-2xl p-6 md:p-10">
             <div className="grid md:grid-cols-2 gap-8 items-center">
-              {/* Logo and Text */}
               <div>
                 {caseStudy.logo && (
                   <div className="mb-6">
@@ -80,9 +77,7 @@ export function CaseStudySnippet({ caseStudy }: CaseStudySnippetProps) {
                     />
                   </div>
                 )}
-                <h3 className="text-2xl md:text-3xl font-bold mb-4">
-                  {caseStudy.brandName}
-                </h3>
+                <h3 className="text-2xl md:text-3xl font-bold mb-4">{caseStudy.brandName}</h3>
                 <p className="text-neutral-400 mb-6">{caseStudy.summary}</p>
                 <p className="text-sm text-neutral-500 italic mb-6">
                   &quot;This is what we can build for you.&quot;
@@ -91,8 +86,6 @@ export function CaseStudySnippet({ caseStudy }: CaseStudySnippetProps) {
                   <Button variant="outline">Read the full story</Button>
                 </Link>
               </div>
-
-              {/* Image */}
               {caseStudy.images && caseStudy.images[0] && (
                 <div className="relative aspect-square rounded-xl overflow-hidden bg-neutral-700">
                   <Image

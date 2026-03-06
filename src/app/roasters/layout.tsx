@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { RoastersNavbar } from "@/components/roasters/RoastersNavbar";
 import { RoastersFooter } from "@/components/roasters/RoastersFooter";
+import { CookieBanner } from "@/components/layout/CookieBanner";
 import { client, urlFor } from "@/sanity/lib/client";
 import { siteSettingsQuery } from "@/sanity/lib/queries";
 
@@ -50,8 +51,9 @@ export default async function RoastersLayout({
   return (
     <div className="theme-light">
       <RoastersNavbar logoUrl={logoUrl} />
-      <main className="min-h-screen pt-16 lg:pt-20">{children}</main>
+      <main className="min-h-screen">{children}</main>
       <RoastersFooter logoUrl={logoUrl} />
+      <CookieBanner variant="light" />
     </div>
   );
 }

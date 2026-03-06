@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Shapes } from "lucide-react";
+import { Shapes } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { SVG_ELEMENTS, ELEMENT_CATEGORIES } from "../data/svg-elements";
 
@@ -40,7 +40,7 @@ export function ElementsTab({ onAddSvgElement }: ElementsTabProps) {
       {/* Elements grid */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <Shapes className="w-8 h-8 text-neutral-600 mb-2" />
+          <Shapes size={40} weight="duotone" className="text-white mb-2" />
           <p className="text-xs text-neutral-500">No elements in this category.</p>
         </div>
       ) : (

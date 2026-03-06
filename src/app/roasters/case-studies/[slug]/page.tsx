@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
 import { PortableText, type PortableTextBlock } from "@portabletext/react";
 import { client, urlFor } from "@/sanity/lib/client";
 import { caseStudyBySlugQuery } from "@/sanity/lib/queries";
@@ -107,7 +107,7 @@ export default async function RoastersCaseStudyPage({ params }: PageProps) {
             href="/case-studies"
             className="inline-flex items-center text-sm text-neutral-500 hover:text-neutral-900 transition-colors mb-8"
           >
-            <ArrowLeft className="w-4 h-4 mr-1" />
+            <ArrowLeft className="mr-1" size={20} weight="duotone" />
             Back to Case Studies
           </Link>
 
@@ -136,7 +136,7 @@ export default async function RoastersCaseStudyPage({ params }: PageProps) {
               className="inline-flex items-center gap-1 mt-4 text-accent hover:underline font-medium"
             >
               Visit website
-              <ExternalLink className="w-4 h-4" />
+              <ArrowSquareOut size={20} weight="duotone" />
             </a>
           )}
         </div>

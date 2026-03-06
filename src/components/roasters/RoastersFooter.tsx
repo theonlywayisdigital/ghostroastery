@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, Linkedin } from "lucide-react";
+import { InstagramLogo, LinkedinLogo } from "@phosphor-icons/react/dist/ssr";
 
 const PLATFORM_URL = "https://platform.ghostroastery.com";
 
@@ -72,7 +72,7 @@ export function RoastersFooter({ logoUrl }: RoastersFooterProps) {
                 className="p-2 rounded-full bg-neutral-100 text-neutral-500 hover:text-neutral-900 hover:bg-neutral-200 transition-colors"
                 aria-label="Instagram"
               >
-                <Instagram className="h-5 w-5" />
+                <InstagramLogo weight="duotone" size={24} />
               </a>
               <a
                 href="https://linkedin.com"
@@ -81,7 +81,7 @@ export function RoastersFooter({ logoUrl }: RoastersFooterProps) {
                 className="p-2 rounded-full bg-neutral-100 text-neutral-500 hover:text-neutral-900 hover:bg-neutral-200 transition-colors"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="h-5 w-5" />
+                <LinkedinLogo weight="duotone" size={24} />
               </a>
               <a
                 href="https://tiktok.com"

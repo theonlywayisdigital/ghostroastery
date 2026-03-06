@@ -7,14 +7,15 @@ import {
   Play,
   CalendarCheck,
   Truck,
-  BadgeCheck,
+  SealCheck,
   HandCoins,
-} from "lucide-react";
+} from "@phosphor-icons/react/dist/ssr";
 import { client, urlFor } from "@/sanity/lib/client";
 import {
   roastersPageSettingsQuery,
   roasterCaseStudiesQuery,
   roasterBlogPostsQuery,
+  roasterProductsCarouselQuery,
 } from "@/sanity/lib/queries";
 import { ProductsCarousel } from "@/components/roasters/ProductsCarousel";
 
@@ -59,10 +60,11 @@ const categoryLabels: Record<string, string> = {
 /* ── Page ──────────────────────────────────────────────── */
 
 export default async function RoastersHomePage() {
-  const [settings, caseStudies, blogPosts] = await Promise.all([
+  const [settings, caseStudies, blogPosts, carouselCms] = await Promise.all([
     client.fetch(roastersPageSettingsQuery).catch(() => null),
     client.fetch<CaseStudy[]>(roasterCaseStudiesQuery).catch(() => []),
     client.fetch<BlogPost[]>(roasterBlogPostsQuery).catch(() => []),
+    client.fetch(roasterProductsCarouselQuery).catch(() => null),
   ]);
 
   const headline =
@@ -73,6 +75,56 @@ export default async function RoastersHomePage() {
 
   const liveCaseStudies = caseStudies.filter((cs) => !cs.isPlaceholder);
   const latestPosts = blogPosts.slice(0, 3);
+
+  /* ── Partner Steps (CMS with fallback) ──────────────── */
+  const iconMap: Record<string, typeof SealCheck> = {
+    SealCheck,
+    Package,
+    Truck,
+    HandCoins,
+  };
+
+  const defaultPartnerSteps = [
+    {
+      icon: SealCheck,
+      step: "01",
+      title: "Apply & Get Verified",
+      description:
+        "Tell us about your roastery. We verify your capacity, equipment, and quality standards.",
+    },
+    {
+      icon: Package,
+      step: "02",
+      title: "Receive Orders",
+      description:
+        "Orders from brands in your territory land directly in your dashboard.",
+    },
+    {
+      icon: Truck,
+      step: "03",
+      title: "Roast & Ship",
+      description:
+        "Roast to spec, print shipping labels, and dispatch within the deadline.",
+    },
+    {
+      icon: HandCoins,
+      step: "04",
+      title: "Get Paid",
+      description:
+        "Payouts processed automatically. Transparent rates with no hidden fees.",
+    },
+  ];
+
+  const resolvedPartnerSteps = settings?.partnerSteps?.length
+    ? settings.partnerSteps.map(
+        (s: { step: string; title: string; description: string; icon?: string }, i: number) => ({
+          icon: (s.icon && iconMap[s.icon]) || defaultPartnerSteps[i]?.icon || SealCheck,
+          step: s.step,
+          title: s.title,
+          description: s.description,
+        })
+      )
+    : defaultPartnerSteps;
 
   return (
     <>
@@ -99,13 +151,13 @@ export default async function RoastersHomePage() {
               className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
             >
               Start Free
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="ml-2" size={24} weight="duotone" />
             </a>
             <a
               href={`${PLATFORM_URL}/demo`}
               className="inline-flex items-center px-8 py-4 border-2 border-neutral-300 text-neutral-700 font-semibold text-lg rounded-lg hover:border-neutral-400 hover:bg-white transition-colors"
             >
-              <CalendarCheck className="mr-2 w-5 h-5" />
+              <CalendarCheck className="mr-2" size={24} weight="duotone" />
               Book a Demo
             </a>
           </div>
@@ -122,10 +174,10 @@ export default async function RoastersHomePage() {
               {/* Placeholder — replace with real video embed */}
               <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
                 <div className="w-20 h-20 rounded-full bg-accent/90 flex items-center justify-center mb-4 hover:bg-accent transition-colors cursor-pointer">
-                  <Play className="w-8 h-8 ml-1" />
+                  <Play className="ml-1" size={40} weight="duotone" />
                 </div>
-                <p className="text-lg font-semibold">See the platform in action</p>
-                <p className="text-sm text-neutral-400 mt-1">2 minute overview</p>
+                <p className="text-lg font-semibold">{settings?.videoSectionTitle ?? "See the platform in action"}</p>
+                <p className="text-sm text-neutral-400 mt-1">{settings?.videoSectionSubtitle ?? "2 minute overview"}</p>
               </div>
             </div>
           </div>
@@ -140,10 +192,10 @@ export default async function RoastersHomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Everything you need to sell coffee online
+                {settings?.ctaStrip1Headline ?? "Everything you need to sell coffee online"}
               </h2>
               <p className="text-white/80 mt-1">
-                No monthly fees. No commission on storefront sales. Free forever.
+                {settings?.ctaStrip1Subtitle ?? "No monthly fees. No commission on storefront sales. Free forever."}
               </p>
             </div>
             <a
@@ -151,7 +203,7 @@ export default async function RoastersHomePage() {
               className="inline-flex items-center px-8 py-4 bg-white text-accent font-semibold text-lg rounded-lg hover:bg-neutral-50 transition-colors shrink-0"
             >
               Start Free
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="ml-2" size={24} weight="duotone" />
             </a>
           </div>
         </div>
@@ -164,14 +216,14 @@ export default async function RoastersHomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-4">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">
-              Powerful tools for{" "}
-              <span className="text-accent">modern roasters</span>
+              {settings?.toolsSectionTitle ?? "Powerful tools for"}{" "}
+              <span className="text-accent">{settings?.toolsSectionSubtitle ?? "modern roasters"}</span>
             </h2>
             <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
-              Everything you need to sell coffee and grow your brand — in one platform.
+              {settings?.toolsSectionDescription ?? "Everything you need to sell coffee and grow your brand — in one platform."}
             </p>
           </div>
-          <ProductsCarousel />
+          <ProductsCarousel cms={carouselCms} />
         </div>
       </section>
 
@@ -183,10 +235,10 @@ export default async function RoastersHomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Ready to grow your roastery?
+                {settings?.ctaStrip2Headline ?? "Ready to grow your roastery?"}
               </h2>
               <p className="text-neutral-400 mt-1">
-                Join hundreds of roasters already selling more coffee with less effort.
+                {settings?.ctaStrip2Subtitle ?? "Join hundreds of roasters already selling more coffee with less effort."}
               </p>
             </div>
             <div className="flex items-center gap-4 shrink-0">
@@ -195,7 +247,7 @@ export default async function RoastersHomePage() {
                 className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
               >
                 Start Free
-                <ArrowRight className="ml-2 w-5 h-5" />
+                <ArrowRight className="ml-2" size={24} weight="duotone" />
               </a>
             </div>
           </div>
@@ -209,10 +261,11 @@ export default async function RoastersHomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">
-              Roaster <span className="text-accent">success stories</span>
+              {settings?.caseStudiesSectionTitle ?? "Roaster"}{" "}
+              <span className="text-accent">success stories</span>
             </h2>
             <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
-              See how roasters are growing their businesses with Ghost Roastery Platform.
+              {settings?.caseStudiesSectionSubtitle ?? "See how roasters are growing their businesses with Ghost Roastery Platform."}
             </p>
           </div>
 
@@ -243,7 +296,7 @@ export default async function RoastersHomePage() {
                   </p>
                   <div className="mt-4 flex items-center text-accent font-semibold text-sm">
                     Read story
-                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" size={20} weight="duotone" />
                   </div>
                 </Link>
               ))}
@@ -277,7 +330,7 @@ export default async function RoastersHomePage() {
               className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline"
             >
               View all case studies
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight size={20} weight="duotone" />
             </Link>
           </div>
         </div>
@@ -290,10 +343,11 @@ export default async function RoastersHomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">
-              Latest from the <span className="text-accent">blog</span>
+              {settings?.blogSectionTitle ?? "Latest from the"}{" "}
+              <span className="text-accent">blog</span>
             </h2>
             <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
-              Tips, guides, and industry insights to help you sell more coffee.
+              {settings?.blogSectionSubtitle ?? "Tips, guides, and industry insights to help you sell more coffee."}
             </p>
           </div>
 
@@ -381,7 +435,7 @@ export default async function RoastersHomePage() {
               className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:underline"
             >
               View all posts
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight size={20} weight="duotone" />
             </Link>
           </div>
         </div>
@@ -394,57 +448,31 @@ export default async function RoastersHomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-3">
-              Partner Program
+              {settings?.partnerSectionLabel ?? "Partner Program"}
             </p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-4">
-              Earn more by roasting for{" "}
+              {settings?.partnerSectionTitle ?? "Earn more by roasting for"}{" "}
               <span className="text-accent">other brands</span>
             </h2>
             <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-              Join our ghost roasting network. We send you the orders — you roast
-              and ship. Guaranteed volume, zero marketing overhead.
+              {settings?.partnerSectionSubtitle ?? "Join our ghost roasting network. We send you the orders — you roast and ship. Guaranteed volume, zero marketing overhead."}
             </p>
           </div>
 
           {/* How it works */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl mx-auto mb-16">
-            {[
-              {
-                icon: BadgeCheck,
-                step: "01",
-                title: "Apply & Get Verified",
-                desc: "Tell us about your roastery. We verify your capacity, equipment, and quality standards.",
-              },
-              {
-                icon: Package,
-                step: "02",
-                title: "Receive Orders",
-                desc: "Orders from brands in your territory land directly in your dashboard.",
-              },
-              {
-                icon: Truck,
-                step: "03",
-                title: "Roast & Ship",
-                desc: "Roast to spec, print shipping labels, and dispatch within the deadline.",
-              },
-              {
-                icon: HandCoins,
-                step: "04",
-                title: "Get Paid",
-                desc: "Payouts processed automatically. Transparent rates with no hidden fees.",
-              },
-            ].map((item) => {
+            {resolvedPartnerSteps.map((item: { icon: typeof SealCheck; step: string; title: string; description: string }) => {
               const Icon = item.icon;
               return (
                 <div key={item.step} className="text-center">
                   <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-7 h-7 text-accent" />
+                    <Icon className="text-accent" size={32} weight="duotone" />
                   </div>
                   <p className="text-xs font-bold text-accent tracking-wider mb-2">
                     STEP {item.step}
                   </p>
                   <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                  <p className="text-sm text-neutral-400">{item.desc}</p>
+                  <p className="text-sm text-neutral-400">{item.description}</p>
                 </div>
               );
             })}
@@ -456,7 +484,7 @@ export default async function RoastersHomePage() {
               className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
             >
               Learn About the Partner Program
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="ml-2" size={24} weight="duotone" />
             </Link>
           </div>
         </div>

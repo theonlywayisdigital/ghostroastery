@@ -16,7 +16,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { X, ArrowRight, Package } from "lucide-react";
+import { X, ArrowRight, Package } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { BagVisualisation } from "../builder/BagVisualisation";
 import { client } from "@/sanity/lib/client";
@@ -93,9 +93,9 @@ export function BagPreviewModal({
         </h2>
         <button
           onClick={onClose}
-          className="p-1.5 rounded-lg hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 transition-colors"
+          className="p-1.5 rounded-lg hover:bg-neutral-800 text-white hover:text-neutral-200 transition-colors"
         >
-          <X className="w-5 h-5" />
+          <X size={20} weight="duotone" />
         </button>
       </div>
 
@@ -178,7 +178,7 @@ export function BagPreviewModal({
             className="flex items-center gap-2 px-6 py-2.5 bg-accent text-neutral-900 text-sm font-semibold rounded-lg hover:bg-accent/90 transition-colors"
           >
             Done — export label
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight size={20} weight="duotone" />
           </button>
         </div>
       </div>
@@ -196,7 +196,7 @@ function FallbackPreview({
     <div className="flex flex-col items-center gap-6 max-w-sm">
       {/* Grey bag silhouette */}
       <div className="w-48 h-64 bg-neutral-800 rounded-xl border-2 border-dashed border-neutral-700 flex flex-col items-center justify-center">
-        <Package className="w-16 h-16 text-neutral-600" />
+        <Package size={64} weight="duotone" className="text-white" />
       </div>
 
       {/* Label at actual proportions */}
