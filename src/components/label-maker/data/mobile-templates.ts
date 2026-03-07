@@ -10,22 +10,21 @@ const CANVAS_W = TRIM_W + BLEED * 2;
 const CANVAS_H = TRIM_H + BLEED * 2;
 const SAFE = mmToPx(4);
 
-const trimLeft = BLEED;
 const trimTop = BLEED;
 const trimCenterX = BLEED + TRIM_W / 2;
 const safeLeft = BLEED + SAFE;
 const safeTop = BLEED + SAFE;
+const safeBottom = BLEED + TRIM_H - SAFE;
 const safeW = TRIM_W - SAFE * 2;
 
 // ─────────────────────────────────────────────────────────
 // Mobile Template 1 — "Stack" (Minimal vertical stack)
-// White bg, black text, pure typography
 // ─────────────────────────────────────────────────────────
 const stack: TemplateDefinition = {
   id: "tpl-mobile-stack",
   name: "Stack",
   category: "mobile",
-  description: "Minimal vertical stack: brand, coffee name, origin, notes, weight",
+  description: "Minimal vertical stack with logo, coffee name and weight",
   backgroundColor: "#FFFFFF",
   objects: [
     // White background
@@ -38,30 +37,13 @@ const stack: TemplateDefinition = {
       fill: "#FFFFFF",
       data: { elementType: "shape", isBackground: true },
     },
-    // Brand name — small caps, spaced
+    // Logo zone — square, taller
+    ...logoZone(trimCenterX, safeTop + mmToPx(30), 40, 35, "#999999", "#999999"),
+    // Coffee name — more central
     {
       type: "textbox",
       left: trimCenterX,
-      top: safeTop + mmToPx(12),
-      width: safeW,
-      text: "YOUR BRAND",
-      fontSize: mmToPx(4),
-      fontFamily: "Inter",
-      fontWeight: 500,
-      fill: "#1A1A1A",
-      textAlign: "center",
-      charSpacing: 300,
-      originX: "center",
-      originY: "center",
-      data: { elementType: "text" },
-    },
-    // Logo zone
-    ...logoZone(trimCenterX, safeTop + mmToPx(24), 40, 15, "#999999", "#999999"),
-    // Coffee name — large display
-    {
-      type: "textbox",
-      left: trimCenterX,
-      top: safeTop + mmToPx(48),
+      top: safeTop + mmToPx(72),
       width: safeW,
       text: "Coffee\nName",
       fontSize: mmToPx(14),
@@ -72,31 +54,15 @@ const stack: TemplateDefinition = {
       lineHeight: 1.0,
       originX: "center",
       originY: "center",
-      data: { elementType: "text" },
+      data: { elementType: "text", fieldName: "Coffee Name" },
     },
-    // Origin
+    // Tagline
     {
       type: "textbox",
       left: trimCenterX,
-      top: safeTop + mmToPx(73),
+      top: safeTop + mmToPx(96),
       width: safeW,
-      text: "Single Origin \u2022 Ethiopia Yirgacheffe",
-      fontSize: mmToPx(3.5),
-      fontFamily: "Inter",
-      fontWeight: 400,
-      fill: "#666666",
-      textAlign: "center",
-      originX: "center",
-      originY: "center",
-      data: { elementType: "text" },
-    },
-    // Tasting notes
-    {
-      type: "textbox",
-      left: trimCenterX,
-      top: safeTop + mmToPx(95),
-      width: safeW,
-      text: "Blueberry \u2022 Dark Chocolate \u2022 Honey",
+      text: "Your tagline here",
       fontSize: mmToPx(3),
       fontFamily: "Inter",
       fontWeight: 400,
@@ -110,7 +76,7 @@ const stack: TemplateDefinition = {
     {
       type: "textbox",
       left: trimCenterX,
-      top: trimTop + TRIM_H - mmToPx(12),
+      top: safeBottom - mmToPx(8),
       width: safeW,
       text: "250g",
       fontSize: mmToPx(3.5),
@@ -120,7 +86,7 @@ const stack: TemplateDefinition = {
       textAlign: "center",
       originX: "center",
       originY: "center",
-      data: { elementType: "text" },
+      data: { elementType: "text", fieldName: "Weight" },
     },
   ],
 };
@@ -132,7 +98,7 @@ const boldSplit: TemplateDefinition = {
   id: "tpl-mobile-bold-split",
   name: "Bold Split",
   category: "mobile",
-  description: "Top half solid colour block with reversed brand name; bottom half white with details",
+  description: "Top half solid colour block with logo; bottom half with coffee name and weight",
   backgroundColor: "#FFFFFF",
   objects: [
     // White background
@@ -145,112 +111,55 @@ const boldSplit: TemplateDefinition = {
       fill: "#FFFFFF",
       data: { elementType: "shape", isBackground: true },
     },
-    // Top colour block (full bleed)
+    // Top colour block (full bleed, taller to fit square logo)
     {
       type: "rect",
       left: 0,
       top: 0,
       width: CANVAS_W,
-      height: Math.round(CANVAS_H * 0.45),
+      height: Math.round(CANVAS_H * 0.50),
       fill: "#1B3D2F",
       data: { elementType: "shape" },
     },
-    // Brand name — reversed on colour block
+    // Logo zone in colour block — square, taller
+    ...logoZone(trimCenterX, trimTop + mmToPx(32), 40, 35, "#FFFFFF", "#FFFFFF"),
+    // Coffee name below the split — more central
     {
       type: "textbox",
       left: trimCenterX,
-      top: trimTop + mmToPx(20),
-      width: safeW,
-      text: "YOUR BRAND",
-      fontSize: mmToPx(4),
-      fontFamily: "Inter",
-      fontWeight: 600,
-      fill: "#FFFFFF",
-      textAlign: "center",
-      charSpacing: 400,
-      originX: "center",
-      originY: "center",
-      data: { elementType: "text" },
-    },
-    // Logo zone in colour block
-    ...logoZone(trimCenterX, trimTop + mmToPx(35), 40, 15, "#FFFFFF", "#FFFFFF"),
-    // Coffee name on colour block
-    {
-      type: "textbox",
-      left: trimCenterX,
-      top: trimTop + mmToPx(50),
+      top: trimTop + mmToPx(92),
       width: safeW,
       text: "COFFEE NAME",
       fontSize: mmToPx(10),
       fontFamily: "Bebas Neue",
       fontWeight: 400,
-      fill: "#FFFFFF",
+      fill: "#1B3D2F",
       textAlign: "center",
       originX: "center",
       originY: "center",
-      data: { elementType: "text" },
+      data: { elementType: "text", fieldName: "Coffee Name" },
     },
-    // Origin below the split
+    // Tagline
     {
       type: "textbox",
-      left: safeLeft,
-      top: trimTop + mmToPx(78),
+      left: trimCenterX,
+      top: trimTop + mmToPx(106),
       width: safeW,
-      text: "ORIGIN",
-      fontSize: mmToPx(2.5),
-      fontFamily: "Inter",
-      fontWeight: 600,
-      fill: "#999999",
-      textAlign: "left",
-      charSpacing: 200,
-      data: { elementType: "text" },
-    },
-    {
-      type: "textbox",
-      left: safeLeft,
-      top: trimTop + mmToPx(84),
-      width: safeW,
-      text: "Ethiopia Yirgacheffe",
-      fontSize: mmToPx(4),
-      fontFamily: "Inter",
-      fontWeight: 500,
-      fill: "#1A1A1A",
-      textAlign: "left",
-      data: { elementType: "text" },
-    },
-    // Tasting notes
-    {
-      type: "textbox",
-      left: safeLeft,
-      top: trimTop + mmToPx(96),
-      width: safeW,
-      text: "NOTES",
-      fontSize: mmToPx(2.5),
-      fontFamily: "Inter",
-      fontWeight: 600,
-      fill: "#999999",
-      textAlign: "left",
-      charSpacing: 200,
-      data: { elementType: "text" },
-    },
-    {
-      type: "textbox",
-      left: safeLeft,
-      top: trimTop + mmToPx(102),
-      width: safeW,
-      text: "Blueberry, Dark Chocolate, Honey",
-      fontSize: mmToPx(3.5),
+      text: "Your tagline here",
+      fontSize: mmToPx(3),
       fontFamily: "Inter",
       fontWeight: 400,
-      fill: "#1A1A1A",
-      textAlign: "left",
+      fill: "#999999",
+      textAlign: "center",
+      originX: "center",
+      originY: "center",
       data: { elementType: "text" },
     },
     // Weight at bottom
     {
       type: "textbox",
       left: trimCenterX,
-      top: trimTop + TRIM_H - mmToPx(10),
+      top: safeBottom - mmToPx(8),
       width: safeW,
       text: "250g",
       fontSize: mmToPx(3.5),
@@ -260,7 +169,7 @@ const boldSplit: TemplateDefinition = {
       textAlign: "center",
       originX: "center",
       originY: "center",
-      data: { elementType: "text" },
+      data: { elementType: "text", fieldName: "Weight" },
     },
   ],
 };
@@ -272,7 +181,7 @@ const circleMark: TemplateDefinition = {
   id: "tpl-mobile-circle-mark",
   name: "Circle Mark",
   category: "mobile",
-  description: "Large circle center with coffee name inside. Brand above, details below.",
+  description: "Large circle with coffee name inside, logo above, weight below",
   backgroundColor: "#F5F3EF",
   objects: [
     // Warm off-white background
@@ -285,31 +194,14 @@ const circleMark: TemplateDefinition = {
       fill: "#F5F3EF",
       data: { elementType: "shape", isBackground: true },
     },
-    // Brand name above circle
-    {
-      type: "textbox",
-      left: trimCenterX,
-      top: safeTop + mmToPx(10),
-      width: safeW,
-      text: "YOUR BRAND",
-      fontSize: mmToPx(3.5),
-      fontFamily: "Space Grotesk",
-      fontWeight: 500,
-      fill: "#2A2A2A",
-      textAlign: "center",
-      charSpacing: 300,
-      originX: "center",
-      originY: "center",
-      data: { elementType: "text" },
-    },
-    // Logo zone below brand name
-    ...logoZone(trimCenterX, safeTop + mmToPx(22), 40, 15, "#7A7A7A", "#7A7A7A"),
-    // Large dark circle
+    // Logo zone above circle — square, taller
+    ...logoZone(trimCenterX, safeTop + mmToPx(24), 36, 30, "#7A7A7A", "#7A7A7A"),
+    // Large dark circle — more central
     {
       type: "circle",
       left: trimCenterX,
-      top: trimTop + mmToPx(55),
-      radius: mmToPx(30),
+      top: trimTop + mmToPx(75),
+      radius: mmToPx(28),
       fill: "#2A2A2A",
       originX: "center",
       originY: "center",
@@ -319,8 +211,8 @@ const circleMark: TemplateDefinition = {
     {
       type: "textbox",
       left: trimCenterX,
-      top: trimTop + mmToPx(55),
-      width: mmToPx(45),
+      top: trimTop + mmToPx(75),
+      width: mmToPx(42),
       text: "Coffee\nName",
       fontSize: mmToPx(8),
       fontFamily: "Space Grotesk",
@@ -330,29 +222,13 @@ const circleMark: TemplateDefinition = {
       lineHeight: 1.1,
       originX: "center",
       originY: "center",
-      data: { elementType: "text" },
-    },
-    // Details below circle
-    {
-      type: "textbox",
-      left: trimCenterX,
-      top: trimTop + mmToPx(100),
-      width: safeW,
-      text: "Single Origin \u2022 Ethiopia",
-      fontSize: mmToPx(3),
-      fontFamily: "Space Grotesk",
-      fontWeight: 400,
-      fill: "#7A7A7A",
-      textAlign: "center",
-      originX: "center",
-      originY: "center",
-      data: { elementType: "text" },
+      data: { elementType: "text", fieldName: "Coffee Name" },
     },
     // Weight
     {
       type: "textbox",
       left: trimCenterX,
-      top: trimTop + TRIM_H - mmToPx(12),
+      top: safeBottom - mmToPx(8),
       width: safeW,
       text: "250g",
       fontSize: mmToPx(3),
@@ -362,7 +238,7 @@ const circleMark: TemplateDefinition = {
       textAlign: "center",
       originX: "center",
       originY: "center",
-      data: { elementType: "text" },
+      data: { elementType: "text", fieldName: "Weight" },
     },
   ],
 };
@@ -374,7 +250,7 @@ const typeOnly: TemplateDefinition = {
   id: "tpl-mobile-type-only",
   name: "Type Only",
   category: "mobile",
-  description: "Pure typography with font size hierarchy. No shapes. Showcases font pairing.",
+  description: "Pure typography with font size hierarchy and logo zone",
   backgroundColor: "#FAFAFA",
   objects: [
     // Near-white background
@@ -387,56 +263,41 @@ const typeOnly: TemplateDefinition = {
       fill: "#FAFAFA",
       data: { elementType: "shape", isBackground: true },
     },
-    // Brand name — tiny, spaced
-    {
-      type: "textbox",
-      left: safeLeft,
-      top: safeTop + mmToPx(8),
-      width: safeW,
-      text: "YOUR BRAND",
-      fontSize: mmToPx(2.8),
-      fontFamily: "EB Garamond",
-      fontWeight: 400,
-      fill: "#999999",
-      textAlign: "left",
-      charSpacing: 400,
-      data: { elementType: "text" },
-    },
     // Thin rule
     {
       type: "line",
       left: safeLeft,
-      top: safeTop + mmToPx(15),
+      top: safeTop + mmToPx(12),
       width: safeW,
       height: 0,
       stroke: "#E0E0E0",
       strokeWidth: 1,
       data: { elementType: "shape" },
     },
-    // Logo zone below rule, left-aligned
-    ...logoZone(safeLeft + mmToPx(20), safeTop + mmToPx(26), 40, 15, "#999999", "#999999"),
-    // Coffee name — massive serif
+    // Logo zone — square, taller
+    ...logoZone(safeLeft + mmToPx(20), safeTop + mmToPx(34), 40, 32, "#999999", "#999999"),
+    // Coffee name — more central
     {
       type: "textbox",
       left: safeLeft,
-      top: safeTop + mmToPx(42),
+      top: safeTop + mmToPx(72),
       width: safeW,
-      text: "Ethiopian\nYirgacheffe",
+      text: "Coffee\nName",
       fontSize: mmToPx(12),
       fontFamily: "Playfair Display",
       fontWeight: 700,
       fill: "#1A1A1A",
       textAlign: "left",
       lineHeight: 1.05,
-      data: { elementType: "text" },
+      data: { elementType: "text", fieldName: "Coffee Name" },
     },
-    // Origin subtitle
+    // Tagline
     {
       type: "textbox",
       left: safeLeft,
-      top: safeTop + mmToPx(72),
+      top: safeTop + mmToPx(98),
       width: safeW,
-      text: "Single Origin \u2014 Washed Process",
+      text: "Your tagline here",
       fontSize: mmToPx(3.2),
       fontFamily: "EB Garamond",
       fontWeight: 400,
@@ -445,25 +306,11 @@ const typeOnly: TemplateDefinition = {
       textAlign: "left",
       data: { elementType: "text" },
     },
-    // Tasting notes
+    // Weight
     {
       type: "textbox",
       left: safeLeft,
-      top: safeTop + mmToPx(88),
-      width: safeW,
-      text: "Blueberry \u2022 Jasmine \u2022 Dark Chocolate",
-      fontSize: mmToPx(3),
-      fontFamily: "EB Garamond",
-      fontWeight: 400,
-      fill: "#999999",
-      textAlign: "left",
-      data: { elementType: "text" },
-    },
-    // Weight + batch at bottom
-    {
-      type: "textbox",
-      left: safeLeft,
-      top: trimTop + TRIM_H - mmToPx(12),
+      top: safeBottom - mmToPx(8),
       width: safeW,
       text: "250g",
       fontSize: mmToPx(3),
@@ -471,7 +318,7 @@ const typeOnly: TemplateDefinition = {
       fontWeight: 500,
       fill: "#1A1A1A",
       textAlign: "left",
-      data: { elementType: "text" },
+      data: { elementType: "text", fieldName: "Weight" },
     },
   ],
 };

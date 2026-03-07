@@ -30,6 +30,7 @@ import {
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { pxToMm, mmToPx, FONT_LIBRARY, loadGoogleFont, loadGoogleFontAsync } from "./types";
+import { cache as fabricCache } from "fabric";
 import { ColourPicker } from "./ColourPicker";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,6 +74,8 @@ interface ElementInfo {
   shapeSecondary?: string;
   stroke?: string;
   strokeWidth?: number;
+  cornerRadius?: number;
+  isRect?: boolean;
   // Image
   flipX?: boolean;
   flipY?: boolean;
@@ -178,6 +181,12 @@ function extractInfo(obj: fabric.FabricObject): ElementInfo {
     }
     info.flipX = s.flipX ?? false;
     info.flipY = s.flipY ?? false;
+    // Corner radius for Rect objects
+    const objType = ((s.type || "") as string).toLowerCase();
+    if (objType === "rect") {
+      info.isRect = true;
+      info.cornerRadius = Math.round(pxToMm(s.rx ?? 0) * 10) / 10;
+    }
   }
 
   if (type === "image") {
@@ -556,26 +565,51 @@ export function PropertiesPanel({
 
   const setFontFamily = async (family: string) => {
     await loadGoogleFontAsync(family);
+    // Clear stale character-width measurements for this font family
+    fabricCache.clearFontCache(family);
     const obj = getActiveObj() as FabricAny;
-    if (obj) { obj.set("fontFamily", family); applyAndUpdate(); }
+    if (obj) {
+      obj.set("fontFamily", family);
+      if (typeof obj.initDimensions === "function") obj.initDimensions();
+      applyAndUpdate();
+    }
   };
   const setFontSize = (val: number) => {
     const obj = getActiveObj() as FabricAny;
     if (!obj) return;
     const newSize = mmToPx(val);
-    // Capture centre before change
-    const centerX = (obj.left ?? 0) + ((obj.width ?? 0) * (obj.scaleX ?? 1)) / 2;
-    const centerY = (obj.top ?? 0) + ((obj.height ?? 0) * (obj.scaleY ?? 1)) / 2;
+
+    // For center-origin objects, left/top IS the center — capture it directly
+    const isCenterX = obj.originX === "center";
+    const isCenterY = obj.originY === "center";
+    // Compute true center regardless of origin
+    const centerX = isCenterX
+      ? (obj.left ?? 0)
+      : (obj.left ?? 0) + ((obj.width ?? 0) * (obj.scaleX ?? 1)) / 2;
+    const centerY = isCenterY
+      ? (obj.top ?? 0)
+      : (obj.top ?? 0) + ((obj.height ?? 0) * (obj.scaleY ?? 1)) / 2;
+
     // Use set() so Fabric triggers internal text relayout
     obj.set("fontSize", newSize);
     // Force Fabric to recalculate text dimensions
     if (typeof obj.initDimensions === "function") obj.initDimensions();
+
     // Restore centre position for centered text
-    if (obj.textAlign === "center" || obj.originX === "center") {
-      const newW = (obj.width ?? 0) * (obj.scaleX ?? 1);
-      const newH = (obj.height ?? 0) * (obj.scaleY ?? 1);
-      obj.set("left", centerX - newW / 2);
-      obj.set("top", centerY - newH / 2);
+    if (obj.textAlign === "center" || isCenterX) {
+      if (isCenterX) {
+        // originX is "center" — left IS the center, no correction needed
+        obj.set("left", centerX);
+      } else {
+        const newW = (obj.width ?? 0) * (obj.scaleX ?? 1);
+        obj.set("left", centerX - newW / 2);
+      }
+      if (isCenterY) {
+        obj.set("top", centerY);
+      } else {
+        const newH = (obj.height ?? 0) * (obj.scaleY ?? 1);
+        obj.set("top", centerY - newH / 2);
+      }
     }
     applyAndUpdate();
   };
@@ -693,6 +727,17 @@ export function PropertiesPanel({
     } else {
       obj.strokeWidth = val;
     }
+    applyAndUpdate();
+  };
+
+  // ── Corner radius (Rect only) ──
+
+  const setCornerRadius = (val: number) => {
+    const obj = getActiveObj() as FabricAny;
+    if (!obj) return;
+    const px = mmToPx(val);
+    obj.set("rx", px);
+    obj.set("ry", px);
     applyAndUpdate();
   };
 
@@ -914,6 +959,7 @@ export function PropertiesPanel({
               onSecondary={setShapeSecondary}
               onStroke={setStroke}
               onStrokeWidth={setStrokeWidth}
+              onCornerRadius={setCornerRadius}
               onFlipX={toggleFlipX}
               onFlipY={toggleFlipY}
               onOpacity={setOpacity}
@@ -1282,6 +1328,7 @@ function ShapeSection({
   onSecondary,
   onStroke,
   onStrokeWidth,
+  onCornerRadius,
   onFlipX,
   onFlipY,
   onOpacity,
@@ -1291,6 +1338,7 @@ function ShapeSection({
   onSecondary: (c: string) => void;
   onStroke: (c: string) => void;
   onStrokeWidth: (v: number) => void;
+  onCornerRadius: (v: number) => void;
   onFlipX: () => void;
   onFlipY: () => void;
   onOpacity: (v: number) => void;
@@ -1311,6 +1359,17 @@ function ShapeSection({
         unit="px"
         onChange={onStrokeWidth}
       />
+      {info.isRect && (
+        <SliderInput
+          label="Corner Radius"
+          value={info.cornerRadius ?? 0}
+          min={0}
+          max={3}
+          step={0.1}
+          unit="mm"
+          onChange={onCornerRadius}
+        />
+      )}
       <SliderInput
         label="Opacity"
         value={info.opacity}

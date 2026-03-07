@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
   ArrowCounterClockwise,
@@ -115,7 +116,8 @@ export function LabelMakerClient({
           // any localStorage restore and DOM reparenting).
           const tryLoad = () => {
             if (canvas.canvasReadyRef.current) {
-              canvas.loadTemplate(data.label.canvas_json);
+              setTemplateLoading(true);
+              canvas.loadTemplate(data.label.canvas_json).finally(() => setTemplateLoading(false));
               setCurrentLabelId(labelIdParam);
             } else {
               setTimeout(tryLoad, 100);
@@ -202,10 +204,27 @@ export function LabelMakerClient({
   }, [saveToProfile]);
 
   const handleLoadLabel = useCallback(
-    (labelId: string, canvasJson: string) => {
-      canvas.loadTemplate(canvasJson);
+    async (labelId: string, canvasJson: string) => {
+      setTemplateLoading(true);
+      try {
+        await canvas.loadTemplate(canvasJson);
+      } finally {
+        setTemplateLoading(false);
+      }
       setCurrentLabelId(labelId);
       setSavedLabelsOpen(false);
+    },
+    [canvas]
+  );
+
+  const handleApplyTemplate = useCallback(
+    async (template: import("./data/templates").TemplateDefinition) => {
+      setTemplateLoading(true);
+      try {
+        await canvas.applyTemplate(template);
+      } finally {
+        setTemplateLoading(false);
+      }
     },
     [canvas]
   );
@@ -216,6 +235,7 @@ export function LabelMakerClient({
     setSavedLabelsOpen(false);
   }, [canvas]);
 
+  const [templateLoading, setTemplateLoading] = useState(false);
   const [autoExporting, setAutoExporting] = useState(false);
 
   const handleDone = useCallback(() => {
@@ -301,6 +321,8 @@ export function LabelMakerClient({
           onNewLabel={handleNewLabel}
           onSignIn={() => setAuthModalOpen(true)}
           labelRefreshTrigger={labelRefreshTrigger}
+          templateLoading={templateLoading}
+          onApplyTemplate={handleApplyTemplate}
         />
       ) : (
         <div className="flex flex-col h-screen bg-neutral-900 text-foreground overflow-hidden">
@@ -308,9 +330,21 @@ export function LabelMakerClient({
           <header className="flex items-center justify-between px-4 h-12 bg-neutral-800 border-b border-neutral-700 shrink-0">
             {/* Left: Logo + title */}
             <div className="flex items-center gap-3">
-              <span className="text-sm font-bold tracking-tight text-accent">
-                Ghost Roastery
-              </span>
+              <a
+                href="https://ghostroastery.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <Image
+                  src="/ghost-roastery-consumer-logo.png"
+                  alt="Ghost Roastery"
+                  width={240}
+                  height={56}
+                  className="h-12 w-auto"
+                  priority
+                />
+              </a>
               <span className="text-neutral-600">|</span>
               <span className="text-sm font-medium text-neutral-300">
                 Label Maker
@@ -455,7 +489,7 @@ export function LabelMakerClient({
               onAddLabelField={canvas.addLabelField}
               onAddSvgElement={canvas.addSvgElement}
               onAddImage={canvas.addImage}
-              onApplyTemplate={canvas.applyTemplate}
+              onApplyTemplate={handleApplyTemplate}
               onUploadLogo={canvas.replaceLogoZone}
               hasContent={canvas.hasContent}
               getCanvasImage={canvas.getCanvasImage}
@@ -472,6 +506,7 @@ export function LabelMakerClient({
               scaledCanvasH={scaledCanvasH}
               canvas={canvas}
               dimensions={dimensions}
+              templateLoading={templateLoading}
             />
 
             {/* ─── RIGHT PANEL ─── */}
@@ -554,6 +589,7 @@ function DesktopCanvasArea({
   scaledCanvasH,
   canvas,
   dimensions,
+  templateLoading,
 }: {
   containerRef: React.RefObject<HTMLDivElement | null>;
   canvasHostRef: React.RefObject<HTMLDivElement | null>;
@@ -563,6 +599,7 @@ function DesktopCanvasArea({
   canvas: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dimensions: any;
+  templateLoading: boolean;
 }) {
   const desktopSlotRef = useRef<HTMLDivElement>(null);
 
@@ -588,6 +625,16 @@ function DesktopCanvasArea({
       ref={containerRef}
       className="flex-1 overflow-auto bg-neutral-950 relative"
     >
+      {/* Loading overlay while fonts / template are loading */}
+      {templateLoading && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-neutral-950/70 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-3">
+            <SpinnerGap size={28} weight="duotone" className="animate-spin text-accent" />
+            <span className="text-xs text-neutral-300">Loading fonts...</span>
+          </div>
+        </div>
+      )}
+
       <div
         className="flex items-center justify-center"
         style={{

@@ -78,37 +78,104 @@ export const FONT_LIBRARY: FontOption[] = [
   { family: "Allura", label: "Allura", weights: [400], category: "script" },
 ];
 
-/** Track which Google Fonts have been loaded to avoid duplicates */
-const loadedFonts = new Set<string>();
+/** Track async font loads — stores Promises so concurrent callers share one load */
+const loadingFonts = new Map<string, Promise<void>>();
 
-/** Dynamically load a Google Font via the CSS API */
-export function loadGoogleFont(family: string, weights?: number[]): void {
-  if (typeof document === "undefined") return;
-  if (loadedFonts.has(family)) return;
-  loadedFonts.add(family);
-
-  const fontEntry = FONT_LIBRARY.find((f) => f.family === family);
-  const w = weights ?? fontEntry?.weights ?? [400, 700];
-  const wStr = w.join(";");
+/**
+ * Inject a Google Fonts CSS <link> and wait for the stylesheet to be loaded
+ * and parsed by the browser. Returns a promise that resolves when the <link>
+ * fires its `load` event (meaning @font-face rules are now registered).
+ */
+function injectFontCSSAndWait(family: string, weights: number[]): Promise<void> {
+  const wStr = weights.join(";");
   const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:ital,wght@0,${wStr};1,${wStr}&display=swap`;
 
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = url;
-  document.head.appendChild(link);
+  // Check if this exact stylesheet already exists in the DOM
+  const existing = document.querySelector(`link[href="${url}"]`);
+  if (existing) return Promise.resolve();
+
+  return new Promise<void>((resolve) => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = url;
+    link.onload = () => resolve();
+    link.onerror = () => resolve(); // don't block on network errors
+    document.head.appendChild(link);
+  });
+}
+
+/** Dynamically load a Google Font via the CSS API (fire-and-forget, no wait) */
+export function loadGoogleFont(family: string, weights?: number[]): void {
+  if (typeof document === "undefined") return;
+  const fontEntry = FONT_LIBRARY.find((f) => f.family === family);
+  const w = weights ?? fontEntry?.weights ?? [400, 700];
+  injectFontCSSAndWait(family, w); // fire-and-forget
 }
 
 /**
- * Load a Google Font and wait for it to be available for rendering.
+ * Load a Google Font and wait for it to be truly available for canvas rendering.
+ *
+ * Strategy:
+ * 1. Inject the Google Fonts CSS <link> tag and WAIT for it to load
+ *    (this ensures @font-face rules are registered before we try to load)
+ * 2. Use document.fonts.load() to trigger font download for each weight
+ * 3. Wait for document.fonts.ready to confirm all pending loads are done
+ * 4. Verify with a canvas-based measurement test (more reliable than
+ *    document.fonts.check which returns true for unknown fonts)
  */
 export async function loadGoogleFontAsync(family: string, weights?: number[]): Promise<void> {
   if (typeof document === "undefined") return;
 
-  loadGoogleFont(family, weights);
+  // If already loading/loaded, return the existing promise
+  const existing = loadingFonts.get(family);
+  if (existing) return existing;
 
-  try {
-    await document.fonts.load(`16px "${family}"`);
-  } catch {
-    await new Promise((r) => setTimeout(r, 150));
-  }
+  const fontEntry = FONT_LIBRARY.find((f) => f.family === family);
+  const w = weights ?? fontEntry?.weights ?? [400, 700];
+
+  const loadPromise = (async () => {
+    // Step 1: Inject CSS and wait for stylesheet to be parsed
+    await injectFontCSSAndWait(family, w);
+
+    // Step 2: Explicitly load each weight (now @font-face rules exist)
+    const loadPromises = w.map((weight) => {
+      try {
+        return document.fonts.load(`${weight} 16px "${family}"`);
+      } catch {
+        return Promise.resolve([] as FontFace[]);
+      }
+    });
+    await Promise.all(loadPromises);
+
+    // Step 3: Wait for all pending font loads to settle
+    await document.fonts.ready;
+
+    // Step 4: Canvas-based verification — measure text with the target font
+    // vs a known fallback. If widths differ, the real font is loaded.
+    // Poll for up to 5s to handle slow connections.
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const testStr = "ABCDEFGHijklmnop123";
+      ctx.font = `400 72px monospace`;
+      const fallbackWidth = ctx.measureText(testStr).width;
+
+      const maxWait = 5000;
+      const interval = 50;
+      let waited = 0;
+      while (waited < maxWait) {
+        ctx.font = `400 72px "${family}", monospace`;
+        const testWidth = ctx.measureText(testStr).width;
+        if (Math.abs(testWidth - fallbackWidth) > 0.5) {
+          // Font is rendering differently from fallback — it's loaded
+          return;
+        }
+        await new Promise((r) => setTimeout(r, interval));
+        waited += interval;
+      }
+    }
+  })();
+
+  loadingFonts.set(family, loadPromise);
+  return loadPromise;
 }

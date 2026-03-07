@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, type RefObject } from "react";
+import { SpinnerGap } from "@phosphor-icons/react";
 import type { LabelDimensions } from "../types";
 import { MobileHeader } from "./MobileHeader";
 import { MobileToolbar, type MobileToolTab } from "./MobileToolbar";
@@ -44,6 +45,8 @@ interface MobileLabelMakerProps {
   onNewLabel: () => void;
   onSignIn: () => void;
   labelRefreshTrigger?: number;
+  templateLoading?: boolean;
+  onApplyTemplate?: (template: import("../data/templates").TemplateDefinition) => void;
 }
 
 export function MobileLabelMaker({
@@ -61,6 +64,8 @@ export function MobileLabelMaker({
   onNewLabel,
   onSignIn,
   labelRefreshTrigger,
+  templateLoading,
+  onApplyTemplate,
 }: MobileLabelMakerProps) {
   const [activeTab, setActiveTab] = useState<MobileToolTab | null>(null);
   const [hasSelection, setHasSelection] = useState(false);
@@ -228,16 +233,26 @@ export function MobileLabelMaker({
       />
 
       {/* Canvas viewport */}
-      <MobileCanvasViewport
-        canvasRef={canvas.canvasRef}
-        fabricRef={canvas.fabricRef}
-        containerRef={containerRef}
-        canvasHostRef={canvasHostRef}
-        totalWMm={canvas.totalWMm}
-        totalHMm={canvas.totalHMm}
-        currentScale={canvas.currentScale}
-        applyZoom={canvas.applyZoom}
-      />
+      <div className="relative flex-1">
+        <MobileCanvasViewport
+          canvasRef={canvas.canvasRef}
+          fabricRef={canvas.fabricRef}
+          containerRef={containerRef}
+          canvasHostRef={canvasHostRef}
+          totalWMm={canvas.totalWMm}
+          totalHMm={canvas.totalHMm}
+          currentScale={canvas.currentScale}
+          applyZoom={canvas.applyZoom}
+        />
+        {templateLoading && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-neutral-950/70 backdrop-blur-sm">
+            <div className="flex flex-col items-center gap-2">
+              <SpinnerGap size={24} weight="duotone" className="animate-spin text-accent" />
+              <span className="text-[11px] text-neutral-300">Loading fonts...</span>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Context menu for selected objects */}
       {hasSelection && selectedObject && activeTab !== "properties" && (
@@ -276,7 +291,7 @@ export function MobileLabelMaker({
         initialSnap="half"
       >
         <MobileTemplatesSheet
-          onApplyTemplate={canvas.applyTemplate}
+          onApplyTemplate={onApplyTemplate ?? canvas.applyTemplate}
           hasContent={canvas.hasContent}
           onDismiss={closeSheet}
         />

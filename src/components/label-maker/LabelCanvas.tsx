@@ -12,6 +12,7 @@ import {
   mmToPx,
   pxToMm,
   rehydrateFontsOnCanvas,
+  loadGoogleFontAsync,
   type LabelDimensions,
   type ZoomLevel,
 } from "./types";
@@ -340,19 +341,62 @@ export function LabelCanvas({
 
     fabricRef.current = canvas;
 
+    // Expose to console for template editing workflow
+    // Usage: copy(__grCanvas.dumpTemplate("My Template Name", "minimal"))
+    (window as FabricAny).__grCanvas = {
+      fabric: canvas,
+      dumpTemplate: (name?: string, category?: string) => {
+        const json = canvas.toObject(["data"]);
+        // Filter out guides/grid/snap lines
+        json.objects = (json.objects as FabricAny[]).filter(
+          (obj: FabricAny) => !obj.data?.isGuide && !obj.data?.isGrid && !obj.data?.isSnapLine
+        );
+        const out = {
+          name: name || "Untitled",
+          category: category || "minimal",
+          backgroundColor: json.background || "#ffffff",
+          objects: json.objects,
+        };
+        const str = JSON.stringify(out, null, 2);
+        console.log(`Template "${out.name}" (${out.objects.length} objects):`);
+        console.log(str);
+        return str;
+      },
+    };
+
+    // Preload default text fonts so they're always available
+    Promise.all([
+      loadGoogleFontAsync("Figtree", [400, 600, 700]),
+      loadGoogleFontAsync("Inter", [400, 700]),
+    ]);
+
     // Try to restore from localStorage
     const stored = localStorage.getItem(storageKey);
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        canvas.loadFromJSON(parsed).then(async () => {
-          createGuides(canvas);
-          canvas.renderAll();
-          await rehydrateFontsOnCanvas(canvas);
-          initState(canvas);
-          canvasReadyRef.current = true;
-          // Slight delay to ensure container is measured
-          requestAnimationFrame(() => applyZoom("fit"));
+
+        // Pre-load fonts BEFORE loadFromJSON so Fabric has correct metrics
+        const fontFamilies = new Set<string>();
+        if (Array.isArray(parsed.objects)) {
+          for (const obj of parsed.objects as FabricAny[]) {
+            if (obj.fontFamily) fontFamilies.add(obj.fontFamily);
+          }
+        }
+        const fontLoadPromise = fontFamilies.size > 0
+          ? Promise.all(Array.from(fontFamilies).map((f) => loadGoogleFontAsync(f)))
+          : Promise.resolve();
+
+        fontLoadPromise.then(() => {
+          canvas.loadFromJSON(parsed).then(async () => {
+            createGuides(canvas);
+            // Fonts already loaded, but re-measure to be safe
+            await rehydrateFontsOnCanvas(canvas);
+            canvas.renderAll();
+            initState(canvas);
+            canvasReadyRef.current = true;
+            requestAnimationFrame(() => applyZoom("fit"));
+          });
         });
       } catch {
         createGuides(canvas);
@@ -699,7 +743,7 @@ export function LabelCanvas({
 
   // ─── Phase B: Add text to canvas ───
   const addText = useCallback(
-    (
+    async (
       preset: "heading" | "subheading" | "body" | "label",
       options?: { text?: string; fontFamily?: string }
     ) => {
@@ -734,6 +778,11 @@ export function LabelCanvas({
       };
 
       const p = presets[preset];
+      const fontFamily = options?.fontFamily ?? p.fontFamily;
+
+      // Load the font before creating the Textbox so Fabric has correct metrics
+      await loadGoogleFontAsync(fontFamily);
+
       const textObj = new fabric.Textbox(options?.text ?? p.text, {
         left: bleedPx + trimW / 2,
         top: bleedPx + trimH / 2,
@@ -741,7 +790,7 @@ export function LabelCanvas({
         originY: "center",
         fontSize: p.fontSize,
         fontWeight: p.fontWeight,
-        fontFamily: options?.fontFamily ?? p.fontFamily,
+        fontFamily,
         fill: "#000000",
         textAlign: "center",
         width: trimW * 0.8,
@@ -760,7 +809,7 @@ export function LabelCanvas({
 
   // ─── Phase B: Add label field shortcut ───
   const addLabelField = useCallback(
-    (fieldName: string) => {
+    async (fieldName: string) => {
       const canvas = fabricRef.current;
       if (!canvas) return;
 
@@ -775,6 +824,10 @@ export function LabelCanvas({
       };
 
       const defaults = fieldDefaults[fieldName] ?? { text: fieldName, fontSize: mmToPx(3) };
+      const fontFamily = fieldName === "Roaster Name" ? "Figtree" : "Inter";
+
+      // Load the font before creating the Textbox so Fabric has correct metrics
+      await loadGoogleFontAsync(fontFamily);
 
       const textObj = new fabric.Textbox(defaults.text, {
         left: bleedPx + trimW / 2,
@@ -783,7 +836,7 @@ export function LabelCanvas({
         originY: "center",
         fontSize: defaults.fontSize,
         fontWeight: fieldName === "Roaster Name" ? "bold" : "normal",
-        fontFamily: fieldName === "Roaster Name" ? "Figtree" : "Inter",
+        fontFamily,
         fill: "#000000",
         textAlign: "center",
         width: trimW * 0.8,
@@ -873,7 +926,7 @@ export function LabelCanvas({
 
   // ─── Phase B: Load template ───
   const loadTemplate = useCallback(
-    (canvasJSON: string | object) => {
+    async (canvasJSON: string | object) => {
       const canvas = fabricRef.current;
       if (!canvas) return;
 
@@ -885,21 +938,36 @@ export function LabelCanvas({
 
       try {
         const parsed = typeof canvasJSON === "string" ? JSON.parse(canvasJSON) : canvasJSON;
-        isProgrammatic.current = true;
-        canvas.loadFromJSON(parsed).then(async () => {
-          createGuides(canvas);
-          // Re-create grid if it was visible
-          if (gridVisible && gridCreatedRef.current) {
-            createGrid(canvas);
-            gridLinesRef.current.forEach((g) => { g.visible = true; });
+
+        // Pre-load ALL fonts referenced in the JSON BEFORE loadFromJSON
+        // so Fabric.js has correct metrics when it creates text objects
+        const fontFamilies = new Set<string>();
+        if (Array.isArray(parsed.objects)) {
+          for (const obj of parsed.objects as FabricAny[]) {
+            if (obj.fontFamily) fontFamilies.add(obj.fontFamily);
           }
-          canvas.renderAll();
-          await rehydrateFontsOnCanvas(canvas);
-          isProgrammatic.current = false;
-          saveState(canvas);
-          updateHistoryState();
-          scheduleLocalSave();
-        });
+        }
+        if (fontFamilies.size > 0) {
+          await Promise.all(
+            Array.from(fontFamilies).map((f) => loadGoogleFontAsync(f))
+          );
+        }
+
+        isProgrammatic.current = true;
+        await canvas.loadFromJSON(parsed);
+        createGuides(canvas);
+        // Re-create grid if it was visible
+        if (gridVisible && gridCreatedRef.current) {
+          createGrid(canvas);
+          gridLinesRef.current.forEach((g) => { g.visible = true; });
+        }
+        // Fonts are already loaded, but re-measure to be safe
+        await rehydrateFontsOnCanvas(canvas);
+        canvas.renderAll();
+        isProgrammatic.current = false;
+        saveState(canvas);
+        updateHistoryState();
+        scheduleLocalSave();
       } catch {
         // If JSON is invalid, just re-add guides
         createGuides(canvas);
@@ -913,9 +981,22 @@ export function LabelCanvas({
   // Converts template objects to a Fabric.js-compatible JSON and uses loadFromJSON
   // which reliably renders all object types including text.
   const applyTemplate = useCallback(
-    (template: TemplateDefinition) => {
+    async (template: TemplateDefinition) => {
       const canvas = fabricRef.current;
       if (!canvas) return;
+
+      // Pre-load ALL fonts used in the template BEFORE creating objects
+      const fontFamilies = new Set<string>();
+      for (const obj of template.objects) {
+        if (obj.type === "textbox" && obj.fontFamily) {
+          fontFamilies.add(obj.fontFamily);
+        }
+      }
+      if (fontFamilies.size > 0) {
+        await Promise.all(
+          Array.from(fontFamilies).map((f) => loadGoogleFontAsync(f))
+        );
+      }
 
       // Remove all non-guide, non-grid objects
       const toRemove = canvas
@@ -1013,19 +1094,18 @@ export function LabelCanvas({
       };
 
       isProgrammatic.current = true;
-      canvas.loadFromJSON(canvasJSON).then(async () => {
-        createGuides(canvas);
-        if (gridVisible && gridCreatedRef.current) {
-          createGrid(canvas);
-          gridLinesRef.current.forEach((g) => { g.visible = true; });
-        }
-        canvas.renderAll();
-        await rehydrateFontsOnCanvas(canvas);
-        isProgrammatic.current = false;
-        saveState(canvas);
-        updateHistoryState();
-        scheduleLocalSave();
-      });
+      await canvas.loadFromJSON(canvasJSON);
+      createGuides(canvas);
+      if (gridVisible && gridCreatedRef.current) {
+        createGrid(canvas);
+        gridLinesRef.current.forEach((g) => { g.visible = true; });
+      }
+      await rehydrateFontsOnCanvas(canvas);
+      canvas.renderAll();
+      isProgrammatic.current = false;
+      saveState(canvas);
+      updateHistoryState();
+      scheduleLocalSave();
     },
     [trimW, isProgrammatic, saveState, updateHistoryState, scheduleLocalSave, createGuides, createGrid, gridVisible]
   );

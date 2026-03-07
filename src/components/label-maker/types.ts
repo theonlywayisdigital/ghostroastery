@@ -74,6 +74,8 @@ export type { FontOption } from "@/lib/fonts";
 export { FONT_LIBRARY, FONT_CATEGORIES, loadGoogleFont, loadGoogleFontAsync } from "@/lib/fonts";
 // Local import for use within this file (re-exports above don't create local bindings)
 import { loadGoogleFontAsync } from "@/lib/fonts";
+// Fabric's global character-width cache — must be cleared when fonts change
+import { cache as fabricCache } from "fabric";
 
 /**
  * After loading canvas JSON (from DB, localStorage, or undo/redo), Google Fonts
@@ -83,21 +85,24 @@ import { loadGoogleFontAsync } from "@/lib/fonts";
  *
  * Call this after every `canvas.loadFromJSON()` resolves.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RehydrateAny = any;
+
 export async function rehydrateFontsOnCanvas(canvas: {
-  getObjects: () => { type?: string; fontFamily?: string; initDimensions?: () => void; setCoords?: () => void }[];
+  getObjects: () => RehydrateAny[];
   renderAll: () => void;
+  requestRenderAll: () => void;
 }): Promise<void> {
   const objects = canvas.getObjects();
 
   // Collect unique font families from all text-like objects
   const families = new Set<string>();
-  const textObjects: { initDimensions?: () => void; setCoords?: () => void }[] = [];
+  const textObjects: RehydrateAny[] = [];
 
   for (const obj of objects) {
-    const t = (obj as { type?: string }).type?.toLowerCase();
+    const t = (obj.type ?? "").toLowerCase();
     if (t === "textbox" || t === "i-text" || t === "text") {
-      const family = (obj as { fontFamily?: string }).fontFamily;
-      if (family) families.add(family);
+      if (obj.fontFamily) families.add(obj.fontFamily);
       textObjects.push(obj);
     }
   }
@@ -109,13 +114,21 @@ export async function rehydrateFontsOnCanvas(canvas: {
     Array.from(families).map((f) => loadGoogleFontAsync(f))
   );
 
-  // Force Fabric to recalculate text dimensions now that the real fonts are loaded
+  // Clear Fabric's GLOBAL character-width cache for each font family.
+  // Without this, stale measurements (made with fallback fonts before the real
+  // Google Font loaded) persist and cause wrong line widths / centering offsets.
+  for (const family of families) {
+    fabricCache.clearFontCache(family);
+  }
+
+  // Force Fabric to fully recalculate text dimensions with the real fonts.
   for (const obj of textObjects) {
+    obj.dirty = true;
     if (typeof obj.initDimensions === "function") obj.initDimensions();
     if (typeof obj.setCoords === "function") obj.setCoords();
   }
 
-  canvas.renderAll();
+  canvas.requestRenderAll();
 }
 
 /** SVG element categories */

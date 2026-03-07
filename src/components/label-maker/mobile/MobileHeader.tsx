@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   ArrowCounterClockwise,
   ArrowClockwise,
@@ -65,9 +66,25 @@ export function MobileHeader({
   return (
     <header className="flex items-center justify-between px-3 h-11 bg-neutral-800 border-b border-neutral-700 shrink-0 relative z-30">
       {/* Left: Brand */}
-      <span className="text-xs font-bold tracking-tight text-accent">
-        Label Maker
-      </span>
+      <a
+        href="https://ghostroastery.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2"
+      >
+        <Image
+          src="/ghost-roastery-consumer-logo.png"
+          alt="Ghost Roastery"
+          width={180}
+          height={44}
+          className="h-10 w-auto"
+          priority
+        />
+        <span className="text-neutral-600">|</span>
+        <span className="text-xs font-medium text-neutral-300">
+          Label Maker
+        </span>
+      </a>
 
       {/* Center: Undo / Redo */}
       <div className="flex items-center gap-1">

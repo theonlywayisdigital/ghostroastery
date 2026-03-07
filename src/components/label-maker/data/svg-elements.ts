@@ -132,7 +132,25 @@ const mapPin: SvgElement = {
   sortOrder: 14,
 };
 
-// ─── Geometric (6 elements) ───
+// ─── Geometric (8 elements) ───
+
+const rectangleOutline: SvgElement = {
+  _id: "svg-rectangle-outline",
+  name: "Rectangle (Outline)",
+  category: "geometric",
+  svgMarkup: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#1A1A1A" stroke-width="2.5"><rect x="6" y="6" width="52" height="52"/></svg>`,
+  thumbnailUrl: null,
+  sortOrder: 15,
+};
+
+const rectangleFilled: SvgElement = {
+  _id: "svg-rectangle-filled",
+  name: "Rectangle (Filled)",
+  category: "geometric",
+  svgMarkup: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="6" y="6" width="52" height="52" fill="#1A1A1A"/></svg>`,
+  thumbnailUrl: null,
+  sortOrder: 16,
+};
 
 const circleOutline: SvgElement = {
   _id: "svg-circle-outline",
@@ -140,7 +158,7 @@ const circleOutline: SvgElement = {
   category: "geometric",
   svgMarkup: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#1A1A1A" stroke-width="2.5"><circle cx="32" cy="32" r="28"/></svg>`,
   thumbnailUrl: null,
-  sortOrder: 15,
+  sortOrder: 17,
 };
 
 const circleFilled: SvgElement = {
@@ -365,6 +383,8 @@ export const SVG_ELEMENTS: SvgElement[] = [
   globe,
   mapPin,
   // Geometric
+  rectangleOutline,
+  rectangleFilled,
   circleOutline,
   circleFilled,
   triangleOutline,

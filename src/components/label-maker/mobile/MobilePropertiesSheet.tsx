@@ -50,6 +50,8 @@ interface ObjectState {
   lineHeight: number;
   stroke: string;
   strokeWidth: number;
+  cornerRadius: number;
+  isRect: boolean;
 }
 
 const DEFAULT_STATE: ObjectState = {
@@ -66,6 +68,8 @@ const DEFAULT_STATE: ObjectState = {
   lineHeight: 1.2,
   stroke: "",
   strokeWidth: 0,
+  cornerRadius: 0,
+  isRect: false,
 };
 
 export function MobilePropertiesSheet({
@@ -141,6 +145,10 @@ export function MobilePropertiesSheet({
         lineHeight: obj.lineHeight ?? 1.2,
         stroke: strokeInfo.stroke,
         strokeWidth: strokeInfo.strokeWidth,
+        cornerRadius: ((obj.type || "") as string).toLowerCase() === "rect"
+          ? Math.round(pxToMm(obj.rx ?? 0) * 10) / 10
+          : 0,
+        isRect: ((obj.type || "") as string).toLowerCase() === "rect",
       });
     };
 
@@ -221,6 +229,10 @@ export function MobilePropertiesSheet({
       } else {
         obj.set("strokeWidth", value);
       }
+    } else if (key === "cornerRadius") {
+      const px = mmToPx(value as number);
+      obj.set("rx", px);
+      obj.set("ry", px);
     } else {
       obj.set(key, value);
     }
@@ -611,6 +623,31 @@ export function MobilePropertiesSheet({
               <span className="text-[10px] text-neutral-500">px</span>
             </div>
           </div>
+
+          {/* Corner Radius (Rect only) */}
+          {state.isRect && (
+            <div>
+              <label className="text-[10px] text-neutral-500 block mb-1">
+                Corner Radius
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min={0}
+                  max={3}
+                  step={0.1}
+                  value={state.cornerRadius}
+                  onChange={(e) =>
+                    updateProp("cornerRadius", parseFloat(e.target.value))
+                  }
+                  className="w-full accent-accent"
+                />
+                <span className="text-[10px] text-neutral-500 whitespace-nowrap">
+                  {state.cornerRadius.toFixed(1)}mm
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Flip */}
           <div>
