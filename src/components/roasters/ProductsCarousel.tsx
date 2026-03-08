@@ -13,6 +13,16 @@ import {
   ArrowRight,
   Package,
   ClipboardText,
+  Leaf,
+  Fire,
+  Star,
+  Calculator,
+  Layout,
+  PaintBrush,
+  Globe,
+  Eye,
+  Wrench,
+  Browser,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
@@ -94,6 +104,78 @@ const suites = [
         title: "AI Studio",
         desc: "Generate product descriptions, social captions, email copy, and marketing images with AI.",
         href: "/features/ai-studio",
+      },
+    ],
+  },
+  {
+    key: "roaster-tools",
+    label: "Roaster Tools",
+    tagline: "The tools your roastery actually needs",
+    description:
+      "Green bean inventory, roast logging, cupping scorecards, and calculators — built for working roasters. Free on every plan.",
+    allHref: "/features/roaster-tools",
+    placeholderIcon: Wrench,
+    placeholderLabel: "Roaster Tools Screenshot",
+    features: [
+      {
+        icon: Leaf,
+        title: "Green Bean Inventory",
+        desc: "Track every bag of green coffee from arrival to roast. Origins, suppliers, and stock levels.",
+        href: "/features/roaster-tools",
+      },
+      {
+        icon: Fire,
+        title: "Roast Log",
+        desc: "Record profiles, temperatures, development times, and batch notes.",
+        href: "/features/roaster-tools",
+      },
+      {
+        icon: Star,
+        title: "Cupping Scorecards",
+        desc: "SCA-aligned scoring. Compare batches across origins, profiles, and dates.",
+        href: "/features/roaster-tools",
+      },
+      {
+        icon: Calculator,
+        title: "Calculators",
+        desc: "Roast loss, brew ratio, and cost-per-cup. The maths without the spreadsheet.",
+        href: "/features/roaster-tools",
+      },
+    ],
+  },
+  {
+    key: "website",
+    label: "Website Builder",
+    tagline: "A proper website for your roastery",
+    description:
+      "Build your website without a developer. Drag-and-drop pages, your own domain, and a design that matches your brand. From £14/month.",
+    allHref: "/features/website",
+    placeholderIcon: Browser,
+    placeholderLabel: "Website Builder Screenshot",
+    features: [
+      {
+        icon: Layout,
+        title: "Page Builder",
+        desc: "Drag-and-drop blocks to build pages in minutes. Pre-built components for roasters.",
+        href: "/features/website",
+      },
+      {
+        icon: PaintBrush,
+        title: "Design & Theming",
+        desc: "Set your brand colours, typography, and logo. Every page inherits your design.",
+        href: "/features/website",
+      },
+      {
+        icon: Globe,
+        title: "Custom Domains",
+        desc: "Use your own domain — yourroastery.com. SSL included. One-click setup.",
+        href: "/features/website",
+      },
+      {
+        icon: Eye,
+        title: "Live Preview",
+        desc: "See changes before you publish. Desktop and mobile preview built in.",
+        href: "/features/website",
       },
     ],
   },

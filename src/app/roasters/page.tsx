@@ -22,9 +22,9 @@ import { ProductsCarousel } from "@/components/roasters/ProductsCarousel";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Ghost Roastery Platform | For Coffee Roasters",
+  title: "Ghost Roastery Platform — Sell, Market & Grow Your Roastery",
   description:
-    "The all-in-one platform for coffee roasters. Sell online, manage wholesale orders, and grow your roasting business.",
+    "Everything you need to sell more coffee. Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login.",
 };
 
 const PLATFORM_URL = "https://platform.ghostroastery.com";
@@ -68,10 +68,10 @@ export default async function RoastersHomePage() {
   ]);
 
   const headline =
-    settings?.heroHeadline || "Grow your roastery. We handle the rest.";
+    settings?.heroHeadline || "Everything you need to sell more coffee. Nothing you don't.";
   const subheadline =
     settings?.heroSubheadline ||
-    "The all-in-one platform to sell online, manage wholesale, and scale your coffee business.";
+    "Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login. Free to start.";
 
   const liveCaseStudies = caseStudies.filter((cs) => !cs.isPlaceholder);
   const latestPosts = blogPosts.slice(0, 3);
@@ -88,30 +88,30 @@ export default async function RoastersHomePage() {
     {
       icon: SealCheck,
       step: "01",
-      title: "Apply & Get Verified",
+      title: "Apply",
       description:
-        "Tell us about your roastery. We verify your capacity, equipment, and quality standards.",
+        "Tell us about your roastery — equipment, capacity, and the profiles you roast. We verify quality and approve within 48 hours.",
     },
     {
       icon: Package,
       step: "02",
-      title: "Receive Orders",
+      title: "Match",
       description:
-        "Orders from brands in your territory land directly in your dashboard.",
+        "We match you with brands in your region that need your capacity. Orders land in your dashboard automatically.",
     },
     {
       icon: Truck,
       step: "03",
-      title: "Roast & Ship",
+      title: "Roast & ship",
       description:
-        "Roast to spec, print shipping labels, and dispatch within the deadline.",
+        "Roast to spec, print labels, and dispatch. We handle customer service, returns, and reorders.",
     },
     {
       icon: HandCoins,
       step: "04",
-      title: "Get Paid",
+      title: "Get paid",
       description:
-        "Payouts processed automatically. Transparent rates with no hidden fees.",
+        "Payouts processed weekly. Transparent rates, no hidden fees, no invoicing to chase.",
     },
   ];
 
@@ -192,10 +192,10 @@ export default async function RoastersHomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {settings?.ctaStrip1Headline ?? "Everything you need to sell coffee online"}
+                {settings?.ctaStrip1Headline ?? "Stop stitching together Shopify, Mailchimp, and spreadsheets"}
               </h2>
               <p className="text-white/80 mt-1">
-                {settings?.ctaStrip1Subtitle ?? "No monthly fees. No commission on storefront sales. Free forever."}
+                {settings?.ctaStrip1Subtitle ?? "One platform for sales, marketing, production, and your website. Free to start."}
               </p>
             </div>
             <a
@@ -216,11 +216,11 @@ export default async function RoastersHomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-4">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">
-              {settings?.toolsSectionTitle ?? "Powerful tools for"}{" "}
-              <span className="text-accent">{settings?.toolsSectionSubtitle ?? "modern roasters"}</span>
+              {settings?.toolsSectionTitle ?? "Four products."}{" "}
+              <span className="text-accent">{settings?.toolsSectionSubtitle ?? "One platform."}</span>
             </h2>
             <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
-              {settings?.toolsSectionDescription ?? "Everything you need to sell coffee and grow your brand — in one platform."}
+              {settings?.toolsSectionDescription ?? "Sales, marketing, roaster tools, and website builder. Each works on its own. Together they replace the stack of apps you're paying for."}
             </p>
           </div>
           <ProductsCarousel cms={carouselCms} />
@@ -235,10 +235,10 @@ export default async function RoastersHomePage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {settings?.ctaStrip2Headline ?? "Ready to grow your roastery?"}
+                {settings?.ctaStrip2Headline ?? "Free to start. Paid plans that grow with your business."}
               </h2>
               <p className="text-neutral-400 mt-1">
-                {settings?.ctaStrip2Subtitle ?? "Join hundreds of roasters already selling more coffee with less effort."}
+                {settings?.ctaStrip2Subtitle ?? "No transaction fees on paid plans. No lock-in. Cancel any time."}
               </p>
             </div>
             <div className="flex items-center gap-4 shrink-0">
@@ -261,11 +261,11 @@ export default async function RoastersHomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">
-              {settings?.caseStudiesSectionTitle ?? "Roaster"}{" "}
-              <span className="text-accent">success stories</span>
+              {settings?.caseStudiesSectionTitle ?? "Roasters using the"}{" "}
+              <span className="text-accent">platform</span>
             </h2>
             <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
-              {settings?.caseStudiesSectionSubtitle ?? "See how roasters are growing their businesses with Ghost Roastery Platform."}
+              {settings?.caseStudiesSectionSubtitle ?? "Real roasteries. Real results. See how they sell more coffee with less overhead."}
             </p>
           </div>
 
@@ -343,11 +343,11 @@ export default async function RoastersHomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-neutral-900 tracking-tight">
-              {settings?.blogSectionTitle ?? "Latest from the"}{" "}
-              <span className="text-accent">blog</span>
+              {settings?.blogSectionTitle ?? "From the"}{" "}
+              <span className="text-accent">roaster blog</span>
             </h2>
             <p className="mt-4 text-lg text-neutral-600 max-w-2xl mx-auto">
-              {settings?.blogSectionSubtitle ?? "Tips, guides, and industry insights to help you sell more coffee."}
+              {settings?.blogSectionSubtitle ?? "Practical guides, industry insights, and business tips for working roasters."}
             </p>
           </div>
 
@@ -448,14 +448,14 @@ export default async function RoastersHomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-3">
-              {settings?.partnerSectionLabel ?? "Partner Program"}
+              {settings?.partnerSectionLabel ?? "Partner Programme"}
             </p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight mb-4">
-              {settings?.partnerSectionTitle ?? "Earn more by roasting for"}{" "}
-              <span className="text-accent">other brands</span>
+              {settings?.partnerSectionTitle ?? "More orders."}{" "}
+              <span className="text-accent">No marketing.</span>
             </h2>
             <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-              {settings?.partnerSectionSubtitle ?? "Join our ghost roasting network. We send you the orders — you roast and ship. Guaranteed volume, zero marketing overhead."}
+              {settings?.partnerSectionSubtitle ?? "We bring the brands and the orders. You bring the craft. Fill your roaster without spending a penny on advertising."}
             </p>
           </div>
 
