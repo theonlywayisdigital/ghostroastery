@@ -6,8 +6,10 @@ import { TileCard } from "@/components/ui/Card";
 import { Accordion } from "@/components/ui/Accordion";
 import {
   ArrowRight,
-  type Icon,
 } from "@phosphor-icons/react/dist/ssr";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PhosphorIcon = React.ComponentType<any>;
 
 interface WholesaleSubPageProps {
   heroHeadline: string;
@@ -15,7 +17,7 @@ interface WholesaleSubPageProps {
   heroDescription: string;
   problemTitle: string;
   problemDescription: string[];
-  features: { icon: Icon; title: string; description: string }[];
+  features: { icon: PhosphorIcon; title: string; description: string }[];
   howItWorks: { step: string; title: string; description: string }[];
   useCases: { title: string; description: string }[];
   faqs: { question: string; answer: string }[];
