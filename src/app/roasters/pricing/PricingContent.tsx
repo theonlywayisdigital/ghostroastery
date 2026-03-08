@@ -45,26 +45,26 @@ const suites: Suite[] = [
   {
     key: "sales",
     label: "Sales Suite",
-    subtitle: "Everything you need to sell coffee online",
+    subtitle: "Sell wholesale and direct-to-consumer from one dashboard",
     tiers: [
       {
         name: "Free",
         monthly: 0,
-        description: "Get started at zero cost",
+        description: "Start selling at zero cost",
         cta: "Start Free",
         ctaHref: `${PLATFORM_URL}/signup`,
       },
       {
         name: "Starter",
         monthly: 29,
-        description: "For roasters building momentum",
+        description: "Drop the 5% fee, add invoicing",
         cta: "Start Free Trial",
         ctaHref: `${PLATFORM_URL}/signup?plan=starter`,
       },
       {
         name: "Growth",
         monthly: 49,
-        description: "For growing roasteries",
+        description: "Most roasters start here",
         highlighted: true,
         cta: "Start Free Trial",
         ctaHref: `${PLATFORM_URL}/signup?plan=growth`,
@@ -72,14 +72,14 @@ const suites: Suite[] = [
       {
         name: "Pro",
         monthly: 79,
-        description: "For established roasters",
+        description: "Full analytics, more capacity",
         cta: "Start Free Trial",
         ctaHref: `${PLATFORM_URL}/signup?plan=pro`,
       },
       {
         name: "Scale",
         monthly: 149,
-        description: "For high-volume operations",
+        description: "Unlimited everything",
         cta: "Contact Us",
         ctaHref: `${PLATFORM_URL}/contact`,
       },
@@ -101,27 +101,27 @@ const suites: Suite[] = [
   {
     key: "marketing",
     label: "Marketing Suite",
-    subtitle: "Grow your brand with powerful marketing tools",
+    subtitle: "Email, social, automations, and AI — grow your brand on autopilot",
     isAddOn: true,
     tiers: [
       {
         name: "Free",
         monthly: 0,
-        description: "Basic marketing tools included",
+        description: "Basic tools to get started",
         cta: "Start Free",
         ctaHref: `${PLATFORM_URL}/signup`,
       },
       {
         name: "Starter",
         monthly: 19,
-        description: "Essential campaigns and forms",
+        description: "More sends, more forms",
         cta: "Start Free Trial",
         ctaHref: `${PLATFORM_URL}/signup?plan=starter`,
       },
       {
         name: "Growth",
         monthly: 39,
-        description: "Full marketing toolkit",
+        description: "Social, automations, full analytics",
         highlighted: true,
         cta: "Start Free Trial",
         ctaHref: `${PLATFORM_URL}/signup?plan=growth`,
@@ -129,14 +129,14 @@ const suites: Suite[] = [
       {
         name: "Pro",
         monthly: 59,
-        description: "Advanced marketing power",
+        description: "Higher limits, cheaper AI credits",
         cta: "Start Free Trial",
         ctaHref: `${PLATFORM_URL}/signup?plan=pro`,
       },
       {
         name: "Scale",
         monthly: 99,
-        description: "Unlimited marketing at scale",
+        description: "Unlimited sends and contacts",
         cta: "Contact Us",
         ctaHref: `${PLATFORM_URL}/contact`,
       },
@@ -372,39 +372,39 @@ function PricingTable({
 const defaultFaqs: FAQ[] = [
   {
     _id: "dfaq-1",
-    question: "Can I use both suites on the free plan?",
+    question: "What's included on the free plan?",
     answer:
-      "Yes! Both the Sales Suite and Marketing Suite are included free with generous limits. Upgrade only when you need more capacity.",
+      "Both the Sales Suite and Marketing Suite have free tiers with generous limits. Roaster Tools (inventory, roast log, cupping, calculators) are free on every plan. You only pay when you need more capacity.",
   },
   {
     _id: "dfaq-2",
     question: "Are there transaction fees on paid plans?",
     answer:
-      "No. Transaction fees are only applied on the Free plan (5% on Sales Suite). All paid plans have 0% transaction fees.",
+      "No. The 5% Ghost Roastery fee only applies on the free Sales Suite tier. All paid plans charge 0% — you only pay Stripe's standard processing fee (1.5% + 20p).",
   },
   {
     _id: "dfaq-3",
-    question: "Is the Marketing Suite required?",
+    question: "How much is the Website Builder?",
     answer:
-      "No. The Marketing Suite is an optional add-on. You can use the Sales Suite on its own. The free Marketing Suite tier is always included.",
+      "£14–19/month depending on your plan. Unlimited pages, custom domain, SSL included, and drag-and-drop builder. No per-page charges.",
   },
   {
     _id: "dfaq-4",
-    question: "What happens when I hit my plan limits?",
+    question: "Is the Marketing Suite required?",
     answer:
-      "You\u2019ll get a notification when you\u2019re approaching your limits. You can upgrade at any time \u2014 your data and settings carry over seamlessly.",
+      "No. The Marketing Suite is an optional add-on. You can use the Sales Suite and Roaster Tools without it. The free marketing tier is always included.",
   },
   {
     _id: "dfaq-5",
     question: "Can I switch plans at any time?",
     answer:
-      "Yes. You can upgrade, downgrade, or cancel at any time. If you downgrade, changes take effect at the end of your current billing period.",
+      "Yes. Upgrade, downgrade, or cancel at any time. No lock-in contracts. Changes take effect at the end of your current billing period.",
   },
   {
     _id: "dfaq-6",
     question: "Do you offer annual billing?",
     answer:
-      "Yes. Annual billing gives you 2 months free \u2014 the equivalent of a ~17% discount. You can switch between monthly and annual billing at any time.",
+      "Yes. Annual billing saves you 2 months — roughly 17% off. Switch between monthly and annual at any time.",
   },
 ];
 
@@ -421,12 +421,11 @@ export function PricingContent({ faqs, cms }: { faqs: FAQ[]; cms?: any }) {
       <section className="py-20 lg:py-28 bg-neutral-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 mb-6">
-            {cms?.heroHeadline ?? "Simple,"}{" "}
-            <span className="text-accent">{cms?.heroAccentText ?? "transparent"}</span>{" "}
-            pricing
+            {cms?.heroHeadline ?? "Simple, transparent"}{" "}
+            <span className="text-accent">pricing.</span>
           </h1>
           <p className="text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto">
-            {cms?.heroSubheadline ?? "Start free with both suites. Upgrade as you grow — no transaction fees on any paid plan."}
+            {cms?.heroSubheadline ?? "Sales suite, marketing suite, and roaster tools included on every plan. Website builder from £14/month. No transaction fees on paid plans."}
           </p>
         </div>
       </section>
@@ -611,10 +610,10 @@ export function PricingContent({ faqs, cms }: { faqs: FAQ[]; cms?: any }) {
       <section className="py-20 lg:py-28 bg-neutral-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-6">
-            {cms?.ctaHeadline ?? "Start selling with zero upfront cost"}
+            {cms?.ctaHeadline ?? "Start free. Upgrade when you're ready."}
           </h2>
           <p className="text-lg text-neutral-300 max-w-xl mx-auto mb-10">
-            {cms?.ctaDescription ?? "Both suites included free. No credit card required. Upgrade only when you need more."}
+            {cms?.ctaDescription ?? "Sales suite, marketing suite, and roaster tools included. No credit card required."}
           </p>
           <a
             href={`${PLATFORM_URL}/signup`}

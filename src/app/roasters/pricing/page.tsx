@@ -6,9 +6,9 @@ import { PricingContent } from "./PricingContent";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Pricing",
+  title: "Pricing — Simple, Transparent Plans for Roasters",
   description:
-    "Simple, transparent pricing for coffee roasters. Start free, upgrade as you grow. No transaction fees on any paid plan.",
+    "Start free. Upgrade when you need to. Sales suite, marketing suite, and roaster tools included on every plan. Website builder from £14/month. No transaction fees on paid plans.",
 };
 
 interface FAQ {
