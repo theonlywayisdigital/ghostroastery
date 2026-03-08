@@ -10,6 +10,25 @@ const nextConfig: NextConfig = {
     ],
   },
   serverExternalPackages: ["pdfkit"],
+  async redirects() {
+    return [
+      {
+        source: "/how-it-works",
+        destination: "/branded-coffee",
+        permanent: true,
+      },
+      {
+        source: "/the-roasting-process",
+        destination: "/our-coffee",
+        permanent: true,
+      },
+      {
+        source: "/our-partners",
+        destination: "/about",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
