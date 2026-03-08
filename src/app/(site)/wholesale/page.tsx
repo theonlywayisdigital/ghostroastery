@@ -11,9 +11,8 @@ import { WholesaleForm } from "@/components/wholesale";
 import {
   Storefront,
   Building,
-  Barbell,
+  ForkKnife,
   Desktop,
-  CalendarBlank,
   Coffee,
   Package,
   Palette,
@@ -75,22 +74,16 @@ const sectors = [
     href: "/wholesale/for-hotels",
   },
   {
-    icon: Barbell,
-    title: "Gyms & Fitness Brands",
-    description: "A high-margin revenue stream your members will love",
-    href: "/wholesale/for-gyms",
+    icon: ForkKnife,
+    title: "Restaurants",
+    description: "Your brand on the last thing guests taste",
+    href: "/wholesale/for-restaurants",
   },
   {
     icon: Desktop,
     title: "Offices & Corporates",
     description: "Quality coffee under your company name",
     href: "/wholesale/for-offices",
-  },
-  {
-    icon: CalendarBlank,
-    title: "Weddings & Events",
-    description: "Personalised coffee favours your guests will keep",
-    href: "/wholesale/for-events",
   },
 ];
 

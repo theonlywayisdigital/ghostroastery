@@ -34,17 +34,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/wholesale/for-gyms`,
+      url: `${baseUrl}/wholesale/for-restaurants`,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${baseUrl}/wholesale/for-offices`,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/wholesale/for-events`,
       changeFrequency: "monthly",
       priority: 0.6,
     },

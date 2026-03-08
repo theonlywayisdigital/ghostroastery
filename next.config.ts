@@ -27,6 +27,16 @@ const nextConfig: NextConfig = {
         destination: "/about",
         permanent: true,
       },
+      {
+        source: "/wholesale/for-gyms",
+        destination: "/wholesale",
+        permanent: true,
+      },
+      {
+        source: "/wholesale/for-events",
+        destination: "/wholesale",
+        permanent: true,
+      },
     ];
   },
 };

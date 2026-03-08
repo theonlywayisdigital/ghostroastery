@@ -28,6 +28,8 @@ import {
   Barbell,
   Desktop,
   CalendarBlank,
+  ForkKnife,
+  Gift,
 } from "@phosphor-icons/react";
 import type { IconWeight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
@@ -96,9 +98,14 @@ const moreSections = [
 const wholesaleItems = [
   { icon: Storefront, label: "For Cafes", desc: "Your own house blend, your brand", href: "/wholesale/for-cafes" },
   { icon: Building, label: "For Hotels", desc: "Branded in-room coffee for guests", href: "/wholesale/for-hotels" },
-  { icon: Barbell, label: "For Gyms", desc: "A revenue stream your members love", href: "/wholesale/for-gyms" },
+  { icon: ForkKnife, label: "For Restaurants", desc: "Your brand on the last thing guests taste", href: "/wholesale/for-restaurants" },
   { icon: Desktop, label: "For Offices", desc: "Quality coffee under your company name", href: "/wholesale/for-offices" },
-  { icon: CalendarBlank, label: "For Events", desc: "Branded coffee for weddings and events", href: "/wholesale/for-events" },
+];
+
+const perfectForItems = [
+  { icon: Barbell, label: "For Gyms", desc: "A revenue stream your members love", href: "/how-it-works" },
+  { icon: CalendarBlank, label: "For Events", desc: "Branded coffee for weddings and events", href: "/how-it-works" },
+  { icon: Gift, label: "Client Gifting", desc: "Branded coffee as a premium gift", href: "/how-it-works" },
 ];
 
 /* ── Top Bar ───────────────────────────────────────────── */
@@ -376,6 +383,22 @@ export function Navbar({ logoUrl }: NavbarProps) {
                         ))}
                       </div>
                     </div>
+                    <div className="flex-1">
+                      <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
+                        Perfect For
+                      </h3>
+                      <div className="space-y-1">
+                        {perfectForItems.map((item) => (
+                          <MenuItem
+                            key={item.label}
+                            icon={item.icon}
+                            label={item.label}
+                            desc={item.desc}
+                            href={item.href}
+                          />
+                        ))}
+                      </div>
+                    </div>
                     <MegaCTAPanel
                       title="Get started"
                       ctaLabel="Set Up Your Brand Now"
@@ -545,6 +568,23 @@ export function Navbar({ logoUrl }: NavbarProps) {
               {mobileAccordion === "branded" && (
                 <div className="pl-4 py-2 space-y-1">
                   {brandedCoffeeItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
+                      >
+                        <Icon weight="duotone" size={20} className="text-white" />
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                  <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider px-4 mt-3 mb-1">
+                    Perfect For
+                  </p>
+                  {perfectForItems.map((item) => {
                     const Icon = item.icon;
                     return (
                       <Link
