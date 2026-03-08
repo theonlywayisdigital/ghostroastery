@@ -25,6 +25,19 @@ import {
   Newspaper,
   ShoppingBag,
   ClipboardText,
+  Wrench,
+  Browser,
+  Leaf,
+  Fire,
+  CalendarBlank,
+  Star,
+  Calculator,
+  Certificate,
+  PaintBrush,
+  Compass,
+  Globe,
+  Eye,
+  Layout,
 } from "@phosphor-icons/react";
 import type { IconWeight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
@@ -87,12 +100,26 @@ const productsSections = [
     ],
   },
   {
-    title: "Marketplace",
-    badge: null,
-    allHref: "/features/marketplace",
-    comingSoon: true,
+    title: "Roaster Tools",
+    badge: "Free",
+    allHref: "/features/roaster-tools",
     items: [
-      { icon: ShoppingBag, label: "Marketplace", desc: "Source supplies at trade prices", href: "#", comingSoon: true },
+      { icon: Leaf, label: "Green Bean Inventory", desc: "Track every bag from arrival to roast", href: "/features/green-bean-inventory" },
+      { icon: Fire, label: "Roast Log", desc: "Record profiles, curves and notes", href: "/features/roast-log" },
+      { icon: CalendarBlank, label: "Production Planner", desc: "Schedule roasts and manage capacity", href: "/features/production-planner" },
+      { icon: Star, label: "Cupping Scorecards", desc: "Score and compare every batch", href: "/features/cupping-scorecards" },
+    ],
+  },
+  {
+    title: "Website Builder",
+    badge: null,
+    priceLabel: "From £14/mo",
+    allHref: "/features/website",
+    items: [
+      { icon: Layout, label: "Page Builder", desc: "Drag-and-drop pages in minutes", href: "/features/website" },
+      { icon: PaintBrush, label: "Design & Theming", desc: "Your brand, your colours, your fonts", href: "/features/website" },
+      { icon: Globe, label: "Custom Domains", desc: "Use your own domain name", href: "/features/website" },
+      { icon: Eye, label: "Live Preview", desc: "See changes before you publish", href: "/features/website" },
     ],
   },
 ];
@@ -354,7 +381,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
               <MegaMenuTrigger label="Products" hasTopBar={topBarVisible}>
                 <div className="flex gap-8">
                   {/* Product sections */}
-                  <div className="flex-1 grid grid-cols-3 gap-8">
+                  <div className="flex-1 grid grid-cols-4 gap-8">
                     {productsSections.map((section) => (
                       <div key={section.title}>
                         <div className="flex items-center mb-4">
@@ -362,7 +389,12 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
                             {section.title}
                           </h3>
                           {section.badge && <FreeBadge />}
-                          {"comingSoon" in section && section.comingSoon && (
+                          {"priceLabel" in section && (section as { priceLabel?: string }).priceLabel && (
+                            <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wider bg-accent/10 text-accent border border-accent/20">
+                              {(section as { priceLabel?: string }).priceLabel}
+                            </span>
+                          )}
+                          {"comingSoon" in section && (section as { comingSoon?: boolean }).comingSoon && (
                             <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-500 border border-neutral-200">
                               Coming Soon
                             </span>
@@ -376,7 +408,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
                               label={item.label}
                               desc={item.desc}
                               href={item.href}
-                              comingSoon={"comingSoon" in item && item.comingSoon}
+                              comingSoon={"comingSoon" in item && !!(item as { comingSoon?: boolean }).comingSoon}
                             />
                           ))}
                         </div>
@@ -502,7 +534,12 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
                         {section.title}
                       </p>
                       {section.badge && <FreeBadge />}
-                      {"comingSoon" in section && section.comingSoon && (
+                      {"priceLabel" in section && (section as { priceLabel?: string }).priceLabel && (
+                        <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wider bg-accent/10 text-accent border border-accent/20">
+                          {(section as { priceLabel?: string }).priceLabel}
+                        </span>
+                      )}
+                      {"comingSoon" in section && (section as { comingSoon?: boolean }).comingSoon && (
                         <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-500 border border-neutral-200">
                           Coming Soon
                         </span>
