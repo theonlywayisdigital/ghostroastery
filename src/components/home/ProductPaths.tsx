@@ -24,7 +24,7 @@ const defaultPaths: ProductPath[] = [
     description: "For businesses and entrepreneurs who want their own branded coffee",
     features: ["From just 25 bags", "Sizes: 250g, 500g, 1kg", "Your label, your brand", "Specialty grade, roasted weekly"],
     ctaText: "Build Your Brand",
-    ctaHref: "/branded-coffee",
+    ctaHref: "/how-it-works",
     variant: "primary",
   },
   {

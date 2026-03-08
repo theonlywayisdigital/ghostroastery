@@ -221,7 +221,7 @@ export default async function OurCoffeePage() {
               handle the rest — or get in touch about wholesale supply.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/branded-coffee">
+              <Link href="/how-it-works">
                 <Button variant="primary" size="lg">
                   Branded Coffee
                   <ArrowRight weight="bold" size={16} className="ml-2" />

@@ -57,8 +57,8 @@ const brandedCoffeeItems = [
   {
     icon: GearSix,
     label: "How It Works",
-    desc: "Our simple process from design to delivery",
-    href: "/branded-coffee#how-it-works",
+    desc: "Our simple four-step process explained",
+    href: "/how-it-works",
   },
 ];
 
@@ -361,6 +361,9 @@ export function Navbar({ logoUrl }: NavbarProps) {
                 <MegaMenuTrigger label="Branded Coffee" hasTopBar={topBarVisible}>
                   <div className="flex gap-8">
                     <div className="flex-1">
+                      <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
+                        Branded Coffee Fast
+                      </h3>
                       <div className="space-y-1">
                         {brandedCoffeeItems.map((item) => (
                           <MenuItem

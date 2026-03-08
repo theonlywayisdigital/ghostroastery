@@ -366,7 +366,7 @@ export default async function WholesalePage() {
               <Link href="/label-maker">
                 <Button variant="primary">Open Label Maker</Button>
               </Link>
-              <Link href="/branded-coffee">
+              <Link href="/how-it-works">
                 <Button variant="outline">
                   Learn About Branded Coffee
                   <ArrowRight weight="bold" size={16} className="ml-2" />

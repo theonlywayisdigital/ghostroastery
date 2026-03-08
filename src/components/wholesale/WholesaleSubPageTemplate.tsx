@@ -171,7 +171,7 @@ export function WholesaleSubPageTemplate({
                   Get a Wholesale Quote
                 </Button>
               </Link>
-              <Link href="/branded-coffee">
+              <Link href="/how-it-works">
                 <Button variant="outline" size="lg">
                   Smaller Orders (25+ bags)
                   <ArrowRight weight="bold" size={16} className="ml-2" />

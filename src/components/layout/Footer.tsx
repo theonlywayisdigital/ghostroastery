@@ -6,7 +6,7 @@ const footerLinks = {
   brandedCoffee: [
     { href: "/build", label: "Build Your Brand" },
     { href: "/label-maker", label: "Label Maker" },
-    { href: "/branded-coffee", label: "How It Works" },
+    { href: "/how-it-works", label: "How It Works" },
     { href: "/wholesale", label: "Wholesale" },
   ],
   discover: [

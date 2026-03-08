@@ -189,7 +189,7 @@ const ctaConfig: Record<
     description:
       "From roasting to fulfilment, we handle everything behind the scenes so you can focus on your brand.",
     buttonText: "Learn More",
-    defaultUrl: "/branded-coffee",
+    defaultUrl: "/how-it-works",
   },
 };
 

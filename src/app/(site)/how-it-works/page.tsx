@@ -29,15 +29,14 @@ import {
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Branded Coffee Bags — Create Your Own Coffee Brand | Ghost Roastery",
+  title: "How It Works — Launch Your Own Coffee Brand | Ghost Roastery",
   description:
-    "Launch your own branded coffee in 7–10 days. Design your label, choose your roast, and we handle everything else. Specialty grade, small batch, from 25 bags.",
+    "Four simple steps to your own branded coffee. Design your label, choose your roast, we roast and pack, then deliver to your door. From 25 bags, 7–10 days.",
   openGraph: {
-    title:
-      "Branded Coffee Bags — Create Your Own Coffee Brand | Ghost Roastery",
+    title: "How It Works — Launch Your Own Coffee Brand | Ghost Roastery",
     description:
-      "Launch your own branded coffee in 7–10 days. Design your label, choose your roast, and we handle everything else.",
-    url: "https://ghostroastery.com/branded-coffee",
+      "Four simple steps to your own branded coffee. Design, choose, roast, deliver. From 25 bags.",
+    url: "https://ghostroastery.com/how-it-works",
   },
 };
 
