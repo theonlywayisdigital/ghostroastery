@@ -14,9 +14,9 @@ import { PortableText, type PortableTextBlock } from "@portabletext/react";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Partner Program",
+  title: "Partner Programme — Roast for Brands, Get Paid Weekly",
   description:
-    "Join the Ghost Roaster partner network. Receive guaranteed order volume, we handle marketing and payments — you focus on roasting.",
+    "More orders without the marketing. Join the Ghost Roaster network — we send the orders, you roast and ship. Weekly payouts, zero advertising spend.",
 };
 
 const PLATFORM_URL = "https://platform.ghostroastery.com";
@@ -24,64 +24,63 @@ const PLATFORM_URL = "https://platform.ghostroastery.com";
 const steps = [
   {
     step: "01",
-    title: "Apply to join",
+    title: "Apply",
     description:
-      "Tell us about your roastery, capacity, and specialities. We review applications within 48 hours.",
+      "Tell us about your roastery — equipment, capacity, profiles you roast, and certifications. We review and respond within 48 hours.",
   },
   {
     step: "02",
-    title: "Get verified",
+    title: "Get matched",
     description:
-      "We verify your roastery meets our quality standards with a sample evaluation and facility check.",
+      "We match you with brands in your region that need your capacity and roast style. You choose which orders to accept.",
   },
   {
     step: "03",
-    title: "Receive orders",
+    title: "Roast & ship",
     description:
-      "Ghost Roastery customers place orders through our platform. You receive them in your dashboard.",
+      "Roast to spec, apply the brand's label, and dispatch. We handle customer service, returns, and reorders.",
   },
   {
     step: "04",
-    title: "Roast & ship",
+    title: "Get paid",
     description:
-      "Roast the order, print the label, and dispatch. We handle payments and customer communication.",
+      "Payouts processed weekly into your bank account. Transparent rates, no invoicing to chase, no hidden fees.",
   },
 ];
 
 const benefits = [
   {
     icon: <TrendUp size={28} weight="duotone" />,
-    title: "Guaranteed Volume",
+    title: "Fill your spare capacity",
     description:
-      "Receive a steady stream of orders from Ghost Roastery's growing customer base. Fill your roaster's spare capacity.",
+      "Turn downtime into revenue. We send orders that match your capacity — you roast when you have time, not when you have to.",
   },
   {
     icon: <ShieldCheck size={28} weight="duotone" />,
-    title: "We Handle Marketing",
+    title: "Zero marketing spend",
     description:
-      "Our team manages all marketing, customer acquisition, and brand building. You focus on what you do best — roasting.",
+      "We handle customer acquisition, brand building, and advertising. You never need to spend a penny on marketing to get orders.",
   },
   {
     icon: <Package size={28} weight="duotone" />,
-    title: "Simple Fulfilment",
+    title: "Simple fulfilment",
     description:
-      "Receive orders, print labels, and mark as dispatched. Our dashboard makes fulfilment effortless.",
+      "Orders arrive in your dashboard. Roast, label, dispatch. We handle customer service, returns, and reorders.",
   },
   {
     icon: <Lightning size={28} weight="duotone" />,
-    title: "Fast Payouts",
+    title: "Weekly payouts",
     description:
-      "Transparent payout system with regular payment batches. See exactly what you've earned and when it'll arrive.",
+      "Transparent rates published upfront. Payouts every week, directly to your bank. No invoicing, no chasing, no delays.",
   },
 ];
 
 const requirements = [
-  "UK-based speciality coffee roastery",
-  "SCA-grade equipment and quality standards",
-  "Capacity to fulfil orders within 3-5 business days",
-  "Food safety certification (HACCP or equivalent)",
-  "Ability to roast a range of profiles (light to dark)",
-  "Commitment to consistent quality",
+  "UK-based speciality coffee roastery with commercial roasting equipment",
+  "Ability to fulfil orders within 3–5 working days of receipt",
+  "Food safety certification (HACCP or equivalent) in place",
+  "Experience roasting a range of profiles — light through dark",
+  "Consistent quality standards across batches",
 ];
 
 const benefitIconMap: Record<string, React.ReactNode> = {
@@ -114,11 +113,11 @@ export default async function PartnerProgramPage() {
       <section className="py-20 lg:py-28 bg-neutral-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 mb-6">
-            {cms?.heroHeadline ?? "Ghost Roaster"}{" "}
-            <span className="text-accent">{cms?.heroAccentText ?? "Partner Programme"}</span>
+            {cms?.heroHeadline ?? "More orders."}{" "}
+            <span className="text-accent">{cms?.heroAccentText ?? "No marketing."}</span>
           </h1>
           <p className="text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto mb-10">
-            {cms?.heroSubheadline ?? "We bring the orders. You bring the craft. A partnership that fills your roaster and grows your business."}
+            {cms?.heroSubheadline ?? "We bring the brands and the orders. You bring the craft. Fill your roaster without spending a penny on advertising."}
           </p>
           <a
             href={`${PLATFORM_URL}/signup?plan=partner`}
@@ -156,7 +155,7 @@ export default async function PartnerProgramPage() {
       <section className="py-20 lg:py-28 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-black text-neutral-900 text-center mb-16">
-            {cms?.benefitsTitle ?? "Why partner with us"}
+            {cms?.benefitsTitle ?? "What you get"}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {resolvedBenefits.map((benefit: { icon: React.ReactNode; title: string; description: string }) => (
@@ -190,7 +189,7 @@ export default async function PartnerProgramPage() {
       <section className="py-20 lg:py-28 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
           <h2 className="text-3xl sm:text-4xl font-black text-neutral-900 text-center mb-12">
-            {cms?.requirementsTitle ?? "Requirements"}
+            {cms?.requirementsTitle ?? "What you need"}
           </h2>
           <div className="space-y-4">
             {resolvedRequirements.map((req: string) => (
@@ -203,14 +202,59 @@ export default async function PartnerProgramPage() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section className="py-16 lg:py-20 bg-neutral-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-neutral-900 text-center mb-12">
+            Frequently asked questions
+          </h2>
+          <div className="max-w-2xl mx-auto space-y-8">
+            {[
+              {
+                question: "How much do I get paid per order?",
+                answer:
+                  "Rates depend on order size, complexity, and turnaround. We publish transparent rate cards during onboarding — no hidden fees, no surprises.",
+              },
+              {
+                question: "Can I choose which orders to accept?",
+                answer:
+                  "Yes. You set your capacity and preferences. We match you with suitable orders, and you can decline any that don't fit your schedule.",
+              },
+              {
+                question: "Do I need to use the Ghost Roastery platform for my own sales?",
+                answer:
+                  "No. The partner programme is independent. You can roast for brands through us without using any other part of the platform.",
+              },
+              {
+                question: "How quickly do I need to fulfil orders?",
+                answer:
+                  "Standard turnaround is 3–5 working days from order receipt. Expedited orders are optional and paid at a higher rate.",
+              },
+              {
+                question: "What happens if I need to take time off?",
+                answer:
+                  "Set your availability in the dashboard. We pause order matching while you're away and resume when you're back. No penalties.",
+              },
+            ].map((faq) => (
+              <div key={faq.question}>
+                <h3 className="text-lg font-bold text-neutral-900 mb-2">
+                  {faq.question}
+                </h3>
+                <p className="text-neutral-600">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 lg:py-28 bg-neutral-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-6">
-            {cms?.ctaHeadline ?? "Ready to become a Ghost Roaster?"}
+            {cms?.ctaHeadline ?? "Ready to fill your roaster?"}
           </h2>
           <p className="text-lg text-neutral-300 max-w-xl mx-auto mb-10">
-            {cms?.ctaDescription ?? "Apply today and start receiving orders within the week. No upfront costs, no risk."}
+            {cms?.ctaDescription ?? "Apply today. We review applications within 48 hours. No upfront costs, no risk."}
           </p>
           <a
             href={`${PLATFORM_URL}/signup?plan=partner`}
