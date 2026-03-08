@@ -16,13 +16,13 @@ import {
 export const revalidate = 3600; // ISR: revalidate every hour
 
 export const metadata: Metadata = {
-  title: "Ghost Roastery | White Label Coffee Roasting",
+  title: "Ghost Roastery | Branded Coffee Roasting Service UK",
   description:
-    "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service. Launch your coffee brand from 25 bags.",
+    "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service. Launch your coffee brand from 25 bags.",
   openGraph: {
-    title: "Ghost Roastery | White Label Coffee Roasting",
+    title: "Ghost Roastery | Branded Coffee Roasting Service UK",
     description:
-      "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service.",
+      "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
     url: "https://ghostroastery.com",
     type: "website",
   },
@@ -36,7 +36,7 @@ const jsonLd = {
   url: "https://ghostroastery.com",
   logo: "https://ghostroastery.com/logo.png",
   description:
-    "UK-based ghost roasting and white label coffee service. Launch your coffee brand with zero barriers.",
+    "UK-based ghost roasting and branded coffee service. Launch your coffee brand from 25 bags with specialty grade coffee.",
   address: {
     "@type": "PostalAddress",
     addressCountry: "GB",

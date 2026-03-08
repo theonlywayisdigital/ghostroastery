@@ -20,17 +20,17 @@ interface ProductPathsProps {
 
 const defaultPaths: ProductPath[] = [
   {
-    title: "Bespoke Branded Bags",
+    title: "Branded Coffee",
     description: "For businesses and entrepreneurs who want their own branded coffee",
-    features: ["Minimum order: 25 bags", "Sizes: 250g, 500g, 1kg", "Your label, your brand", "Fresh roasted weekly"],
+    features: ["From just 25 bags", "Sizes: 250g, 500g, 1kg", "Your label, your brand", "Specialty grade, roasted weekly"],
     ctaText: "Build Your Brand",
-    ctaHref: "/build",
+    ctaHref: "/branded-coffee",
     variant: "primary",
   },
   {
     title: "Wholesale",
-    description: "For cafes, offices, restaurants wanting bulk supply",
-    features: ["Orders: 150+ bags", "Custom roast profiles", "Flexible delivery schedules", "Branded or unbranded options"],
+    description: "For cafes, hotels, gyms, and offices wanting volume supply",
+    features: ["From 150 bags", "Custom roast profiles", "Flexible delivery schedules", "Branded or unbranded options"],
     ctaText: "Wholesale Enquiry",
     ctaHref: "/wholesale",
     variant: "secondary",
