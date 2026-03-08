@@ -19,14 +19,15 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Ghost Roastery | White Label Coffee Roasting",
+    default: "Ghost Roastery | Branded Coffee Roasting Service UK",
     template: "%s | Ghost Roastery",
   },
   description:
-    "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service. Launch your coffee brand with zero barriers.",
+    "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service. Launch your coffee brand from 25 bags.",
   keywords: [
     "ghost roasting UK",
     "white label coffee UK",
+    "branded coffee bags UK",
     "start a coffee brand UK",
     "custom branded coffee bags UK",
     "private label coffee UK",
@@ -42,15 +43,15 @@ export const metadata: Metadata = {
     locale: "en_GB",
     url: "https://ghostroastery.com",
     siteName: "Ghost Roastery",
-    title: "Ghost Roastery | White Label Coffee Roasting",
+    title: "Ghost Roastery | Branded Coffee Roasting Service UK",
     description:
-      "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service.",
+      "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ghost Roastery | White Label Coffee Roasting",
+    title: "Ghost Roastery | Branded Coffee Roasting Service UK",
     description:
-      "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and white label coffee service.",
+      "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
   },
   robots: {
     index: true,
