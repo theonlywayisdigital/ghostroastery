@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 import { useBuilder } from "./BuilderContext";
@@ -55,9 +55,16 @@ export function BuilderShell({ children }: BuilderShellProps) {
       <header className="flex-shrink-0 z-40 bg-background/80 backdrop-blur-md border-b border-neutral-800">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="text-foreground font-bold text-lg">
-            Ghost Roastery
-          </Link>
+          <button onClick={handleExitClick} className="cursor-pointer">
+            <Image
+              src="/ghost-roastery-consumer-logo.png"
+              alt="Ghost Roastery"
+              width={240}
+              height={56}
+              className="h-12 w-auto"
+              priority
+            />
+          </button>
 
           {/* Exit button */}
           <button

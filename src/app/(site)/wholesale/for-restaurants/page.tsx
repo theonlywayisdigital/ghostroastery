@@ -28,6 +28,7 @@ export default function WholesaleForRestaurantsPage() {
     <WholesaleSubPageTemplate
       heroHeadline="The last thing your guests taste"
       heroAccent="should be yours."
+      heroImage="/images/wholesale/restaurant.jpg"
       heroDescription="Coffee is the final impression your restaurant makes. Serve your own branded specialty coffee — and make sure guests leave remembering your name, not a roaster's."
       problemTitle="Why restaurants are branding their coffee"
       problemDescription={[

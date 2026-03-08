@@ -7,7 +7,7 @@ import { FadeIn } from "@/components/ui/FadeIn";
 import { Button } from "@/components/ui/Button";
 import { TileCard } from "@/components/ui/Card";
 import { Accordion } from "@/components/ui/Accordion";
-import { WholesaleForm } from "@/components/wholesale";
+
 import {
   Storefront,
   Building,
@@ -32,12 +32,12 @@ export const metadata: Metadata = {
   title:
     "Wholesale Branded Coffee — White Label Coffee Supplier UK | Ghost Roastery",
   description:
-    "Wholesale branded coffee for cafes, hotels, gyms, offices, and events. Specialty grade, custom roast profiles, flexible delivery across the UK. From 150 bags.",
+    "Wholesale branded coffee for cafes, hotels, restaurants, and offices. Specialty grade, custom roast profiles, flexible delivery across the UK. From 150 bags.",
   openGraph: {
     title:
       "Wholesale Branded Coffee — White Label Coffee Supplier UK | Ghost Roastery",
     description:
-      "Wholesale branded coffee for cafes, hotels, gyms, offices, and events. Specialty grade, flexible delivery across the UK.",
+      "Wholesale branded coffee for cafes, hotels, restaurants, and offices. Specialty grade, flexible delivery across the UK.",
     url: "https://ghostroastery.com/wholesale",
   },
 };
@@ -246,9 +246,9 @@ export default async function WholesalePage() {
               consistency, and flexibility. Branded or unbranded. From 150 bags.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="#enquiry">
+              <Link href="/wholesale/sign-up">
                 <Button variant="primary" size="lg">
-                  Get a Wholesale Quote
+                  Request Wholesale Access
                 </Button>
               </Link>
               <Link href="#how-it-works">
@@ -269,7 +269,7 @@ export default async function WholesalePage() {
             subtitle="We work with businesses across every sector. Pick yours to see how wholesale coffee works for you."
           />
         </FadeIn>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
           {sectors.map((sector, index) => {
             const Icon = sector.icon;
             return (
@@ -382,19 +382,22 @@ export default async function WholesalePage() {
         </FadeIn>
       </Section>
 
-      {/* Enquiry Form */}
+      {/* CTA to Sign Up */}
       <Section id="enquiry">
         <FadeIn>
-          <SectionHeader
-            title="Get a wholesale quote"
-            subtitle="Fill in the form below and we'll get back to you within 2 business days."
-          />
-        </FadeIn>
-        <FadeIn delay={0.2}>
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-neutral-800/50 border border-neutral-700 rounded-2xl p-6 md:p-8">
-              <WholesaleForm />
-            </div>
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4">
+              Ready to get started?
+            </h2>
+            <p className="text-lg text-neutral-300 mb-8 max-w-xl mx-auto">
+              Request access to the wholesale platform. We&apos;ll get back to
+              you within 2 business days with pricing and next steps.
+            </p>
+            <Link href="/wholesale/sign-up">
+              <Button variant="primary" size="lg">
+                Request Wholesale Access
+              </Button>
+            </Link>
           </div>
         </FadeIn>
       </Section>

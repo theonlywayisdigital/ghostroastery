@@ -197,7 +197,7 @@ const faqs = [
   {
     question: "Will anyone know you roasted it?",
     answer:
-      "No. That's the whole point. Your brand, our roastery — nobody needs to know. There's no Ghost Roastery branding on your bags.",
+      "No. That's the whole point. Your brand, our roasters — nobody needs to know. There's no Ghost Roastery branding on your bags.",
   },
 ];
 
@@ -298,7 +298,7 @@ export default async function BrandedCoffeePage() {
           <div className="max-w-3xl">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">
               Your brand on the bag.{" "}
-              <span className="text-accent">Our roastery behind it.</span>
+              <span className="text-accent">Our roasters behind it.</span>
             </h1>
             <p className="text-xl md:text-2xl text-neutral-300 mb-8">
               Design your label, choose your roast, and receive your own branded
@@ -455,7 +455,7 @@ export default async function BrandedCoffeePage() {
               </Link>
               <Link href="/wholesale">
                 <Button variant="outline" size="lg">
-                  Wholesale Enquiry
+                  Request Wholesale Access
                   <ArrowRight weight="bold" size={16} className="ml-2" />
                 </Button>
               </Link>

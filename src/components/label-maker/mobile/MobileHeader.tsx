@@ -35,6 +35,7 @@ interface MobileHeaderProps {
   onDone: () => void;
   onMyLabels: () => void;
   onSave: () => void;
+  onLogoClick: () => void;
   saving?: boolean;
   saved?: boolean;
   autoExporting?: boolean;
@@ -57,6 +58,7 @@ export function MobileHeader({
   onDone,
   onMyLabels,
   onSave,
+  onLogoClick,
   saving,
   saved,
   autoExporting,
@@ -66,11 +68,9 @@ export function MobileHeader({
   return (
     <header className="flex items-center justify-between px-3 h-11 bg-neutral-800 border-b border-neutral-700 shrink-0 relative z-30">
       {/* Left: Brand */}
-      <a
-        href="https://ghostroastery.com"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2"
+      <button
+        onClick={onLogoClick}
+        className="flex items-center gap-2 cursor-pointer"
       >
         <Image
           src="/ghost-roastery-consumer-logo.png"
@@ -84,7 +84,7 @@ export function MobileHeader({
         <span className="text-xs font-medium text-neutral-300">
           Label Maker
         </span>
-      </a>
+      </button>
 
       {/* Center: Undo / Redo */}
       <div className="flex items-center gap-1">

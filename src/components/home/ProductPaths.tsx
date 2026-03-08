@@ -31,8 +31,8 @@ const defaultPaths: ProductPath[] = [
     title: "Wholesale",
     description: "For cafes, hotels, gyms, and offices wanting volume supply",
     features: ["From 150 bags", "Custom roast profiles", "Flexible delivery schedules", "Branded or unbranded options"],
-    ctaText: "Wholesale Enquiry",
-    ctaHref: "/wholesale",
+    ctaText: "Request Wholesale Access",
+    ctaHref: "/wholesale/sign-up",
     variant: "secondary",
   },
 ];

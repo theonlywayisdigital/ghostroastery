@@ -1001,35 +1001,41 @@ export type Database = {
       delivery_addresses: {
         Row: {
           city: string
+          country: string
           created_at: string
           id: string
           is_default: boolean | null
           label: string
           line1: string
           line2: string | null
-          postcode: string
+          name: string
+          postal_code: string
           user_id: string
         }
         Insert: {
           city: string
+          country?: string
           created_at?: string
           id?: string
           is_default?: boolean | null
           label: string
           line1: string
           line2?: string | null
-          postcode: string
+          name?: string
+          postal_code: string
           user_id: string
         }
         Update: {
           city?: string
+          country?: string
           created_at?: string
           id?: string
           is_default?: boolean | null
           label?: string
           line1?: string
           line2?: string | null
-          postcode?: string
+          name?: string
+          postal_code?: string
           user_id?: string
         }
         Relationships: [
@@ -1242,6 +1248,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_verification_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          token: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          token: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       form_submissions: {
         Row: {
@@ -4442,9 +4475,15 @@ export type Database = {
         Row: {
           content: Json
           created_at: string
+          footer_sort_order: number
           id: string
+          is_nav_button: boolean
           is_published: boolean
           meta_description: string | null
+          meta_title: string | null
+          nav_sort_order: number
+          show_in_footer: boolean
+          show_in_nav: boolean
           slug: string
           sort_order: number
           title: string
@@ -4454,9 +4493,15 @@ export type Database = {
         Insert: {
           content?: Json
           created_at?: string
+          footer_sort_order?: number
           id?: string
+          is_nav_button?: boolean
           is_published?: boolean
           meta_description?: string | null
+          meta_title?: string | null
+          nav_sort_order?: number
+          show_in_footer?: boolean
+          show_in_nav?: boolean
           slug?: string
           sort_order?: number
           title?: string
@@ -4466,9 +4511,15 @@ export type Database = {
         Update: {
           content?: Json
           created_at?: string
+          footer_sort_order?: number
           id?: string
+          is_nav_button?: boolean
           is_published?: boolean
           meta_description?: string | null
+          meta_title?: string | null
+          nav_sort_order?: number
+          show_in_footer?: boolean
+          show_in_nav?: boolean
           slug?: string
           sort_order?: number
           title?: string
@@ -5068,3 +5119,18 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
+// ─── Convenience type aliases ───
+export type Order = Tables<"orders">
+export type DeliveryAddress = Tables<"delivery_addresses">
+export type User = Tables<"users">
+
+/** Shape of the JSON stored in orders.delivery_address column */
+export interface DeliveryAddressJson {
+  name: string
+  line1: string
+  line2?: string | null
+  city: string
+  postal_code?: string
+  postcode?: string // legacy fallback
+}

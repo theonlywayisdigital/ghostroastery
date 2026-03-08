@@ -28,6 +28,7 @@ export default function WholesaleForOfficesPage() {
     <WholesaleSubPageTemplate
       heroHeadline="Your company coffee."
       heroAccent="Actually good."
+      heroImage="/images/wholesale/office.jpg"
       heroDescription="Replace the generic office coffee with your own branded specialty blend. For the kitchen, the boardroom, and the client meeting where details matter."
       problemTitle="Office coffee doesn't have to be terrible"
       problemDescription={[

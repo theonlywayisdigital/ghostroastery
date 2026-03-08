@@ -45,6 +45,27 @@ export function WholesaleForm() {
         throw new Error("Failed to submit enquiry");
       }
 
+      // Also submit to the portal wholesale-apply endpoint (fire-and-forget)
+      const portalUrl = process.env.NEXT_PUBLIC_PORTAL_URL;
+      const grRoasterId = process.env.NEXT_PUBLIC_GR_ROASTER_ID;
+      if (portalUrl && grRoasterId) {
+        fetch(`${portalUrl}/api/s/wholesale-apply`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            roasterId: grRoasterId,
+            name: data.name,
+            email: data.email,
+            businessName: data.businessName,
+            businessType: data.businessType,
+            monthlyVolume: data.estimatedVolume,
+            notes: data.message || "",
+          }),
+        }).catch(() => {
+          // Silently ignore portal errors — Sanity enquiry is the primary record
+        });
+      }
+
       setIsSuccess(true);
       reset();
     } catch {

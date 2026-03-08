@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { FadeIn } from "@/components/ui/FadeIn";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +16,7 @@ interface WholesaleSubPageProps {
   heroHeadline: string;
   heroAccent: string;
   heroDescription: string;
+  heroImage?: string;
   problemTitle: string;
   problemDescription: string[];
   features: { icon: PhosphorIcon; title: string; description: string }[];
@@ -27,6 +29,7 @@ export function WholesaleSubPageTemplate({
   heroHeadline,
   heroAccent,
   heroDescription,
+  heroImage,
   problemTitle,
   problemDescription,
   features,
@@ -39,26 +42,39 @@ export function WholesaleSubPageTemplate({
       {/* Hero */}
       <Section className="pt-24 md:pt-32 pb-16 md:pb-20">
         <FadeIn>
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">
-              {heroHeadline}{" "}
-              <span className="text-accent">{heroAccent}</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-neutral-300 mb-8">
-              {heroDescription}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/wholesale#enquiry">
-                <Button variant="primary" size="lg">
-                  Get a Wholesale Quote
-                </Button>
-              </Link>
-              <Link href="/wholesale">
-                <Button variant="outline" size="lg">
-                  All Wholesale Services
-                </Button>
-              </Link>
+          <div className={heroImage ? "grid grid-cols-1 lg:grid-cols-2 gap-12 items-center" : ""}>
+            <div className={heroImage ? "" : "max-w-3xl"}>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">
+                {heroHeadline}{" "}
+                <span className="text-accent">{heroAccent}</span>
+              </h1>
+              <p className="text-xl md:text-2xl text-neutral-300 mb-8">
+                {heroDescription}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/wholesale/sign-up">
+                  <Button variant="primary" size="lg">
+                    Request Wholesale Access
+                  </Button>
+                </Link>
+                <Link href="/wholesale">
+                  <Button variant="outline" size="lg">
+                    All Wholesale Services
+                  </Button>
+                </Link>
+              </div>
             </div>
+            {heroImage && (
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden hidden lg:block">
+                <Image
+                  src={heroImage}
+                  alt={`${heroHeadline} ${heroAccent}`}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            )}
           </div>
         </FadeIn>
       </Section>
@@ -166,9 +182,9 @@ export function WholesaleSubPageTemplate({
               wholesale package. No commitment, no pressure.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/wholesale#enquiry">
+              <Link href="/wholesale/sign-up">
                 <Button variant="primary" size="lg">
-                  Get a Wholesale Quote
+                  Request Wholesale Access
                 </Button>
               </Link>
               <Link href="/how-it-works">

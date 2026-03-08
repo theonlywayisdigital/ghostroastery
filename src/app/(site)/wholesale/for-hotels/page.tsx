@@ -28,6 +28,7 @@ export default function WholesaleForHotelsPage() {
     <WholesaleSubPageTemplate
       heroHeadline="The in-room coffee"
       heroAccent="guests actually remember."
+      heroImage="/images/wholesale/hotel.jpg"
       heroDescription="Replace generic sachets with your own branded specialty coffee. Your hotel name on every bag, quality your guests will notice, and wholesale pricing that works."
       problemTitle="Generic in-room coffee is a missed opportunity"
       problemDescription={[

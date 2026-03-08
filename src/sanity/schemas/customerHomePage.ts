@@ -12,7 +12,7 @@ export const customerHomePage = defineType({
       type: "text",
       rows: 3,
       description: "Main hero headline (line breaks preserved)",
-      initialValue: "Your brand.\nOur roastery.\nNobody needs to know.",
+      initialValue: "Your brand.\nOur roasters.\nNobody needs to know.",
     }),
     defineField({
       name: "heroSubheadline",

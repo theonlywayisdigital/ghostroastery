@@ -36,8 +36,8 @@ const defaultPathCards = [
     icon: "Package",
     title: "Need 150+ bags?",
     description: "Custom pricing for volume orders.",
-    cta: "Wholesale enquiry",
-    href: "/wholesale",
+    cta: "Request wholesale access",
+    href: "/wholesale/sign-up",
     variant: "outline" as const,
   },
 ];

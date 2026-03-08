@@ -38,6 +38,7 @@ interface MobileLabelMakerProps {
   }) => void;
   user: User | null;
   onSave: () => void;
+  onLogoClick: () => void;
   saving: boolean;
   saved: boolean;
   currentLabelId: string | null;
@@ -57,6 +58,7 @@ export function MobileLabelMaker({
   onExportComplete,
   user,
   onSave,
+  onLogoClick,
   saving,
   saved,
   currentLabelId,
@@ -227,6 +229,7 @@ export function MobileLabelMaker({
         onDone={handleDone}
         onMyLabels={() => setSavedLabelsOpen(true)}
         onSave={onSave}
+        onLogoClick={onLogoClick}
         saving={saving}
         saved={saved}
         autoExporting={autoExporting}

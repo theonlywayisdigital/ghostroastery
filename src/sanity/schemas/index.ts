@@ -25,6 +25,7 @@ import { customerBrandsPage } from "./customerBrandsPage";
 import { customerPartnersPage } from "./customerPartnersPage";
 import { customerSupportPage } from "./customerSupportPage";
 import { customerWholesalePage } from "./customerWholesalePage";
+import { wholesaleSubPage } from "./wholesaleSubPage";
 import { customerContactPage } from "./customerContactPage";
 import { customerBlogSettings } from "./customerBlogSettings";
 import { customerLegalPage } from "./customerLegalPage";
@@ -67,6 +68,7 @@ export const schemaTypes = [
   customerPartnersPage,
   customerSupportPage,
   customerWholesalePage,
+  wholesaleSubPage,
   customerContactPage,
   customerBlogSettings,
   customerLegalPage,

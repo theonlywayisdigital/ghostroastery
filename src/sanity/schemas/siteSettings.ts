@@ -17,7 +17,7 @@ export const siteSettings = defineType({
       name: "tagline",
       title: "Tagline",
       type: "string",
-      initialValue: "Your brand. Our roastery. Nobody needs to know.",
+      initialValue: "Your brand. Our roasters. Nobody needs to know.",
     }),
     defineField({
       name: "defaultSeoTitle",

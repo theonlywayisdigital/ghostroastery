@@ -7,7 +7,7 @@ import { siteSettingsQuery } from "@/sanity/lib/queries";
 
 export const metadata: Metadata = {
   title: {
-    default: "Ghost Roastery Platform — Sell, Market & Grow Your Roastery",
+    default: "Ghost Roastery Platform — The All-in-One Platform for Coffee Roasters",
     template: "%s | Ghost Roastery Platform",
   },
   description:
@@ -18,13 +18,13 @@ export const metadata: Metadata = {
     locale: "en_GB",
     url: "https://roasters.ghostroastery.com",
     siteName: "Ghost Roastery Platform",
-    title: "Ghost Roastery Platform — Sell, Market & Grow Your Roastery",
+    title: "Ghost Roastery Platform — The All-in-One Platform for Coffee Roasters",
     description:
       "Everything you need to sell more coffee. Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ghost Roastery Platform — Sell, Market & Grow Your Roastery",
+    title: "Ghost Roastery Platform — The All-in-One Platform for Coffee Roasters",
     description:
       "Everything you need to sell more coffee. Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login.",
   },

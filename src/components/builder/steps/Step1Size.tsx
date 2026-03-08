@@ -69,13 +69,13 @@ export function Step1Size() {
               Our wholesale service offers better pricing for larger orders.
             </p>
             <a
-              href="/wholesale"
+              href="/wholesale/sign-up"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-accent/15 text-accent text-sm font-medium rounded-lg hover:bg-accent/25 transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
-              Get a wholesale quote
+              Request wholesale access
               <ArrowSquareOut size={16} weight="duotone" />
             </a>
           </motion.div>

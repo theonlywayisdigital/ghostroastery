@@ -57,7 +57,7 @@ const suites: Suite[] = [
       {
         name: "Starter",
         monthly: 29,
-        description: "Drop the 5% fee, add invoicing",
+        description: "Lower fees, add invoicing",
         cta: "Start Free Trial",
         ctaHref: `${PLATFORM_URL}/signup?plan=starter`,
       },
@@ -86,7 +86,7 @@ const suites: Suite[] = [
     ],
     features: [
       { label: "Products", values: ["5", "10", "20", "50", "Unlimited"] },
-      { label: "Storefront Orders", values: ["Unlimited + 5% fee", "Unlimited", "Unlimited", "Unlimited", "Unlimited"] },
+      { label: "Storefront Orders", values: ["Unlimited", "Unlimited", "Unlimited", "Unlimited", "Unlimited"] },
       { label: "Wholesale Orders / month", values: ["30", "150", "400", "800", "Unlimited"] },
       { label: "CRM Contacts", values: ["100", "500", "1,500", "5,000", "Unlimited"] },
       { label: "Team Members", values: ["1", "2", "3", "5", "10"] },
@@ -95,7 +95,7 @@ const suites: Suite[] = [
       { label: "Invoices", values: [false, true, true, true, true] },
       { label: "Sales Analytics", values: [false, "Basic", "Full", "Full", "Full"] },
       { label: "CRM Email Integration", values: [false, false, true, true, true] },
-      { label: "Transaction Fee", values: ["5%", "0%", "0%", "0%", "0%"] },
+      { label: "Card Payment Fees", values: ["5% + 20p", "2% + 20p", "2% + 20p", "2% + 20p", "2% + 20p"] },
     ],
   },
   {
@@ -145,11 +145,36 @@ const suites: Suite[] = [
       { label: "Email Sends / month", values: ["500", "2,000", "5,000", "15,000", "Unlimited"] },
       { label: "Embedded Forms", values: ["1 (branded)", "3", "10", "Unlimited", "Unlimited"] },
       { label: "AI Credits / month", values: ["10", "50", "150", "500", "1,500"] },
+      { label: "Blog", values: [false, false, true, true, true] },
       { label: "Content Calendar", values: [false, true, true, true, true] },
       { label: "Social Scheduling", values: [false, false, true, true, true] },
       { label: "Automations", values: [false, false, true, true, true] },
       { label: "Marketing Analytics", values: [false, "Basic", "Full", "Full", "Full"] },
       { label: "Additional AI Credits", values: ["\u2014", "£5/100", "£5/100", "£4/100", "£3/100"] },
+    ],
+  },
+  {
+    key: "website",
+    label: "Website Builder",
+    subtitle: "Build and publish a full website for your roastery with a custom domain",
+    isAddOn: true,
+    tiers: [
+      {
+        name: "Website Builder",
+        monthly: 19,
+        description: "Everything you need for a professional roastery website",
+        highlighted: true,
+        cta: "Start Free Trial",
+        ctaHref: `${PLATFORM_URL}/signup`,
+      },
+    ],
+    features: [
+      { label: "Multi-page Website Builder", values: [true] },
+      { label: "Custom Domain Support", values: [true] },
+      { label: "SEO Tools", values: [true] },
+      { label: "Mobile Responsive", values: [true] },
+      { label: "SSL Certificate", values: [true] },
+      { label: "Blog", values: ["Requires Marketing Suite"] },
     ],
   },
 ];
@@ -524,12 +549,12 @@ export function PricingContent({ faqs, cms }: { faqs: FAQ[]; cms?: any }) {
                   <div className="mt-12 max-w-3xl mx-auto">
                     <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 sm:p-8">
                       <h3 className="text-lg font-bold text-neutral-900 mb-4">
-                        Transaction fees — full transparency
+                        Card payment fees — full transparency
                       </h3>
                       <p className="text-sm text-neutral-600 mb-5">
-                        Stripe payment processing applies to all storefront
-                        transactions regardless of plan. We believe in being
-                        upfront about costs so you can price with confidence.
+                        Card payment fees include all processing costs.
+                        We believe in being upfront about costs so you can
+                        price with confidence.
                       </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -539,13 +564,10 @@ export function PricingContent({ faqs, cms }: { faqs: FAQ[]; cms?: any }) {
                             Free plan
                           </p>
                           <p className="text-2xl font-black text-neutral-900">
-                            6.5% + 20p
+                            5% + 20p
                           </p>
                           <p className="text-sm text-neutral-500 mt-1">
                             per storefront sale
-                          </p>
-                          <p className="text-xs text-neutral-400 mt-3">
-                            5% Ghost Roastery fee + 1.5% + 20p Stripe
                           </p>
                         </div>
 
@@ -555,13 +577,10 @@ export function PricingContent({ faqs, cms }: { faqs: FAQ[]; cms?: any }) {
                             All paid plans
                           </p>
                           <p className="text-2xl font-black text-neutral-900">
-                            1.5% + 20p
+                            2% + 20p
                           </p>
                           <p className="text-sm text-neutral-500 mt-1">
                             per storefront sale
-                          </p>
-                          <p className="text-xs text-neutral-400 mt-3">
-                            Stripe processing only — no Ghost Roastery fee
                           </p>
                         </div>
                       </div>
@@ -570,7 +589,7 @@ export function PricingContent({ faqs, cms }: { faqs: FAQ[]; cms?: any }) {
                       <div className="rounded-lg bg-white border border-neutral-200 px-5 py-4">
                         <p className="text-sm text-neutral-700">
                           <span className="font-semibold">Example — £20 sale:</span>{" "}
-                          Free tier = £1.50 in fees. Paid tier = 50p in fees.
+                          Free plan = £1.20 in fees. Paid plan = 60p in fees.
                         </p>
                       </div>
                     </div>

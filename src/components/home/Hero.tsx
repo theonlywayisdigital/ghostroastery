@@ -22,7 +22,7 @@ export function Hero({
   secondaryCtaHref,
 }: HeroProps) {
   // Split on newlines for line-by-line rendering (second line gets accent)
-  const lines = (headline ?? "Your brand.\nOur roastery.\nNobody needs to know.").split("\n");
+  const lines = (headline ?? "Your brand.\nOur roasters.\nNobody needs to know.").split("\n");
   const subLines = (subheadline ?? "Ghost roasted, packed and shipped across the UK.\nYour name on every bag.").split("\n");
 
   return (
@@ -81,7 +81,7 @@ export function Hero({
           </Link>
           <Link href={secondaryCtaHref ?? "/wholesale"}>
             <Button variant="outline" size="lg">
-              {secondaryCta ?? "Wholesale Enquiry"}
+              {secondaryCta ?? "Wholesale Access"}
             </Button>
           </Link>
         </motion.div>

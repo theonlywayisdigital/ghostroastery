@@ -29,6 +29,7 @@ export default function WholesaleForCafesPage() {
       heroHeadline="Your cafe deserves"
       heroAccent="its own coffee brand."
       heroDescription="Stop serving the same roaster as everyone else on the high street. Get your own branded blend — specialty grade, roasted to your spec, and delivered on your schedule."
+      heroImage="/images/wholesale/cafe.jpg"
       problemTitle="The problem with generic coffee"
       problemDescription={[
         "Most cafes serve coffee from the same handful of roasters. The same bags, the same branding, the same flavour profile as the shop next door. Your customers can't tell the difference — because there isn't one.",

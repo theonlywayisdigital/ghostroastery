@@ -13,11 +13,6 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: "/branded-coffee",
-        destination: "/how-it-works",
-        permanent: true,
-      },
-      {
         source: "/the-roasting-process",
         destination: "/our-coffee",
         permanent: true,
@@ -29,12 +24,22 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/wholesale/for-gyms",
-        destination: "/wholesale",
+        destination: "/branded-coffee/for-gyms",
         permanent: true,
       },
       {
         source: "/wholesale/for-events",
-        destination: "/wholesale",
+        destination: "/branded-coffee/for-events",
+        permanent: true,
+      },
+      {
+        source: "/wholesale/for-weddings",
+        destination: "/branded-coffee/for-weddings",
+        permanent: true,
+      },
+      {
+        source: "/wholesale/for-client-gifting",
+        destination: "/branded-coffee/for-client-gifting",
         permanent: true,
       },
     ];

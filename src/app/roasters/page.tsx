@@ -68,7 +68,7 @@ export default async function RoastersHomePage() {
   ]);
 
   const headline =
-    settings?.heroHeadline || "Everything you need to sell more coffee. Nothing you don't.";
+    settings?.heroHeadline || "The all-in-one platform built for coffee roasters. Market. Sell. Manage.";
   const subheadline =
     settings?.heroSubheadline ||
     "Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login. Free to start.";

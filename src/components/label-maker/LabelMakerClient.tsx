@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
@@ -65,7 +65,9 @@ export function LabelMakerClient({
   const [currentLabelId, setCurrentLabelId] = useState<string | null>(null);
   const [labelRefreshTrigger, setLabelRefreshTrigger] = useState(0);
   const pendingSaveRef = useRef(false);
+  const hasUnsavedChanges = useRef(false);
 
+  const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = useMemo(() => createBrowserClient(), []);
 
@@ -97,6 +99,21 @@ export function LabelMakerClient({
     dimensions,
     containerRef,
   });
+
+  // Track unsaved changes via fabric canvas events
+  useEffect(() => {
+    const fab = canvas.fabricRef.current;
+    if (!fab) return;
+    const markDirty = () => { hasUnsavedChanges.current = true; };
+    fab.on("object:modified", markDirty);
+    fab.on("object:added", markDirty);
+    fab.on("object:removed", markDirty);
+    return () => {
+      fab.off("object:modified", markDirty);
+      fab.off("object:added", markDirty);
+      fab.off("object:removed", markDirty);
+    };
+  }, [canvas.fabricRef]);
 
   // Load a specific label when ?labelId= is in the URL
   useEffect(() => {
@@ -139,6 +156,16 @@ export function LabelMakerClient({
     }
   };
 
+  const handleLogoClick = () => {
+    if (hasUnsavedChanges.current) {
+      const ok = window.confirm(
+        "You have unsaved changes. Are you sure you want to leave?"
+      );
+      if (!ok) return;
+    }
+    router.push("/");
+  };
+
   // Save label to profile
   const saveToProfile = useCallback(async () => {
     if (!canvas.getCanvasJson || !canvas.getCanvasImage) {
@@ -172,6 +199,7 @@ export function LabelMakerClient({
         const data = await res.json();
         setCurrentLabelId(data.label.id);
         setSaved(true);
+        hasUnsavedChanges.current = false;
         setLabelRefreshTrigger((n) => n + 1);
         setTimeout(() => setSaved(false), 2000);
       } else {
@@ -314,6 +342,7 @@ export function LabelMakerClient({
           onExportComplete={onExportComplete}
           user={user}
           onSave={handleSave}
+          onLogoClick={handleLogoClick}
           saving={saving}
           saved={saved}
           currentLabelId={currentLabelId}
@@ -330,11 +359,9 @@ export function LabelMakerClient({
           <header className="flex items-center justify-between px-4 h-12 bg-neutral-800 border-b border-neutral-700 shrink-0">
             {/* Left: Logo + title */}
             <div className="flex items-center gap-3">
-              <a
-                href="https://ghostroastery.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center"
+              <button
+                onClick={handleLogoClick}
+                className="flex items-center cursor-pointer"
               >
                 <Image
                   src="/ghost-roastery-consumer-logo.png"
@@ -344,7 +371,7 @@ export function LabelMakerClient({
                   className="h-12 w-auto"
                   priority
                 />
-              </a>
+              </button>
               <span className="text-neutral-600">|</span>
               <span className="text-sm font-medium text-neutral-300">
                 Label Maker

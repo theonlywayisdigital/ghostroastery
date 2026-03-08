@@ -229,7 +229,7 @@ export default async function OurCoffeePage() {
               </Link>
               <Link href="/wholesale">
                 <Button variant="outline" size="lg">
-                  Wholesale Enquiry
+                  Request Wholesale Access
                 </Button>
               </Link>
             </div>

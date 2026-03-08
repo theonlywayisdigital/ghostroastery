@@ -18,11 +18,11 @@ export const revalidate = 3600; // ISR: revalidate every hour
 export const metadata: Metadata = {
   title: "Ghost Roastery | Branded Coffee Roasting Service UK",
   description:
-    "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service. Launch your coffee brand from 25 bags.",
+    "Your brand. Our roasters. Nobody needs to know. UK-based ghost roasting and branded coffee service. Launch your coffee brand from 25 bags.",
   openGraph: {
     title: "Ghost Roastery | Branded Coffee Roasting Service UK",
     description:
-      "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
+      "Your brand. Our roasters. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
     url: "https://ghostroastery.com",
     type: "website",
   },
