@@ -19,6 +19,18 @@ import {
   ArrowRight,
   CaretRight,
   Rocket,
+  Leaf,
+  Fire,
+  CalendarBlank,
+  Star,
+  Calculator,
+  Certificate,
+  Layout,
+  PaintBrush,
+  Compass,
+  Eye,
+  Wrench,
+  Browser,
 } from "@phosphor-icons/react/dist/ssr";
 import { client } from "@/sanity/lib/client";
 import {
@@ -30,9 +42,9 @@ import {
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Features",
+  title: "Features — Sales, Marketing, Roaster Tools & Website Builder",
   description:
-    "Explore the full suite of tools Ghost Roastery Platform offers coffee roasters — storefronts, wholesale, marketing, analytics, and more.",
+    "Everything a coffee roaster needs in one platform. Sales suite, marketing suite, roaster tools (free), and website builder. Sell, market, and grow your roastery.",
 };
 
 const PLATFORM_URL = "https://platform.ghostroastery.com";
@@ -181,6 +193,89 @@ const marketingFeatures: DefaultFeature[] = [
       "Build full marketing sites for your brand — landing pages, about pages, and more.",
     href: "/features/marketing-websites",
     comingSoon: true,
+  },
+];
+
+const roasterToolsFeatures: DefaultFeature[] = [
+  {
+    icon: <Leaf size={28} weight="duotone" />,
+    title: "Green Bean Inventory",
+    description:
+      "Track green coffee from arrival to roast. Origins, suppliers, lot numbers, and remaining stock.",
+    href: "/features/green-bean-inventory",
+  },
+  {
+    icon: <Fire size={28} weight="duotone" />,
+    title: "Roast Log",
+    description:
+      "Record profiles, charge temps, development times, and batch notes. Searchable library of every roast.",
+    href: "/features/roast-log",
+  },
+  {
+    icon: <CalendarBlank size={28} weight="duotone" />,
+    title: "Production Planner",
+    description:
+      "Schedule roasts against orders and capacity. See what needs roasting and allocate batches.",
+    href: "/features/production-planner",
+  },
+  {
+    icon: <Star size={28} weight="duotone" />,
+    title: "Cupping Scorecards",
+    description:
+      "SCA-aligned cupping forms. Compare scores across origins, profiles, and roast dates.",
+    href: "/features/cupping-scorecards",
+  },
+  {
+    icon: <Calculator size={28} weight="duotone" />,
+    title: "Calculators",
+    description:
+      "Roast loss, brew ratio, and cost-per-cup calculators. The maths without the spreadsheet.",
+    href: "/features/calculators",
+  },
+  {
+    icon: <Certificate size={28} weight="duotone" />,
+    title: "Certifications",
+    description:
+      "Manage organic, Fairtrade, and Rainforest Alliance certifications. Track expiry dates and documents.",
+    href: "/features/certifications",
+  },
+];
+
+const websiteBuilderFeatures: DefaultFeature[] = [
+  {
+    icon: <Layout size={28} weight="duotone" />,
+    title: "Page Builder",
+    description:
+      "Drag-and-drop blocks to build pages in minutes. Hero sections, galleries, contact forms — all pre-built.",
+    href: "/features/website",
+  },
+  {
+    icon: <PaintBrush size={28} weight="duotone" />,
+    title: "Design & Theming",
+    description:
+      "Set brand colours, typography, and logo once. Every page inherits your design automatically.",
+    href: "/features/website",
+  },
+  {
+    icon: <Compass size={28} weight="duotone" />,
+    title: "Navigation & Menus",
+    description:
+      "Build your site structure with a visual menu editor. Add pages, dropdowns, and external links.",
+    href: "/features/website",
+  },
+  {
+    icon: <Globe size={28} weight="duotone" />,
+    title: "Custom Domains",
+    description:
+      "Use your own domain — yourroastery.com. SSL certificate included. One-click setup.",
+    href: "/features/website",
+  },
+  {
+    icon: <Eye size={28} weight="duotone" />,
+    title: "Live Preview",
+    description:
+      "See exactly what your page looks like before publishing. Desktop and mobile preview.",
+    href: "/features/website",
   },
 ];
 
@@ -354,6 +449,66 @@ export default async function FeaturesPage() {
               className="inline-flex items-center text-accent font-semibold hover:underline"
             >
               View all Marketing Suite features
+              <ArrowRight size={20} weight="duotone" className="ml-2" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Roaster Tools ─────────────────────────────────────── */}
+      <section className="py-16 lg:py-24 bg-neutral-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-black text-neutral-900 mb-3">
+              Roaster Tools
+            </h2>
+            <p className="text-neutral-500 text-lg">
+              Free on every plan
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {roasterToolsFeatures.map((feature) => (
+              <FeatureCard key={feature.title} feature={feature} />
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              href="/features/roaster-tools"
+              className="inline-flex items-center text-accent font-semibold hover:underline"
+            >
+              View all Roaster Tools
+              <ArrowRight size={20} weight="duotone" className="ml-2" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Website Builder ────────────────────────────────────── */}
+      <section className="py-16 lg:py-24 bg-white border-t border-neutral-100">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-black text-neutral-900 mb-3">
+              Website Builder
+            </h2>
+            <p className="text-neutral-500 text-lg">
+              From £14/month
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {websiteBuilderFeatures.map((feature) => (
+              <FeatureCard key={feature.title} feature={feature} />
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              href="/features/website"
+              className="inline-flex items-center text-accent font-semibold hover:underline"
+            >
+              Learn more about Website Builder
               <ArrowRight size={20} weight="duotone" className="ml-2" />
             </Link>
           </div>
