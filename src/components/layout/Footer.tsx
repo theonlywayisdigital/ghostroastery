@@ -4,6 +4,7 @@ import { InstagramLogo, LinkedinLogo, TiktokLogo } from "@phosphor-icons/react/d
 
 const footerLinks = {
   brandedCoffee: [
+    { href: "/branded-coffee", label: "Branded Coffee" },
     { href: "/build", label: "Build Your Brand" },
     { href: "/label-maker", label: "Label Maker" },
     { href: "/how-it-works", label: "How It Works" },
@@ -56,7 +57,7 @@ export function Footer({ logoUrl }: FooterProps) {
               )}
             </Link>
             <p className="mt-4 text-neutral-400 max-w-sm">
-              Your brand. Our roastery. Nobody needs to know.
+              Your brand. Our roasters. Nobody needs to know.
             </p>
             <p className="mt-2 text-sm text-neutral-500">
               UK-based ghost roasting and branded coffee service.

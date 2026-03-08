@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   List as MenuIcon,
   X,
@@ -30,6 +30,7 @@ import {
   CalendarBlank,
   ForkKnife,
   Gift,
+  Heart,
 } from "@phosphor-icons/react";
 import type { IconWeight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
@@ -44,6 +45,12 @@ const HOVER_DELAY = 150;
 /* ── Mega-menu data ────────────────────────────────────── */
 
 const brandedCoffeeItems = [
+  {
+    icon: Coffee,
+    label: "Overview",
+    desc: "Everything you need to know about branded coffee",
+    href: "/branded-coffee",
+  },
   {
     icon: PaintBrush,
     label: "Build Your Brand",
@@ -103,9 +110,10 @@ const wholesaleItems = [
 ];
 
 const perfectForItems = [
-  { icon: Barbell, label: "For Gyms", desc: "A revenue stream your members love", href: "/how-it-works" },
-  { icon: CalendarBlank, label: "For Events", desc: "Branded coffee for weddings and events", href: "/how-it-works" },
-  { icon: Gift, label: "Client Gifting", desc: "Branded coffee as a premium gift", href: "/how-it-works" },
+  { icon: Barbell, label: "For Gyms", desc: "Sell your own branded coffee at the desk", href: "/branded-coffee/for-gyms" },
+  { icon: CalendarBlank, label: "For Events", desc: "Custom bags for conferences and launches", href: "/branded-coffee/for-events" },
+  { icon: Heart, label: "For Weddings", desc: "The favour guests actually keep", href: "/branded-coffee/for-weddings" },
+  { icon: Gift, label: "Client Gifting", desc: "Premium branded gifts they'll actually use", href: "/branded-coffee/for-client-gifting" },
 ];
 
 /* ── Top Bar ───────────────────────────────────────────── */
@@ -160,13 +168,13 @@ function MegaCTAPanel({
       )}
       <Link
         href={ctaHref}
-        className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors group"
+        className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent text-black hover:bg-accent-hover transition-colors group"
       >
         <ArrowRight weight="duotone" className="h-5 w-5 shrink-0" />
         <div>
           <p className="text-sm font-semibold">{ctaLabel}</p>
           {subtext && (
-            <p className="text-xs text-white/70">{subtext}</p>
+            <p className="text-xs text-black/60">{subtext}</p>
           )}
         </div>
       </Link>
@@ -179,29 +187,58 @@ function MegaCTAPanel({
 function MegaMenuTrigger({
   label,
   children,
-  hasTopBar,
+  onNavigate,
+  onOpenChange,
+  closeKey,
 }: {
   label: string;
   children: React.ReactNode;
   hasTopBar?: boolean;
+  onNavigate?: () => void;
+  onOpenChange?: (open: boolean) => void;
+  closeKey?: string;
 }) {
   const [open, setOpen] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevCloseKey = useRef(closeKey);
+
+  const updateOpen = useCallback((next: boolean) => {
+    setOpen(next);
+    onOpenChange?.(next);
+  }, [onOpenChange]);
 
   const show = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setOpen(true);
-  }, []);
+    updateOpen(true);
+  }, [updateOpen]);
 
   const hide = useCallback(() => {
-    timeoutRef.current = setTimeout(() => setOpen(false), HOVER_DELAY);
-  }, []);
+    timeoutRef.current = setTimeout(() => updateOpen(false), HOVER_DELAY);
+  }, [updateOpen]);
+
+  // Close when closeKey (pathname) changes
+  useEffect(() => {
+    if (prevCloseKey.current !== closeKey) {
+      updateOpen(false);
+      prevCloseKey.current = closeKey;
+    }
+  }, [closeKey, updateOpen]);
 
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
+
+  // Wrap children to intercept link clicks
+  const handlePanelClick = useCallback((e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    const link = target.closest("a");
+    if (link) {
+      updateOpen(false);
+      onNavigate?.();
+    }
+  }, [onNavigate, updateOpen]);
 
   return (
     <div
@@ -216,7 +253,7 @@ function MegaMenuTrigger({
             ? "text-foreground bg-neutral-800"
             : "text-neutral-300 hover:text-foreground hover:bg-neutral-800"
         )}
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => updateOpen(!open)}
         aria-expanded={open}
       >
         {label}
@@ -231,16 +268,22 @@ function MegaMenuTrigger({
       </button>
 
       {open && (
-        <div className={cn(
-          "fixed left-0 right-0 z-50",
-          hasTopBar ? "top-[calc(2rem+5rem)]" : "top-[4rem] lg:top-[5rem]"
-        )}>
-          <div className="bg-neutral-900 border-b border-neutral-700 shadow-xl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              {children}
+        <>
+          {/* Bridge to prevent hover gap between button and panel */}
+          <div className="absolute left-0 right-0 h-6 bottom-0 translate-y-full" />
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+          <div
+            className="fixed left-0 right-0 z-50"
+            style={{ top: "var(--navbar-bottom)" }}
+            onClick={handlePanelClick}
+          >
+            <div className="bg-neutral-900 border-t border-neutral-800 border-b border-b-neutral-700 shadow-xl">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {children}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
@@ -289,13 +332,64 @@ export function Navbar({ logoUrl }: NavbarProps) {
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [topBarVisible, setTopBarVisible] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [megaMenuCount, setMegaMenuCount] = useState(0);
+  const megaMenuOpen = megaMenuCount > 0;
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
+  const pathname = usePathname();
+  const prevPathname = useRef(pathname);
+
+  // Close menus and clear loading state on route change
+  useEffect(() => {
+    if (prevPathname.current !== pathname) {
+      setMobileOpen(false);
+      setIsNavigating(false);
+      prevPathname.current = pathname;
+    }
+  }, [pathname]);
+
+  // Update CSS variable for mega menu positioning
+  useEffect(() => {
+    function updateNavbarBottom() {
+      if (headerRef.current) {
+        const rect = headerRef.current.getBoundingClientRect();
+        document.documentElement.style.setProperty(
+          "--navbar-bottom",
+          `${rect.bottom}px`
+        );
+      }
+    }
+    updateNavbarBottom();
+    window.addEventListener("resize", updateNavbarBottom);
+    window.addEventListener("scroll", updateNavbarBottom);
+    return () => {
+      window.removeEventListener("resize", updateNavbarBottom);
+      window.removeEventListener("scroll", updateNavbarBottom);
+    };
+  }, [topBarVisible]);
 
   const toggleAccordion = (key: string) =>
     setMobileAccordion((prev) => (prev === key ? null : key));
+
+  // Show loading bar on navigation
+  const handleNavClick = useCallback(() => {
+    setIsNavigating(true);
+  }, []);
+
+  // Mobile: close menu + show loading
+  const handleMobileNavClick = useCallback(() => {
+    setMobileOpen(false);
+    setIsNavigating(true);
+  }, []);
+
+  // Track mega menu open state for solid header background
+  const handleMegaMenuOpenChange = useCallback((open: boolean) => {
+    setMegaMenuCount((c) => c + (open ? 1 : -1));
+  }, []);
 
   // Click outside to close user dropdown
   useEffect(() => {
@@ -336,11 +430,22 @@ export function Navbar({ logoUrl }: NavbarProps) {
         </div>
       )}
 
+      {/* Loading bar */}
+      {isNavigating && (
+        <div className="fixed top-0 left-0 right-0 z-[60] h-0.5">
+          <div className="h-full bg-accent animate-loading-bar" />
+        </div>
+      )}
+
       {/* Main Header */}
-      <header className={cn(
-        "fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-neutral-800 transition-[margin] duration-200",
-        topBarVisible && "mt-8"
-      )}>
+      <header
+        ref={headerRef}
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 border-b border-neutral-800 transition-[margin,background-color] duration-200",
+          megaMenuOpen ? "bg-background" : "bg-background/80 backdrop-blur-md",
+          topBarVisible && "mt-8"
+        )}
+      >
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
@@ -365,7 +470,7 @@ export function Navbar({ logoUrl }: NavbarProps) {
             <div className="hidden lg:flex items-center justify-center flex-1 px-8">
               <div className="flex items-center gap-1">
                 {/* Branded Coffee mega menu */}
-                <MegaMenuTrigger label="Branded Coffee" hasTopBar={topBarVisible}>
+                <MegaMenuTrigger label="Branded Coffee" hasTopBar={topBarVisible} onNavigate={handleNavClick} onOpenChange={handleMegaMenuOpenChange} closeKey={pathname}>
                   <div className="flex gap-8">
                     <div className="flex-1">
                       <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
@@ -409,11 +514,11 @@ export function Navbar({ logoUrl }: NavbarProps) {
                 </MegaMenuTrigger>
 
                 {/* Wholesale mega menu */}
-                <MegaMenuTrigger label="Wholesale" hasTopBar={topBarVisible}>
+                <MegaMenuTrigger label="Wholesale" hasTopBar={topBarVisible} onNavigate={handleNavClick} onOpenChange={handleMegaMenuOpenChange} closeKey={pathname}>
                   <div className="flex gap-8">
                     <div className="flex-1">
                       <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
-                        Wholesale by sector
+                        By sector
                       </h3>
                       <div className="grid grid-cols-2 gap-1">
                         {wholesaleItems.map((item) => (
@@ -429,15 +534,15 @@ export function Navbar({ logoUrl }: NavbarProps) {
                     </div>
                     <MegaCTAPanel
                       title="Wholesale"
-                      ctaLabel="Get a Wholesale Quote"
-                      ctaHref="/wholesale"
+                      ctaLabel="Request Wholesale Access"
+                      ctaHref="/wholesale/sign-up"
                       subtext="Trade pricing and flexible terms"
                     />
                   </div>
                 </MegaMenuTrigger>
 
                 {/* More mega menu */}
-                <MegaMenuTrigger label="More" hasTopBar={topBarVisible}>
+                <MegaMenuTrigger label="More" hasTopBar={topBarVisible} onNavigate={handleNavClick} onOpenChange={handleMegaMenuOpenChange} closeKey={pathname}>
                   <div className="flex gap-8">
                     <div className="flex-1 grid grid-cols-4 gap-8">
                       {moreSections.map((section) => (
@@ -573,7 +678,7 @@ export function Navbar({ logoUrl }: NavbarProps) {
                       <Link
                         key={item.label}
                         href={item.href}
-                        onClick={() => setMobileOpen(false)}
+                        onClick={handleMobileNavClick}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
                       >
                         <Icon weight="duotone" size={20} className="text-white" />
@@ -590,7 +695,7 @@ export function Navbar({ logoUrl }: NavbarProps) {
                       <Link
                         key={item.label}
                         href={item.href}
-                        onClick={() => setMobileOpen(false)}
+                        onClick={handleMobileNavClick}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
                       >
                         <Icon weight="duotone" size={20} className="text-white" />
@@ -620,7 +725,7 @@ export function Navbar({ logoUrl }: NavbarProps) {
                 <div className="pl-4 py-2 space-y-1">
                   <Link
                     href="/wholesale"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={handleMobileNavClick}
                     className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
                   >
                     <Coffee weight="duotone" size={20} className="text-white" />
@@ -632,7 +737,7 @@ export function Navbar({ logoUrl }: NavbarProps) {
                       <Link
                         key={item.label}
                         href={item.href}
-                        onClick={() => setMobileOpen(false)}
+                        onClick={handleMobileNavClick}
                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
                       >
                         <Icon weight="duotone" size={20} className="text-white" />
@@ -671,7 +776,7 @@ export function Navbar({ logoUrl }: NavbarProps) {
                           <Link
                             key={item.label}
                             href={item.href}
-                            onClick={() => setMobileOpen(false)}
+                            onClick={handleMobileNavClick}
                             className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
                           >
                             <Icon weight="duotone" size={20} className="text-white" />
@@ -693,7 +798,7 @@ export function Navbar({ logoUrl }: NavbarProps) {
                     </p>
                     <a
                       href={PORTAL_URL ? `${PORTAL_URL}/my-orders` : "/account"}
-                      onClick={() => setMobileOpen(false)}
+                      onClick={handleMobileNavClick}
                     >
                       <Button variant="outline" className="w-full">
                         My Orders
@@ -710,14 +815,14 @@ export function Navbar({ logoUrl }: NavbarProps) {
                 ) : (
                   <a
                     href={PORTAL_URL ? `${PORTAL_URL}/login` : "/account"}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={handleMobileNavClick}
                   >
                     <Button variant="outline" className="w-full">
                       Sign In
                     </Button>
                   </a>
                 )}
-                <Link href="/build" onClick={() => setMobileOpen(false)}>
+                <Link href="/build" onClick={handleMobileNavClick}>
                   <Button variant="primary" className="w-full">
                     Build Your Brand
                   </Button>
