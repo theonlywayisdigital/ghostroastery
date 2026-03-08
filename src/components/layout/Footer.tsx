@@ -3,17 +3,16 @@ import Image from "next/image";
 import { InstagramLogo, LinkedinLogo, TiktokLogo } from "@phosphor-icons/react/dist/ssr";
 
 const footerLinks = {
-  whiteLabelCoffee: [
+  brandedCoffee: [
     { href: "/build", label: "Build Your Brand" },
     { href: "/label-maker", label: "Label Maker" },
-    { href: "/how-it-works", label: "How It Works" },
+    { href: "/branded-coffee", label: "How It Works" },
     { href: "/wholesale", label: "Wholesale" },
   ],
   discover: [
     { href: "/brands", label: "Our Brands" },
-    { href: "/our-partners", label: "Our Partners" },
     { href: "/our-coffee", label: "Our Coffee" },
-    { href: "/the-roasting-process", label: "The Roasting Process" },
+    { href: "/about", label: "About Us" },
   ],
   company: [
     { href: "/about", label: "About Us" },
@@ -60,7 +59,7 @@ export function Footer({ logoUrl }: FooterProps) {
               Your brand. Our roastery. Nobody needs to know.
             </p>
             <p className="mt-2 text-sm text-neutral-500">
-              UK-based ghost roasting and white label coffee service.
+              UK-based ghost roasting and branded coffee service.
             </p>
 
             {/* Social Links */}
@@ -95,13 +94,13 @@ export function Footer({ logoUrl }: FooterProps) {
             </div>
           </div>
 
-          {/* White Label Coffee */}
+          {/* Branded Coffee */}
           <div>
             <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-              White Label Coffee
+              Branded Coffee
             </h3>
             <ul className="mt-4 space-y-3">
-              {footerLinks.whiteLabelCoffee.map((link) => (
+              {footerLinks.brandedCoffee.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

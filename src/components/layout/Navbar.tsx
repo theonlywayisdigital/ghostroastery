@@ -21,9 +21,13 @@ import {
   ShieldCheck,
   FileText,
   ArrowRight,
-  Fire,
   Handshake,
   Globe,
+  Storefront,
+  Building,
+  Barbell,
+  Desktop,
+  CalendarBlank,
 } from "@phosphor-icons/react";
 import type { IconWeight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
@@ -37,7 +41,7 @@ const HOVER_DELAY = 150;
 
 /* ── Mega-menu data ────────────────────────────────────── */
 
-const whiteLabelItems = [
+const brandedCoffeeItems = [
   {
     icon: PaintBrush,
     label: "Build Your Brand",
@@ -53,32 +57,31 @@ const whiteLabelItems = [
   {
     icon: GearSix,
     label: "How It Works",
-    desc: "Our simple three-step process explained",
-    href: "/how-it-works",
+    desc: "Our simple process from design to delivery",
+    href: "/branded-coffee#how-it-works",
   },
 ];
 
 const moreSections = [
   {
-    title: "Brands",
+    title: "Discover",
     items: [
-      { icon: Globe, label: "Brands", desc: "Browse our white label brands", href: "/brands" },
-      { icon: Handshake, label: "Our Partners", desc: "The roasters behind the scenes", href: "/our-partners" },
+      { icon: Globe, label: "Brands", desc: "Browse brands built with Ghost Roastery", href: "/brands" },
+      { icon: Coffee, label: "Our Coffee", desc: "Specialty grade beans, ethically sourced", href: "/our-coffee" },
     ],
   },
   {
-    title: "About",
+    title: "Company",
     items: [
       { icon: Info, label: "About", desc: "Our mission and story", href: "/about" },
-      { icon: Coffee, label: "Our Coffee", desc: "Specialty grade beans, ethically sourced", href: "/our-coffee" },
-      { icon: Fire, label: "The Roasting Process", desc: "From green bean to perfect roast", href: "/the-roasting-process" },
+      { icon: Newspaper, label: "Blog", desc: "Tips, guides and industry insights", href: "/blog" },
     ],
   },
   {
-    title: "Resources",
+    title: "Support",
     items: [
-      { icon: Lifebuoy, label: "Support", desc: "Get help from our team", href: "/support" },
-      { icon: Newspaper, label: "Blog", desc: "Tips, guides and industry insights", href: "/blog" },
+      { icon: Lifebuoy, label: "Help Centre", desc: "Get help from our team", href: "/support" },
+      { icon: Handshake, label: "Contact", desc: "Get in touch with us", href: "/contact" },
     ],
   },
   {
@@ -88,6 +91,14 @@ const moreSections = [
       { icon: FileText, label: "Terms & Conditions", desc: "Terms of service", href: "/terms" },
     ],
   },
+];
+
+const wholesaleItems = [
+  { icon: Storefront, label: "For Cafes", desc: "Your own house blend, your brand", href: "/wholesale/for-cafes" },
+  { icon: Building, label: "For Hotels", desc: "Branded in-room coffee for guests", href: "/wholesale/for-hotels" },
+  { icon: Barbell, label: "For Gyms", desc: "A revenue stream your members love", href: "/wholesale/for-gyms" },
+  { icon: Desktop, label: "For Offices", desc: "Quality coffee under your company name", href: "/wholesale/for-offices" },
+  { icon: CalendarBlank, label: "For Events", desc: "Branded coffee for weddings and events", href: "/wholesale/for-events" },
 ];
 
 /* ── Top Bar ───────────────────────────────────────────── */
@@ -346,12 +357,12 @@ export function Navbar({ logoUrl }: NavbarProps) {
             {/* ─── Desktop Navigation ─── */}
             <div className="hidden lg:flex items-center justify-center flex-1 px-8">
               <div className="flex items-center gap-1">
-                {/* White Label Coffee mega menu */}
-                <MegaMenuTrigger label="White Label Coffee" hasTopBar={topBarVisible}>
+                {/* Branded Coffee mega menu */}
+                <MegaMenuTrigger label="Branded Coffee" hasTopBar={topBarVisible}>
                   <div className="flex gap-8">
                     <div className="flex-1">
                       <div className="space-y-1">
-                        {whiteLabelItems.map((item) => (
+                        {brandedCoffeeItems.map((item) => (
                           <MenuItem
                             key={item.label}
                             icon={item.icon}
@@ -366,7 +377,7 @@ export function Navbar({ logoUrl }: NavbarProps) {
                       title="Get started"
                       ctaLabel="Set Up Your Brand Now"
                       ctaHref="/build"
-                      subtext="Receive your own branded coffee in 7-10 working days"
+                      subtext="Receive your own branded coffee in 7–10 working days"
                     />
                   </div>
                 </MegaMenuTrigger>
@@ -374,20 +385,25 @@ export function Navbar({ logoUrl }: NavbarProps) {
                 {/* Wholesale mega menu */}
                 <MegaMenuTrigger label="Wholesale" hasTopBar={topBarVisible}>
                   <div className="flex gap-8">
-                    <div className="flex-1 max-w-lg">
+                    <div className="flex-1">
                       <h3 className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
-                        Wholesale Coffee Supply
+                        Wholesale by sector
                       </h3>
-                      <p className="text-sm text-neutral-300 mb-2">
-                        Competitively priced specialty coffee for cafés, gyms, hotels, offices and event planners.
-                      </p>
-                      <p className="text-sm text-neutral-400">
-                        Get access to wholesale pricing, flexible order quantities, and dedicated account management.
-                      </p>
+                      <div className="grid grid-cols-2 gap-1">
+                        {wholesaleItems.map((item) => (
+                          <MenuItem
+                            key={item.label}
+                            icon={item.icon}
+                            label={item.label}
+                            desc={item.desc}
+                            href={item.href}
+                          />
+                        ))}
+                      </div>
                     </div>
                     <MegaCTAPanel
                       title="Wholesale"
-                      ctaLabel="Register for a Wholesale Account"
+                      ctaLabel="Get a Wholesale Quote"
                       ctaHref="/wholesale"
                       subtext="Trade pricing and flexible terms"
                     />
@@ -508,24 +524,24 @@ export function Navbar({ logoUrl }: NavbarProps) {
             )}
           >
             <div className="py-4 space-y-1 border-t border-neutral-800">
-              {/* White Label Coffee accordion */}
+              {/* Branded Coffee accordion */}
               <button
-                onClick={() => toggleAccordion("whitelabel")}
+                onClick={() => toggleAccordion("branded")}
                 className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
               >
-                White Label Coffee
+                Branded Coffee
                 <CaretDown
                   weight="duotone"
                   size={20}
                   className={cn(
                     "text-white transition-transform duration-200",
-                    mobileAccordion === "whitelabel" && "rotate-180"
+                    mobileAccordion === "branded" && "rotate-180"
                   )}
                 />
               </button>
-              {mobileAccordion === "whitelabel" && (
+              {mobileAccordion === "branded" && (
                 <div className="pl-4 py-2 space-y-1">
-                  {whiteLabelItems.map((item) => {
+                  {brandedCoffeeItems.map((item) => {
                     const Icon = item.icon;
                     return (
                       <Link
@@ -542,14 +558,47 @@ export function Navbar({ logoUrl }: NavbarProps) {
                 </div>
               )}
 
-              {/* Wholesale — direct link */}
-              <Link
-                href="/wholesale"
-                onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-base font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
+              {/* Wholesale accordion */}
+              <button
+                onClick={() => toggleAccordion("wholesale")}
+                className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
               >
                 Wholesale
-              </Link>
+                <CaretDown
+                  weight="duotone"
+                  size={20}
+                  className={cn(
+                    "text-white transition-transform duration-200",
+                    mobileAccordion === "wholesale" && "rotate-180"
+                  )}
+                />
+              </button>
+              {mobileAccordion === "wholesale" && (
+                <div className="pl-4 py-2 space-y-1">
+                  <Link
+                    href="/wholesale"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
+                  >
+                    <Coffee weight="duotone" size={20} className="text-white" />
+                    Overview
+                  </Link>
+                  {wholesaleItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-300 hover:text-foreground hover:bg-neutral-800 rounded-md transition-colors"
+                      >
+                        <Icon weight="duotone" size={20} className="text-white" />
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
 
               {/* More accordion */}
               <button
