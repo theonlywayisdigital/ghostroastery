@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s | Ghost Roastery",
   },
   description:
-    "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service. Launch your coffee brand from 25 bags.",
+    "Your brand. Our roasters. Nobody needs to know. UK-based ghost roasting and branded coffee service. Launch your coffee brand from 25 bags.",
   keywords: [
     "ghost roasting UK",
     "white label coffee UK",
@@ -45,13 +45,25 @@ export const metadata: Metadata = {
     siteName: "Ghost Roastery",
     title: "Ghost Roastery | Branded Coffee Roasting Service UK",
     description:
-      "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
+      "Your brand. Our roasters. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Ghost Roastery | Branded Coffee Roasting Service UK",
     description:
-      "Your brand. Our roastery. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
+      "Your brand. Our roasters. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
+  },
+  icons: {
+    icon: [
+      {
+        url: "/favicon-dark.png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/favicon-light.png",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
   },
   robots: {
     index: true,
