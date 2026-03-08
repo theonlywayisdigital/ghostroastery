@@ -7,9 +7,9 @@ import { roasterBlogPostsQuery } from "@/sanity/lib/queries";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Blog — Guides, Tips & Insights for Coffee Roasters",
   description:
-    "Tips, insights, and guides for coffee roasters — from platform updates to growth strategies.",
+    "Practical guides, business tips, and industry insights for working coffee roasters. From selling wholesale to growing your brand.",
 };
 
 interface BlogPost {

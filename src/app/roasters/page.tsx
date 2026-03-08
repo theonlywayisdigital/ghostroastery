@@ -126,8 +126,50 @@ export default async function RoastersHomePage() {
       )
     : defaultPartnerSteps;
 
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Ghost Roastery",
+    url: "https://roasters.ghostroastery.com",
+    description:
+      "The all-in-one platform for coffee roasters. Sales, marketing, roaster tools, and website builder.",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "GB",
+    },
+  };
+
+  const softwareJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Ghost Roastery Platform",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "GBP",
+      description: "Free plan available. Paid plans from £29/month.",
+    },
+    description:
+      "Sell coffee wholesale and direct-to-consumer, manage marketing, track roasts, and build your website — one platform.",
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationJsonLd),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(softwareJsonLd),
+        }}
+      />
+
       {/* ═══════════════════════════════════════════════════
           1. HERO
       ═══════════════════════════════════════════════════ */}

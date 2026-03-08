@@ -7,26 +7,26 @@ import { siteSettingsQuery } from "@/sanity/lib/queries";
 
 export const metadata: Metadata = {
   title: {
-    default: "Ghost Roastery Platform | For Coffee Roasters",
+    default: "Ghost Roastery Platform — Sell, Market & Grow Your Roastery",
     template: "%s | Ghost Roastery Platform",
   },
   description:
-    "The all-in-one platform for coffee roasters. Sell online, manage wholesale orders, and grow your roasting business.",
+    "Everything you need to sell more coffee. Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login.",
   metadataBase: new URL("https://roasters.ghostroastery.com"),
   openGraph: {
     type: "website",
     locale: "en_GB",
     url: "https://roasters.ghostroastery.com",
     siteName: "Ghost Roastery Platform",
-    title: "Ghost Roastery Platform | For Coffee Roasters",
+    title: "Ghost Roastery Platform — Sell, Market & Grow Your Roastery",
     description:
-      "The all-in-one platform for coffee roasters. Sell online, manage wholesale orders, and grow your roasting business.",
+      "Everything you need to sell more coffee. Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ghost Roastery Platform | For Coffee Roasters",
+    title: "Ghost Roastery Platform — Sell, Market & Grow Your Roastery",
     description:
-      "The all-in-one platform for coffee roasters. Sell online, manage wholesale orders, and grow your roasting business.",
+      "Everything you need to sell more coffee. Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login.",
   },
   robots: {
     index: true,

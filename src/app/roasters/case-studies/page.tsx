@@ -8,9 +8,9 @@ import { roasterCaseStudiesQuery } from "@/sanity/lib/queries";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Case Studies",
+  title: "Case Studies — Roaster Success Stories",
   description:
-    "See how roasters are growing their businesses with Ghost Roastery Platform.",
+    "Real roasteries, real results. See how coffee roasters use Ghost Roastery Platform to sell more coffee with less overhead.",
 };
 
 interface CaseStudy {

@@ -14,9 +14,9 @@ import {
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Sales Suite",
+  title: "Sales Suite — Sell Wholesale & Direct-to-Consumer",
   description:
-    "Sell coffee wholesale and direct-to-consumer. Manage orders, invoicing, and your own branded storefront — all from one platform.",
+    "Sell coffee wholesale and direct-to-consumer from one dashboard. Orders, invoicing, storefront, and CRM — included free on every plan.",
 };
 
 const PLATFORM_URL = "https://platform.ghostroastery.com";

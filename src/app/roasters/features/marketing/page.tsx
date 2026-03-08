@@ -16,9 +16,9 @@ import {
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Marketing Suite",
+  title: "Marketing Suite — Email, Social, Automations & AI",
   description:
-    "Grow your roastery brand with powerful marketing tools — content calendar, email campaigns, automations, discount codes, AI-powered content, and more.",
+    "Grow your coffee brand on autopilot. Email campaigns, social scheduling, automations, discount codes, and AI-powered content — included free on every plan.",
 };
 
 const PLATFORM_URL = "https://platform.ghostroastery.com";

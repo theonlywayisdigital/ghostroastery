@@ -90,6 +90,34 @@ const benefitIconMap: Record<string, React.ReactNode> = {
   Lightning: <Lightning size={28} weight="duotone" />,
 };
 
+const partnerFaqs = [
+  {
+    question: "How much do I get paid per order?",
+    answer:
+      "Rates depend on order size, complexity, and turnaround. We publish transparent rate cards during onboarding — no hidden fees, no surprises.",
+  },
+  {
+    question: "Can I choose which orders to accept?",
+    answer:
+      "Yes. You set your capacity and preferences. We match you with suitable orders, and you can decline any that don't fit your schedule.",
+  },
+  {
+    question: "Do I need to use the Ghost Roastery platform for my own sales?",
+    answer:
+      "No. The partner programme is independent. You can roast for brands through us without using any other part of the platform.",
+  },
+  {
+    question: "How quickly do I need to fulfil orders?",
+    answer:
+      "Standard turnaround is 3–5 working days from order receipt. Expedited orders are optional and paid at a higher rate.",
+  },
+  {
+    question: "What happens if I need to take time off?",
+    answer:
+      "Set your availability in the dashboard. We pause order matching while you're away and resume when you're back. No penalties.",
+  },
+];
+
 export default async function PartnerProgramPage() {
   const cms = await client
     .fetch(roasterPartnerProgramPageQuery)
@@ -107,8 +135,26 @@ export default async function PartnerProgramPage() {
 
   const resolvedRequirements = cms?.requirements?.length ? cms.requirements : requirements;
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: partnerFaqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       {/* Hero */}
       <section className="py-20 lg:py-28 bg-neutral-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -209,33 +255,7 @@ export default async function PartnerProgramPage() {
             Frequently asked questions
           </h2>
           <div className="max-w-2xl mx-auto space-y-8">
-            {[
-              {
-                question: "How much do I get paid per order?",
-                answer:
-                  "Rates depend on order size, complexity, and turnaround. We publish transparent rate cards during onboarding — no hidden fees, no surprises.",
-              },
-              {
-                question: "Can I choose which orders to accept?",
-                answer:
-                  "Yes. You set your capacity and preferences. We match you with suitable orders, and you can decline any that don't fit your schedule.",
-              },
-              {
-                question: "Do I need to use the Ghost Roastery platform for my own sales?",
-                answer:
-                  "No. The partner programme is independent. You can roast for brands through us without using any other part of the platform.",
-              },
-              {
-                question: "How quickly do I need to fulfil orders?",
-                answer:
-                  "Standard turnaround is 3–5 working days from order receipt. Expedited orders are optional and paid at a higher rate.",
-              },
-              {
-                question: "What happens if I need to take time off?",
-                answer:
-                  "Set your availability in the dashboard. We pause order matching while you're away and resume when you're back. No penalties.",
-              },
-            ].map((faq) => (
+            {partnerFaqs.map((faq) => (
               <div key={faq.question}>
                 <h3 className="text-lg font-bold text-neutral-900 mb-2">
                   {faq.question}
