@@ -60,7 +60,7 @@ export function Step1Size() {
               Ordering in bulk?
             </p>
             <p className="text-xs text-neutral-400 mt-2">
-              For ongoing bulk orders, our wholesale service offers better pricing and dedicated support.
+              For cafes, restaurants and ongoing wholesale accounts.
             </p>
             <a
               href="/wholesale/sign-up"
