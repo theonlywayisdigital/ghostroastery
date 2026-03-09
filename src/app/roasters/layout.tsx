@@ -49,7 +49,7 @@ export default async function RoastersLayout({
     : null;
 
   return (
-    <div className="theme-light">
+    <div className="theme-light overflow-x-hidden">
       <RoastersNavbar logoUrl={logoUrl} />
       <main className="min-h-screen">{children}</main>
       <RoastersFooter logoUrl={logoUrl} />

@@ -197,13 +197,13 @@ export function ProductsCarousel({ cms }: { cms?: CarouselCmsData }) {
     <div>
       {/* Toggle tabs */}
       <div className="flex justify-center mb-12">
-        <div className="inline-flex rounded-lg border border-neutral-200 p-1 bg-neutral-50">
+        <div className="grid grid-cols-4 sm:inline-flex rounded-lg border border-neutral-200 p-1 bg-neutral-50 w-full sm:w-auto">
           {resolvedSuites.map((suite, i) => (
             <button
               key={suite.key}
               onClick={() => setActiveIndex(i)}
               className={cn(
-                "px-6 py-2.5 text-sm font-semibold rounded-md transition-all duration-200",
+                "px-2 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold rounded-md transition-all duration-200 text-center leading-tight",
                 activeIndex === i
                   ? "bg-accent text-white shadow-sm"
                   : "text-neutral-600 hover:text-neutral-900"

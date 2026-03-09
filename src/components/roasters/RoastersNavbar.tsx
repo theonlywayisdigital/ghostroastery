@@ -81,6 +81,8 @@ const productsSections = [
     title: "Sales Suite",
     badge: "Free",
     allHref: "/features/sales",
+    mobileIcon: ShoppingBag,
+    mobileDesc: "Storefront, wholesale, orders & invoicing",
     items: [
       { icon: ClipboardText, label: "Order Tracking", desc: "Track every order from roast to doorstep", href: "/features/order-tracking" },
       { icon: ShoppingCart, label: "Wholesale", desc: "Manage wholesale accounts and orders", href: "/features/wholesale" },
@@ -92,6 +94,8 @@ const productsSections = [
     title: "Marketing Suite",
     badge: "Free",
     allHref: "/features/marketing",
+    mobileIcon: Envelope,
+    mobileDesc: "Email campaigns, social, automations & AI",
     items: [
       { icon: Envelope, label: "Email Campaigns", desc: "Beautiful emails that drive repeat orders", href: "/features/email-campaigns" },
       { icon: ShareNetwork, label: "Social Scheduling", desc: "Plan and publish across all channels", href: "/features/social-scheduling" },
@@ -103,6 +107,8 @@ const productsSections = [
     title: "Roaster Tools",
     badge: "Free",
     allHref: "/features/roaster-tools",
+    mobileIcon: Wrench,
+    mobileDesc: "Green bean inventory, roast log & cupping",
     items: [
       { icon: Leaf, label: "Green Bean Inventory", desc: "Track every bag from arrival to roast", href: "/features/green-bean-inventory" },
       { icon: Fire, label: "Roast Log", desc: "Record profiles, curves and notes", href: "/features/roast-log" },
@@ -115,6 +121,8 @@ const productsSections = [
     badge: null,
     priceLabel: "From £14/mo",
     allHref: "/features/website",
+    mobileIcon: Browser,
+    mobileDesc: "Page builder, theming, custom domains",
     items: [
       { icon: Layout, label: "Page Builder", desc: "Drag-and-drop pages in minutes", href: "/features/website" },
       { icon: PaintBrush, label: "Design & Theming", desc: "Your brand, your colours, your fonts", href: "/features/website" },
@@ -346,6 +354,17 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
   const [topBarVisible, setTopBarVisible] = useState(true);
 
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
   const toggleAccordion = (key: string) =>
     setMobileAccordion((prev) => (prev === key ? null : key));
 
@@ -526,69 +545,37 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
               />
             </button>
             {mobileAccordion === "products" && (
-              <div className="pl-4 space-y-4 py-2">
-                {productsSections.map((section) => (
-                  <div key={section.title}>
-                    <div className="flex items-center px-4 mb-1">
-                      <p className="text-xs font-semibold text-neutral-900 uppercase tracking-wider">
-                        {section.title}
-                      </p>
-                      {section.badge && <FreeBadge />}
-                      {"priceLabel" in section && (section as { priceLabel?: string }).priceLabel && (
-                        <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wider bg-accent/10 text-accent border border-accent/20">
-                          {(section as { priceLabel?: string }).priceLabel}
-                        </span>
-                      )}
-                      {"comingSoon" in section && (section as { comingSoon?: boolean }).comingSoon && (
-                        <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-500 border border-neutral-200">
-                          Coming Soon
-                        </span>
-                      )}
-                    </div>
-                    {section.items.map((item) => {
-                      const Icon = item.icon;
-                      const isDisabled =
-                        "comingSoon" in item && item.comingSoon;
-                      if (isDisabled) {
-                        return (
-                          <div
-                            key={item.label}
-                            className="flex items-center gap-3 px-4 py-2.5 opacity-40"
-                          >
-                            <Icon weight="duotone" size={20} className="text-neutral-400" />
-                            <span className="text-sm text-neutral-400">
-                              {item.label}
+              <div className="px-4 space-y-2 py-2">
+                {productsSections.map((section) => {
+                  const MobileIcon = section.mobileIcon;
+                  return (
+                    <Link
+                      key={section.title}
+                      href={section.allHref}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-start gap-3 px-4 py-3 rounded-lg hover:bg-neutral-50 transition-colors group"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-accent group-hover:text-white transition-colors">
+                        <MobileIcon weight="duotone" size={20} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-semibold text-neutral-900 group-hover:text-accent transition-colors">
+                            {section.title}
+                          </p>
+                          {section.badge && <FreeBadge />}
+                          {"priceLabel" in section && (section as { priceLabel?: string }).priceLabel && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wider bg-accent/10 text-accent border border-accent/20">
+                              {(section as { priceLabel?: string }).priceLabel}
                             </span>
-                            <span className="text-[10px] font-semibold text-neutral-400 uppercase">
-                              Coming Soon
-                            </span>
-                          </div>
-                        );
-                      }
-                      return (
-                        <Link
-                          key={item.label}
-                          href={item.href}
-                          onClick={() => setMobileOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
-                        >
-                          <Icon weight="duotone" size={20} className="text-neutral-900" />
-                          {item.label}
-                        </Link>
-                      );
-                    })}
-                    {!("comingSoon" in section && section.comingSoon) && (
-                      <Link
-                        href={section.allHref}
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-1 px-4 mt-2 text-xs font-semibold text-accent"
-                      >
-                        All {section.title} features
-                        <ArrowRight weight="duotone" size={16} />
-                      </Link>
-                    )}
-                  </div>
-                ))}
+                          )}
+                        </div>
+                        <p className="text-xs text-neutral-500 mt-0.5">{section.mobileDesc}</p>
+                      </div>
+                      <ArrowRight weight="duotone" size={16} className="text-neutral-400 group-hover:text-accent shrink-0 mt-2.5 transition-colors" />
+                    </Link>
+                  );
+                })}
               </div>
             )}
 

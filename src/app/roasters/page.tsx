@@ -178,11 +178,14 @@ export default async function RoastersHomePage() {
         <div className="container relative mx-auto px-4 sm:px-6 lg:px-8 text-center py-20 lg:py-28">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 text-neutral-900">
             {headline.split(".")[0]}.
-            <br />
-            <span className="text-accent">
-              {headline.split(".").slice(1).join(".").trim() ||
-                "We handle the rest."}
-            </span>
+            {headline.split(".").slice(1).join(".").trim() && (
+              <>
+                <br />
+                <span className="text-accent">
+                  {headline.split(".").slice(1).join(".").trim()}
+                </span>
+              </>
+            )}
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-neutral-600 max-w-2xl mx-auto mb-10">
             {subheadline}
@@ -242,7 +245,7 @@ export default async function RoastersHomePage() {
             </div>
             <a
               href={`${PLATFORM_URL}/signup`}
-              className="inline-flex items-center px-8 py-4 bg-white text-accent font-semibold text-lg rounded-lg hover:bg-neutral-50 transition-colors shrink-0"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white text-accent font-semibold text-lg rounded-lg hover:bg-neutral-50 transition-colors w-full md:w-auto"
             >
               Start Free
               <ArrowRight className="ml-2" size={24} weight="duotone" />
@@ -283,10 +286,10 @@ export default async function RoastersHomePage() {
                 {settings?.ctaStrip2Subtitle ?? "No transaction fees on paid plans. No lock-in. Cancel any time."}
               </p>
             </div>
-            <div className="flex items-center gap-4 shrink-0">
+            <div className="flex items-center gap-4 w-full md:w-auto">
               <a
                 href={`${PLATFORM_URL}/signup`}
-                className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+                className="inline-flex items-center justify-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors w-full md:w-auto"
               >
                 Start Free
                 <ArrowRight className="ml-2" size={24} weight="duotone" />
@@ -502,7 +505,7 @@ export default async function RoastersHomePage() {
           </div>
 
           {/* How it works */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl mx-auto mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto mb-16">
             {resolvedPartnerSteps.map((item: { icon: typeof SealCheck; step: string; title: string; description: string }) => {
               const Icon = item.icon;
               return (
