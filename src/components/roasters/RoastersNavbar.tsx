@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
   List,
   X,
@@ -286,6 +287,7 @@ function MenuItem({
   href,
   external,
   comingSoon,
+  onNavigate,
 }: {
   icon: React.ComponentType<{ className?: string; weight?: IconWeight; size?: number }>;
   label: string;
@@ -293,6 +295,7 @@ function MenuItem({
   href: string;
   external?: boolean;
   comingSoon?: boolean;
+  onNavigate?: () => void;
 }) {
   if (comingSoon) {
     return (
@@ -337,7 +340,7 @@ function MenuItem({
   }
 
   return (
-    <Link href={href} className={className}>
+    <Link href={href} onClick={onNavigate} className={className}>
       {content}
     </Link>
   );
@@ -353,6 +356,23 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
   const [topBarVisible, setTopBarVisible] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const pathname = usePathname();
+  const prevPathname = useRef(pathname);
+
+  // Close menus and clear loading state on route change
+  useEffect(() => {
+    if (prevPathname.current !== pathname) {
+      setMobileOpen(false);
+      setMobileAccordion(null);
+      setIsNavigating(false);
+      prevPathname.current = pathname;
+    }
+  }, [pathname]);
+
+  const handleNavClick = useCallback(() => {
+    setIsNavigating(true);
+  }, []);
 
   useEffect(() => {
     if (mobileOpen) {
@@ -370,6 +390,13 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
 
   return (
     <>
+    {/* Loading bar */}
+    {isNavigating && (
+      <div className="fixed top-0 left-0 right-0 z-[60] h-0.5">
+        <div className="h-full bg-accent animate-loading-bar" />
+      </div>
+    )}
+
     {topBarVisible && (
       <div className="fixed top-0 left-0 right-0 z-50">
         <TopBar onDismiss={() => setTopBarVisible(false)} />
@@ -382,7 +409,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 flex items-center">
+          <Link href="/" onClick={handleNavClick} className="flex-shrink-0 flex items-center">
             <Image
               src="/ghost-roastery-platform-logo.png"
               alt="Ghost Roastery Platform"
@@ -427,6 +454,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
                               label={item.label}
                               desc={item.desc}
                               href={item.href}
+                              onNavigate={handleNavClick}
                               comingSoon={"comingSoon" in item && !!(item as { comingSoon?: boolean }).comingSoon}
                             />
                           ))}
@@ -434,6 +462,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
                         {!("comingSoon" in section && section.comingSoon) && (
                           <Link
                             href={section.allHref}
+                            onClick={handleNavClick}
                             className="flex items-center gap-1 px-3 mt-3 text-xs font-semibold text-accent hover:underline"
                           >
                             All {section.title} features
@@ -452,6 +481,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
               {/* Pricing — plain link */}
               <Link
                 href="/pricing"
+                onClick={handleNavClick}
                 className="px-4 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-100 transition-colors rounded-md"
               >
                 Pricing
@@ -474,6 +504,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
                               label={item.label}
                               desc={item.desc}
                               href={item.href}
+                              onNavigate={handleNavClick}
                               external={"external" in item && item.external}
                             />
                           ))}
@@ -552,7 +583,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
                     <Link
                       key={section.title}
                       href={section.allHref}
-                      onClick={() => setMobileOpen(false)}
+                      onClick={() => { setMobileOpen(false); handleNavClick(); }}
                       className="flex items-start gap-3 px-4 py-3 rounded-lg hover:bg-neutral-50 transition-colors group"
                     >
                       <div className="w-9 h-9 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-accent group-hover:text-white transition-colors">
@@ -582,7 +613,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
             {/* Pricing link */}
             <Link
               href="/pricing"
-              onClick={() => setMobileOpen(false)}
+              onClick={() => { setMobileOpen(false); handleNavClick(); }}
               className="block px-4 py-3 text-base font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors"
             >
               Pricing
@@ -617,7 +648,7 @@ export function RoastersNavbar({ }: RoastersNavbarProps) {
                       const props = {
                         className:
                           "flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-900 hover:bg-neutral-100 rounded-md transition-colors",
-                        onClick: () => setMobileOpen(false),
+                        onClick: () => { setMobileOpen(false); if (!isExternal) handleNavClick(); },
                       };
 
                       if (isExternal) {
