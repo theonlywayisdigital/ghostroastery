@@ -26,23 +26,16 @@ export async function GET() {
   const trimWidthPt = mmToPt(widthMm);
   const trimHeightPt = mmToPt(heightMm);
 
-  // Crop mark settings
-  const cropMarkLenMm = 5;
-  const cropMarkOffMm = 3;
-  const cropMarkMarginPt = mmToPt(cropMarkOffMm + cropMarkLenMm + 2);
-
-  const pageWidthPt = totalWidthPt + cropMarkMarginPt * 2;
-  const pageHeightPt = totalHeightPt + cropMarkMarginPt * 2;
-
+  // Document is exactly the total size (trim + bleed) — no extra margins
   const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
     const chunks: Buffer[] = [];
     const doc = new PDFDocument({
-      size: [pageWidthPt, pageHeightPt],
+      size: [totalWidthPt, totalHeightPt],
       margin: 0,
       info: {
-        Title: "Label Template - 94x140mm",
+        Title: "Label Template - 94x140mm (100x146mm with bleed)",
         Author: "Ghost Roastery Label Maker",
-        Subject: "Blank label template for coffee bags",
+        Subject: "Blank label template for coffee bags — 100×146mm with 3mm bleed",
         Creator: "Ghost Roastery (ghostroastery.com)",
       },
     });
@@ -51,29 +44,19 @@ export async function GET() {
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
 
-    const imgX = cropMarkMarginPt;
-    const imgY = cropMarkMarginPt;
+    // Fill entire page white
+    doc.rect(0, 0, totalWidthPt, totalHeightPt).fill("#FFFFFF");
 
-    // Fill the total canvas area with white
-    doc.rect(imgX, imgY, totalWidthPt, totalHeightPt).fill("#FFFFFF");
-
-    // Draw bleed area (light grey border)
-    doc.lineWidth(0.5);
-    doc.strokeColor("#CCCCCC");
-    doc.rect(imgX, imgY, totalWidthPt, totalHeightPt).stroke();
-
-    // Draw trim line (dashed)
-    const trimX = imgX + bleedPt;
-    const trimY = imgY + bleedPt;
+    // Trim line (red dashed) — 3mm in from each edge
     doc.lineWidth(0.5);
     doc.strokeColor("#FF0000");
     doc.dash(4, { space: 4 });
-    doc.rect(trimX, trimY, trimWidthPt, trimHeightPt).stroke();
+    doc.rect(bleedPt, bleedPt, trimWidthPt, trimHeightPt).stroke();
     doc.undash();
 
-    // Draw safe zone (dotted, green)
-    const safeX = trimX + safePt;
-    const safeY = trimY + safePt;
+    // Safe zone (green dotted) — 4mm inset from trim
+    const safeX = bleedPt + safePt;
+    const safeY = bleedPt + safePt;
     const safeW = trimWidthPt - safePt * 2;
     const safeH = trimHeightPt - safePt * 2;
     doc.lineWidth(0.5);
@@ -82,68 +65,28 @@ export async function GET() {
     doc.rect(safeX, safeY, safeW, safeH).stroke();
     doc.undash();
 
-    // Draw crop marks
-    const markLen = mmToPt(cropMarkLenMm);
-    const markOff = mmToPt(cropMarkOffMm);
-    doc.lineWidth(0.25);
-    doc.strokeColor("#000000");
-
-    const line = (x1: number, y1: number, x2: number, y2: number) => {
-      doc.moveTo(x1, y1).lineTo(x2, y2).stroke();
-    };
-
-    const trimRight = trimX + trimWidthPt;
-    const trimBottom = trimY + trimHeightPt;
-
-    // Top-left
-    line(trimX, trimY - markOff, trimX, trimY - markOff - markLen);
-    line(trimX - markOff, trimY, trimX - markOff - markLen, trimY);
-    // Top-right
-    line(trimRight, trimY - markOff, trimRight, trimY - markOff - markLen);
-    line(trimRight + markOff, trimY, trimRight + markOff + markLen, trimY);
-    // Bottom-left
-    line(trimX, trimBottom + markOff, trimX, trimBottom + markOff + markLen);
-    line(trimX - markOff, trimBottom, trimX - markOff - markLen, trimBottom);
-    // Bottom-right
-    line(trimRight, trimBottom + markOff, trimRight, trimBottom + markOff + markLen);
-    line(trimRight + markOff, trimBottom, trimRight + markOff + markLen, trimBottom);
-
-    // Add dimension labels
-    doc.fontSize(6);
-    doc.fillColor("#666666");
-
-    // Total size label (below bottom-left)
-    doc.text(
-      `Total: ${totalWidthMm}\u00d7${totalHeightMm}mm (incl. ${bleedMm}mm bleed)`,
-      imgX,
-      imgY + totalHeightPt + mmToPt(2),
-      { width: totalWidthPt, align: "center" }
-    );
-
-    // Trim size label (centre of trim area)
-    doc.fontSize(8);
-    doc.fillColor("#999999");
+    // Centre labels
+    doc.fontSize(7);
+    doc.fillColor("#BBBBBB");
     doc.text(
       `Trim: ${widthMm}\u00d7${heightMm}mm`,
-      trimX,
-      trimY + trimHeightPt / 2 - 12,
+      bleedPt,
+      bleedPt + trimHeightPt / 2 - 14,
       { width: trimWidthPt, align: "center" }
     );
-    doc.fontSize(6);
+    doc.fontSize(5.5);
     doc.text(
-      `Safe zone: ${safeZoneMm}mm inset`,
-      trimX,
-      trimY + trimHeightPt / 2 + 2,
+      `Safe zone: ${safeZoneMm}mm inset from trim`,
+      bleedPt,
+      bleedPt + trimHeightPt / 2 + 1,
       { width: trimWidthPt, align: "center" }
     );
-
-    // Legend
-    const legendY = imgY + totalHeightPt + mmToPt(6);
-    doc.fontSize(5);
-
-    doc.fillColor("#FF0000").text("\u2014 \u2014 Trim line", imgX, legendY);
-    doc.fillColor("#00AA00").text("\u00b7 \u00b7 \u00b7 Safe zone", imgX + mmToPt(25), legendY);
-    doc.fillColor("#CCCCCC").text("\u2014\u2014 Bleed edge", imgX + mmToPt(50), legendY);
+    doc.text(
+      `Document: ${totalWidthMm}\u00d7${totalHeightMm}mm (incl. ${bleedMm}mm bleed)`,
+      bleedPt,
+      bleedPt + trimHeightPt / 2 + 12,
+      { width: trimWidthPt, align: "center" }
+    );
 
     doc.end();
   });
