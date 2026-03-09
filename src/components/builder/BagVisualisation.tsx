@@ -51,18 +51,29 @@ function loadWatermark(): Promise<HTMLImageElement> {
 // ── Module-level image cache ──
 const imageCache = new Map<string, HTMLImageElement>();
 
-function getCachedImage(src: string): Promise<HTMLImageElement> {
-  const cached = imageCache.get(src);
+function getCachedImage(
+  src: string,
+  useCors = false
+): Promise<HTMLImageElement> {
+  const cacheKey = useCors ? `cors:${src}` : src;
+  const cached = imageCache.get(cacheKey);
   if (cached) return Promise.resolve(cached);
 
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = "anonymous";
+    if (useCors) img.crossOrigin = "anonymous";
     img.onload = () => {
-      imageCache.set(src, img);
+      imageCache.set(cacheKey, img);
       resolve(img);
     };
-    img.onerror = reject;
+    img.onerror = () => {
+      // If CORS load failed, retry without CORS for display-only use
+      if (useCors) {
+        getCachedImage(src, false).then(resolve).catch(reject);
+      } else {
+        reject(new Error(`Failed to load image: ${src}`));
+      }
+    };
     img.src = src;
   });
 }
@@ -128,9 +139,9 @@ export function BagVisualisation({
 
     (async () => {
       try {
-        const bagImg = await getCachedImage(bagPhotoUrl);
+        const bagImg = await getCachedImage(bagPhotoUrl, true);
         if (cancelled) return;
-        const labelImg = await getCachedImage(labelFileURL);
+        const labelImg = await getCachedImage(labelFileURL, true);
         if (cancelled) return;
 
         const config = getBagMockupConfig(bagColourName);
