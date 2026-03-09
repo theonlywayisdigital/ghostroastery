@@ -167,7 +167,7 @@ export default async function PartnerProgramPage() {
           </p>
           <a
             href={`${PLATFORM_URL}/signup?plan=partner`}
-            className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+            className="inline-flex items-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-accent transition-colors"
           >
             {cms?.heroCtaText ?? "Apply Now"}
             <ArrowRight className="ml-2" size={24} weight="duotone" />
@@ -278,7 +278,7 @@ export default async function PartnerProgramPage() {
           </p>
           <a
             href={`${PLATFORM_URL}/signup?plan=partner`}
-            className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+            className="inline-flex items-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-accent transition-colors"
           >
             {cms?.ctaButtonText ?? "Apply Now"}
             <ArrowRight className="ml-2" size={24} weight="duotone" />

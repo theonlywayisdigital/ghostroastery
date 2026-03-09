@@ -27,13 +27,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        "bg-accent text-background hover:bg-accent-hover active:scale-[0.98]",
+        "border-2 border-accent bg-accent text-background hover:bg-transparent hover:text-accent active:scale-[0.98]",
       secondary:
-        "bg-neutral-700 text-foreground hover:bg-neutral-600 active:scale-[0.98]",
+        "border-2 border-neutral-700 bg-neutral-700 text-foreground hover:bg-transparent hover:text-foreground active:scale-[0.98]",
       outline:
         "border-2 border-accent text-accent hover:bg-accent hover:text-background active:scale-[0.98]",
       ghost:
-        "text-foreground hover:bg-neutral-800 active:scale-[0.98]",
+        "border-2 border-transparent text-foreground hover:bg-neutral-800 active:scale-[0.98]",
     };
 
     const sizes = {

@@ -193,14 +193,14 @@ export default async function RoastersHomePage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
               href={`${PLATFORM_URL}/signup`}
-              className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+              className="inline-flex items-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-accent transition-colors"
             >
               Start Free
               <ArrowRight className="ml-2" size={24} weight="duotone" />
             </a>
             <a
               href={`${PLATFORM_URL}/demo`}
-              className="inline-flex items-center px-8 py-4 border-2 border-neutral-300 text-neutral-700 font-semibold text-lg rounded-lg hover:border-neutral-400 hover:bg-white transition-colors"
+              className="inline-flex items-center px-8 py-4 border-2 border-neutral-300 text-neutral-700 font-semibold text-lg rounded-lg hover:border-neutral-700 hover:bg-neutral-700 hover:text-white transition-colors"
             >
               <CalendarCheck className="mr-2" size={24} weight="duotone" />
               Book a Demo
@@ -245,7 +245,7 @@ export default async function RoastersHomePage() {
             </div>
             <a
               href={`${PLATFORM_URL}/signup`}
-              className="inline-flex items-center justify-center px-8 py-4 bg-white text-accent font-semibold text-lg rounded-lg hover:bg-neutral-50 transition-colors w-full md:w-auto"
+              className="inline-flex items-center justify-center px-8 py-4 border-2 border-white bg-white text-accent font-semibold text-lg rounded-lg hover:bg-transparent hover:text-white transition-colors w-full md:w-auto"
             >
               Start Free
               <ArrowRight className="ml-2" size={24} weight="duotone" />
@@ -289,7 +289,7 @@ export default async function RoastersHomePage() {
             <div className="flex items-center gap-4 w-full md:w-auto">
               <a
                 href={`${PLATFORM_URL}/signup`}
-                className="inline-flex items-center justify-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors w-full md:w-auto"
+                className="inline-flex items-center justify-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-white transition-colors w-full md:w-auto"
               >
                 Start Free
                 <ArrowRight className="ml-2" size={24} weight="duotone" />
@@ -526,7 +526,7 @@ export default async function RoastersHomePage() {
           <div className="text-center">
             <Link
               href="/partner-program"
-              className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+              className="inline-flex items-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-accent transition-colors"
             >
               Learn About the Partner Program
               <ArrowRight className="ml-2" size={24} weight="duotone" />

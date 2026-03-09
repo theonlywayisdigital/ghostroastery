@@ -61,7 +61,7 @@ export function RoastersFooter({ logoUrl }: RoastersFooterProps) {
             <div className="mt-6">
               <a
                 href={PLATFORM_URL}
-                className="inline-flex items-center px-6 py-3 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover transition-colors"
+                className="inline-flex items-center px-6 py-3 border-2 border-accent bg-accent text-white font-semibold rounded-lg hover:bg-transparent hover:text-accent transition-colors"
               >
                 Join the Platform
               </a>

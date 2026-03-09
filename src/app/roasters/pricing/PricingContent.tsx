@@ -297,12 +297,12 @@ function PricingTable({
                   <a
                     href={tier.ctaHref}
                     className={cn(
-                      "inline-flex items-center justify-center px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors w-full max-w-[160px]",
+                      "inline-flex items-center justify-center px-5 py-2.5 border-2 rounded-lg text-sm font-semibold transition-colors w-full max-w-[160px]",
                       tier.highlighted
-                        ? "bg-accent text-white hover:bg-accent-hover"
+                        ? "border-accent bg-accent text-white hover:bg-transparent hover:text-accent"
                         : tier.cta === "Contact Us"
-                          ? "bg-neutral-900 text-white hover:bg-neutral-800"
-                          : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                          ? "border-neutral-900 bg-neutral-900 text-white hover:bg-transparent hover:text-neutral-900"
+                          : "border-neutral-200 bg-neutral-100 text-neutral-700 hover:bg-neutral-700 hover:border-neutral-700 hover:text-white"
                     )}
                   >
                     {tier.cta}
@@ -374,12 +374,12 @@ function PricingTable({
               <a
                 href={tier.ctaHref}
                 className={cn(
-                  "block w-full text-center px-6 py-3 rounded-lg font-semibold transition-colors",
+                  "block w-full text-center px-6 py-3 border-2 rounded-lg font-semibold transition-colors",
                   tier.highlighted
-                    ? "bg-accent text-white hover:bg-accent-hover"
+                    ? "border-accent bg-accent text-white hover:bg-transparent hover:text-accent"
                     : tier.cta === "Contact Us"
-                      ? "bg-neutral-900 text-white hover:bg-neutral-800"
-                      : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+                      ? "border-neutral-900 bg-neutral-900 text-white hover:bg-transparent hover:text-neutral-900"
+                      : "border-neutral-200 bg-neutral-100 text-neutral-700 hover:bg-neutral-700 hover:border-neutral-700 hover:text-white"
                 )}
               >
                 {tier.cta}
@@ -636,7 +636,7 @@ export function PricingContent({ faqs, cms }: { faqs: FAQ[]; cms?: any }) {
           </p>
           <a
             href={`${PLATFORM_URL}/signup`}
-            className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+            className="inline-flex items-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-accent transition-colors"
           >
             {cms?.ctaButtonText ?? "Get Started Free"}
             <ArrowRight className="ml-2" size={24} weight="duotone" />

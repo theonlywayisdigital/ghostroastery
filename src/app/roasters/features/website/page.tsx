@@ -235,7 +235,7 @@ export default function WebsiteBuilderPage() {
             </ul>
             <a
               href={`${PLATFORM_URL}/signup`}
-              className="inline-flex items-center px-6 py-3 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover transition-colors"
+              className="inline-flex items-center px-6 py-3 border-2 border-accent bg-accent text-white font-semibold rounded-lg hover:bg-transparent hover:text-accent transition-colors"
             >
               Get Started
               <ArrowRight className="ml-2" size={20} weight="duotone" />
@@ -274,7 +274,7 @@ export default function WebsiteBuilderPage() {
           </p>
           <a
             href={`${PLATFORM_URL}/signup`}
-            className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+            className="inline-flex items-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-accent transition-colors"
           >
             Get Started
             <ArrowRight className="ml-2" size={24} weight="duotone" />

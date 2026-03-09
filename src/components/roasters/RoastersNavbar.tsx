@@ -179,7 +179,7 @@ function MegaCTAPanel() {
       </a>
       <a
         href={`${PLATFORM_URL}/signup`}
-        className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent text-white hover:bg-accent-hover transition-colors group"
+        className="flex items-center gap-3 px-4 py-3 rounded-lg border-2 border-accent bg-accent text-white hover:bg-transparent hover:text-accent transition-colors group"
       >
         <ArrowRight weight="duotone" size={24} className="shrink-0" />
         <div>

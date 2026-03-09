@@ -387,7 +387,7 @@ export default async function FeaturesPage() {
           </p>
           <a
             href={PLATFORM_URL}
-            className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+            className="inline-flex items-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-accent transition-colors"
           >
             {cms?.heroCtaText ?? "Get Started Free"}
             <ArrowRight size={24} weight="duotone" className="ml-2" />
@@ -574,7 +574,7 @@ export default async function FeaturesPage() {
           </p>
           <a
             href={PLATFORM_URL}
-            className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold text-lg rounded-lg hover:bg-accent-hover transition-colors"
+            className="inline-flex items-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-accent transition-colors"
           >
             {cms?.ctaButtonText ?? "Get Started Free"}
             <ArrowRight size={24} weight="duotone" className="ml-2" />
