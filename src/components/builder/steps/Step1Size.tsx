@@ -34,7 +34,7 @@ export function Step1Size() {
       <div className="lg:col-span-2">
         <StepHeading heading={heading} subheading={subheading} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-md mx-auto">
           {/* 250g card */}
           <SelectionCard
             selected={state.bagSize === "250g"}
