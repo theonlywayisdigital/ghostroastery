@@ -4812,7 +4812,7 @@ export type Database = {
           },
         ]
       }
-      wholesale_products: {
+      products: {
         Row: {
           created_at: string | null
           description: string | null
