@@ -2082,7 +2082,7 @@ export type Database = {
         }
         Relationships: []
       }
-      orders: {
+      ghost_orders: {
         Row: {
           artwork_status: string | null
           bag_colour: string
@@ -4684,7 +4684,7 @@ export type Database = {
           },
         ]
       }
-      wholesale_orders: {
+      orders: {
         Row: {
           cancellation_reason: string | null
           cancelled_at: string | null

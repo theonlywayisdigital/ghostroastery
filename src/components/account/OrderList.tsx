@@ -16,7 +16,7 @@ export function OrderList() {
   useEffect(() => {
     const supabase = createBrowserClient();
     supabase
-      .from("orders")
+      .from("ghost_orders")
       .select("*")
       .order("created_at", { ascending: false })
       .then(({ data }) => {

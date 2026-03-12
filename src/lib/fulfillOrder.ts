@@ -28,7 +28,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
 
   // Idempotency check: return existing order if already fulfilled
   const { data: existingOrder } = await supabase
-    .from("orders")
+    .from("ghost_orders")
     .select("*")
     .eq("stripe_session_id", session.id)
     .single();
@@ -53,7 +53,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
 
   // Save order to Supabase
   const { data: order, error: dbError } = await supabase
-    .from("orders")
+    .from("ghost_orders")
     .insert({
       user_id: metadata.user_id || null,
       brand_name: metadata.brand_name || null,
@@ -83,7 +83,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
     // If it's a unique constraint violation, another process already created it
     if (dbError.code === "23505") {
       const { data: raceOrder } = await supabase
-        .from("orders")
+        .from("ghost_orders")
         .select("*")
         .eq("stripe_session_id", session.id)
         .single();
@@ -113,7 +113,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
         // User exists — link the order if not already linked
         if (!order.user_id) {
           await supabase
-            .from("orders")
+            .from("ghost_orders")
             .update({ user_id: existingUser.id })
             .eq("id", order.id);
         }
@@ -135,7 +135,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
 
           // Link order to the new user
           await supabase
-            .from("orders")
+            .from("ghost_orders")
             .update({ user_id: userId })
             .eq("id", order.id);
 
@@ -185,7 +185,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
 
     // Update delivery_country on the order
     await supabase
-      .from("orders")
+      .from("ghost_orders")
       .update({ delivery_country: deliveryCountry })
       .eq("id", order.id);
 
@@ -205,7 +205,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
           `Partner ${partnerMatch.roasterId} has no rate for ${order.bag_size}, falling back to head office`
         );
         await supabase
-          .from("orders")
+          .from("ghost_orders")
           .update({ fulfilment_type: "head_office", routed_at: new Date().toISOString() })
           .eq("id", order.id);
       } else {
@@ -222,7 +222,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
 
         // Update the order with partner assignment and rate snapshot
         await supabase
-          .from("orders")
+          .from("ghost_orders")
           .update({
             roaster_id: partnerMatch.roasterId,
             partner_roaster_id: partnerMatch.roasterId,
@@ -287,7 +287,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
     } else {
       // No partner for this territory — head office fulfilment
       await supabase
-        .from("orders")
+        .from("ghost_orders")
         .update({ fulfilment_type: "head_office", routed_at: new Date().toISOString() })
         .eq("id", order.id);
     }
@@ -302,7 +302,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
     .then(async (mockupUrl) => {
       if (mockupUrl && order) {
         await supabase
-          .from("orders")
+          .from("ghost_orders")
           .update({ mockup_image_url: mockupUrl })
           .eq("id", order.id);
       }

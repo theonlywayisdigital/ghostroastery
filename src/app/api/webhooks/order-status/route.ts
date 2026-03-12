@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     // Fetch order
     const { data: order, error: fetchError } = await supabase
-      .from("orders")
+      .from("ghost_orders")
       .select("*")
       .eq("id", order_id)
       .single();
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     // Update status
     const { error: updateError } = await supabase
-      .from("orders")
+      .from("ghost_orders")
       .update({ order_status: new_status })
       .eq("id", order_id);
 

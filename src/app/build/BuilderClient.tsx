@@ -75,7 +75,7 @@ function ReorderHandler() {
 
     const supabase = createBrowserClient();
     supabase
-      .from("orders")
+      .from("ghost_orders")
       .select("*")
       .eq("id", reorderId)
       .single()

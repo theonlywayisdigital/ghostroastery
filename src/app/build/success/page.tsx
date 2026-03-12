@@ -31,7 +31,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   // Check if order already exists
   const supabase = createServerClient();
   let { data: order } = await supabase
-    .from("orders")
+    .from("ghost_orders")
     .select("*")
     .eq("stripe_session_id", session_id)
     .single();
