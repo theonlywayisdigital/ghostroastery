@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     // Generate 3 image descriptions that Gemini can create
     const descriptionPrompt = `You are an expert graphic designer specialising in label and packaging design.
 
-A customer needs a BACKGROUND IMAGE for a printed rectangular label (portrait orientation, approximately 94mm wide × 140mm tall). This background will sit behind text on the label surface.
+A customer needs a BACKGROUND IMAGE for a printed rectangular label (portrait orientation, approximately 102mm wide × 152mm tall). This background will sit behind text on the label surface.
 
 CRITICAL RULES — THE IMAGE MUST:
 - Be a FULL-BLEED background — the imagery/colour/texture MUST extend to EVERY edge of the image with NO margins, NO borders, NO frames, NO white edges, and NO empty space at any side.
@@ -76,7 +76,7 @@ Example: ["description 1", "description 2", "description 3"]`;
         // Use Gemini's native image generation model
         const imageModel = getImageModel();
         const imgResult = await imageModel.generateContent(
-          `Generate a flat rectangular background image in portrait orientation (about 940px wide × 1400px tall). This is a FULL-BLEED surface texture/pattern for a printed label — NOT a product photo.
+          `Generate a flat rectangular background image in portrait orientation (about 1020px wide × 1520px tall). This is a FULL-BLEED surface texture/pattern for a printed label — NOT a product photo.
 
 ABSOLUTE REQUIREMENTS:
 - The image content MUST extend to ALL FOUR EDGES — no margins, no borders, no white space, no frames, no visible edges whatsoever.
@@ -133,14 +133,14 @@ function generateGradientPlaceholder(description: string): string {
   else if (tropical) { c1 = "#1a4a2e"; c2 = "#4a6e3a"; }
   else if (warm) { c1 = "#3d1f0e"; c2 = "#6b3a1a"; }
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="940" height="1400">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="1520">
     <defs>
       <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" style="stop-color:${c1}"/>
         <stop offset="100%" style="stop-color:${c2}"/>
       </linearGradient>
     </defs>
-    <rect width="940" height="1400" fill="url(#g)"/>
+    <rect width="1020" height="1520" fill="url(#g)"/>
   </svg>`;
 
   return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;

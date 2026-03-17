@@ -37,6 +37,57 @@ function isSnapLine(obj: fabric.FabricObject): boolean {
   return !!d?.isSnapLine;
 }
 
+/**
+ * Ensure an SVG data URL will rasterise at a reasonable size.
+ * Many SVGs (especially logo exports) only have a viewBox without explicit
+ * width/height attributes. Without them the browser's Image element may
+ * rasterise at 0×0 (or a tiny default), producing a blank Fabric image.
+ * This function parses the SVG, injects width/height if missing, and returns
+ * a new base64 data URL.
+ */
+function patchSvgDataUrl(dataUrl: string): string {
+  let svgMarkup: string;
+  if (dataUrl.includes(";base64,")) {
+    svgMarkup = atob(dataUrl.split(",")[1]);
+  } else {
+    svgMarkup = decodeURIComponent(dataUrl.split(",")[1]);
+  }
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(svgMarkup, "image/svg+xml");
+  const svgEl = doc.querySelector("svg");
+
+  if (!svgEl) return dataUrl;
+
+  const hasWidth = svgEl.hasAttribute("width") && parseFloat(svgEl.getAttribute("width")!) > 0;
+  const hasHeight = svgEl.hasAttribute("height") && parseFloat(svgEl.getAttribute("height")!) > 0;
+
+  if (hasWidth && hasHeight) return dataUrl; // already fine
+
+  const vb = svgEl.getAttribute("viewBox");
+  if (vb) {
+    const parts = vb.trim().split(/[\s,]+/);
+    const vbW = parseFloat(parts[2]);
+    const vbH = parseFloat(parts[3]);
+    if (vbW > 0 && vbH > 0) {
+      // Scale up so the rasterised image is sharp at label resolution
+      const targetPx = 1200;
+      const aspect = vbW / vbH;
+      const w = aspect >= 1 ? targetPx : Math.round(targetPx * aspect);
+      const h = aspect >= 1 ? Math.round(targetPx / aspect) : targetPx;
+      svgEl.setAttribute("width", String(w));
+      svgEl.setAttribute("height", String(h));
+    }
+  } else {
+    // No viewBox either — set a reasonable default
+    svgEl.setAttribute("width", "1200");
+    svgEl.setAttribute("height", "1200");
+  }
+
+  const patchedSvg = new XMLSerializer().serializeToString(doc);
+  return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(patchedSvg)));
+}
+
 // Colours for guides
 const BLEED_COLOUR = "#ef4444"; // red-500
 const TRIM_COLOUR = "#3b82f6"; // blue-500
@@ -71,13 +122,13 @@ export function LabelCanvas({
   const { saveState, undo, redo, initState, canUndo, canRedo, isProgrammatic } =
     useCanvasHistory();
 
-  // Calculate pixel dimensions (full canvas = trim + bleed on all sides)
+  // Calculate pixel dimensions (canvas = trim + 2mm bleed on each side)
   const bleedPx = mmToPx(dimensions.bleedMm);
   const trimW = mmToPx(dimensions.widthMm);
   const trimH = mmToPx(dimensions.heightMm);
   const canvasW = trimW + bleedPx * 2;
   const canvasH = trimH + bleedPx * 2;
-  const safeInset = mmToPx(dimensions.safeZoneMm);
+  const safeInset = bleedPx + mmToPx(dimensions.safeZoneMm);
 
   // LocalStorage key (fixed — one label size)
   const storageKey = "gr-label-maker";
@@ -139,16 +190,16 @@ export function LabelCanvas({
         ];
       };
 
-      // Bleed = full canvas edge — red dashed
+      // Bleed = canvas edge (red dashed) — bleed extends to page edge
       const bleedLines = makeRect(0, 0, canvasW, canvasH, BLEED_COLOUR, true, "bleed");
 
-      // Trim = inset by bleed — blue solid
+      // Trim = inset by bleedPx (blue solid) — the actual label edge
       const trimLines = makeRect(bleedPx, bleedPx, trimW, trimH, TRIM_COLOUR, false, "trim");
 
-      // Safe zone = inset from trim by safeZone — green dashed
+      // Safe zone = inset from edge by safeInset (green dashed)
       const safeLines = makeRect(
-        bleedPx + safeInset, bleedPx + safeInset,
-        trimW - safeInset * 2, trimH - safeInset * 2,
+        safeInset, safeInset,
+        canvasW - safeInset * 2, canvasH - safeInset * 2,
         SAFE_COLOUR, true, "safe",
       );
 
@@ -641,21 +692,21 @@ export function LabelCanvas({
 
       // Snap targets: guide lines + canvas centre
       const snapTargetsX: number[] = [
-        0,                                 // bleed left
-        canvasW,                           // bleed right
+        0,                                 // bleed left (canvas edge)
+        canvasW,                           // bleed right (canvas edge)
         bleedPx,                           // trim left
-        bleedPx + trimW,                   // trim right
-        bleedPx + safeInset,              // safe left
-        bleedPx + trimW - safeInset,      // safe right
+        canvasW - bleedPx,                 // trim right
+        safeInset,                         // safe left
+        canvasW - safeInset,               // safe right
         canvasW / 2,                       // canvas centre X
       ];
       const snapTargetsY: number[] = [
-        0,                                 // bleed top
-        canvasH,                           // bleed bottom
+        0,                                 // bleed top (canvas edge)
+        canvasH,                           // bleed bottom (canvas edge)
         bleedPx,                           // trim top
-        bleedPx + trimH,                  // trim bottom
-        bleedPx + safeInset,              // safe top
-        bleedPx + trimH - safeInset,      // safe bottom
+        canvasH - bleedPx,                 // trim bottom
+        safeInset,                         // safe top
+        canvasH - safeInset,               // safe bottom
         canvasH / 2,                       // canvas centre Y
       ];
 
@@ -804,7 +855,7 @@ export function LabelCanvas({
       guidesRef.current.forEach((g) => canvas.bringObjectToFront(g));
       canvas.renderAll();
     },
-    [bleedPx, trimW, trimH]
+    [canvasW, canvasH, trimW, trimH, bleedPx]
   );
 
   // ─── Phase B: Add label field shortcut ───
@@ -849,7 +900,7 @@ export function LabelCanvas({
       guidesRef.current.forEach((g) => canvas.bringObjectToFront(g));
       canvas.renderAll();
     },
-    [bleedPx, trimW, trimH]
+    [canvasW, canvasH, trimW, trimH, bleedPx]
   );
 
   // ─── Phase B: Add SVG element ───
@@ -886,7 +937,7 @@ export function LabelCanvas({
         canvas.renderAll();
       });
     },
-    [bleedPx, trimW, trimH]
+    [canvasW, canvasH, trimW, trimH, bleedPx]
   );
 
   // ─── Phase B: Add uploaded image ───
@@ -894,6 +945,11 @@ export function LabelCanvas({
     (dataUrl: string) => {
       const canvas = fabricRef.current;
       if (!canvas) return;
+
+      // Patch SVGs that lack width/height so the browser rasterises them correctly
+      if (dataUrl.startsWith("data:image/svg+xml")) {
+        dataUrl = patchSvgDataUrl(dataUrl);
+      }
 
       const imgEl = new Image();
       imgEl.onload = () => {
@@ -921,7 +977,7 @@ export function LabelCanvas({
       };
       imgEl.src = dataUrl;
     },
-    [bleedPx, trimW, trimH]
+    [canvasW, canvasH, trimW, trimH, bleedPx]
   );
 
   // ─── Phase B: Load template ───
@@ -1141,6 +1197,11 @@ export function LabelCanvas({
       canvas.remove(logoZoneRect);
       if (logoZoneLabel) canvas.remove(logoZoneLabel);
 
+      // Patch SVGs that lack width/height so the browser rasterises them correctly
+      if (dataUrl.startsWith("data:image/svg+xml")) {
+        dataUrl = patchSvgDataUrl(dataUrl);
+      }
+
       const imgEl = new Image();
       imgEl.onload = () => {
         const fabricImg = new fabric.FabricImage(imgEl, {
@@ -1192,6 +1253,11 @@ export function LabelCanvas({
       // Remove old object
       canvas.remove(active);
       canvas.discardActiveObject();
+
+      // Patch SVGs that lack width/height so the browser rasterises them correctly
+      if (dataUrl.startsWith("data:image/svg+xml")) {
+        dataUrl = patchSvgDataUrl(dataUrl);
+      }
 
       const imgEl = new Image();
       imgEl.onload = () => {
@@ -1311,7 +1377,7 @@ export function LabelCanvas({
   }, [onCanvasModified]);
 
   // ─── Phase C: Get canvas as base64 PNG ───
-  // Exports the FULL canvas (trim + bleed) at 1:1 resolution (1181×1724px at 300 DPI).
+  // Exports the full canvas at 1:1 resolution (1252×1843px at 300 DPI).
   const getCanvasImage = useCallback((): string | null => {
     const canvas = fabricRef.current;
     if (!canvas) return null;
@@ -1348,8 +1414,8 @@ export function LabelCanvas({
     return dataUrl;
   }, [canvasW, canvasH]);
 
-  // ─── Phase C: Get trim-only image (excluding bleed) as base64 PNG ───
-  // Returns only the 94×140mm trim area (1110×1654px) for bag mockup preview.
+  // ─── Phase C: Get trim image as base64 PNG ───
+  // Crops out the bleed area and returns only the trim region (1205×1795px at 300 DPI).
   const getTrimImage = useCallback((): string | null => {
     const canvas = fabricRef.current;
     if (!canvas) return null;
@@ -1358,7 +1424,7 @@ export function LabelCanvas({
     const prevZoom = canvas.getZoom();
     const prevVpt = canvas.viewportTransform ? [...canvas.viewportTransform] : null;
 
-    // Reset to 1:1 zoom so export coordinates match canvas coordinates exactly
+    // Reset to 1:1 zoom so export is at full 300 DPI resolution
     canvas.setZoom(1);
     canvas.setDimensions({ width: canvasW, height: canvasH });
 
@@ -1373,7 +1439,7 @@ export function LabelCanvas({
     canvas.discardActiveObject();
     canvas.renderAll();
 
-    // Capture only the trim area at full 300 DPI resolution
+    // Export only the trim area (crop out bleed)
     const dataUrl = canvas.toDataURL({
       format: "png",
       multiplier: 1,
@@ -1394,7 +1460,7 @@ export function LabelCanvas({
     canvas.renderAll();
 
     return dataUrl;
-  }, [bleedPx, trimW, trimH, canvasW, canvasH]);
+  }, [canvasW, canvasH, bleedPx, trimW, trimH]);
 
   // ─── Phase C: Get first image element as base64 (for logo analysis) ───
   const getLogoImage = useCallback((): string | null => {
@@ -1524,7 +1590,7 @@ export function LabelCanvas({
     return () => window.removeEventListener("resize", handleResize);
   }, [zoom, applyZoom]);
 
-  // Ruler data
+  // Ruler data (canvas = trim + bleed on each side)
   const totalWMm = dimensions.widthMm + dimensions.bleedMm * 2;
   const totalHMm = dimensions.heightMm + dimensions.bleedMm * 2;
 

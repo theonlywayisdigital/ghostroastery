@@ -189,7 +189,7 @@ export function SavedLabelsPanel({
                     )}
                   >
                     {/* Thumbnail */}
-                    <div className="aspect-[94/140] bg-neutral-900 flex items-center justify-center">
+                    <div className="aspect-[102/152] bg-neutral-900 flex items-center justify-center">
                       {label.thumbnail_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img

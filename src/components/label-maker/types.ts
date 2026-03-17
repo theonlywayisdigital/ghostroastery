@@ -3,7 +3,7 @@ export interface LabelDimensions {
   widthMm: number;
   /** Label height in mm (trim area) */
   heightMm: number;
-  /** Bleed in mm (added on all sides) */
+  /** Bleed in mm (added on all sides outside the trim area) */
   bleedMm: number;
   /** Safe zone inset from trim in mm */
   safeZoneMm: number;
@@ -22,19 +22,16 @@ export function pxToMm(px: number): number {
 /**
  * Fixed print dimensions — confirmed by printer template.
  *
- * Trim:  94mm × 140mm
- * Bleed: 3mm all sides → 100mm × 146mm total
- * Safe:  4mm inset from trim → 86mm × 132mm
+ * Trim:    102mm × 152mm  (1205×1795px at 300 DPI)
+ * Bleed:   2mm on all sides (external)
+ * Total:   106mm × 156mm  (1252×1843px at 300 DPI) — canvas & PDF page size
+ * Safe:    4mm inside trim → 94mm × 144mm
  * Resolution: 300 DPI
- *
- * At 300 DPI:
- *   Trim:  1110px × 1654px
- *   Total: 1181px × 1724px
  */
 export const LABEL_DIMENSIONS: LabelDimensions = {
-  widthMm: 94,
-  heightMm: 140,
-  bleedMm: 3,
+  widthMm: 102,
+  heightMm: 152,
+  bleedMm: 2,
   safeZoneMm: 4,
 };
 

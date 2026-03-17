@@ -558,7 +558,7 @@ export function Step3Label() {
                         onClick={() => handleSelectSavedLabel(label)}
                         className="w-full text-left"
                       >
-                        <div className="aspect-[94/140] bg-neutral-900 flex items-center justify-center">
+                        <div className="aspect-[102/152] bg-neutral-900 flex items-center justify-center">
                           {label.thumbnail_url ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
@@ -618,7 +618,7 @@ export function Step3Label() {
                   Label dimensions
                 </p>
                 <p className="text-sm text-neutral-400 mt-1">
-                  94mm &times; 140mm + 3mm bleed (100mm &times; 146mm total)
+                  102mm &times; 152mm + 3mm bleed (108mm &times; 158mm total)
                 </p>
                 <p className="text-xs text-neutral-500 mt-1">
                   Safe zone: 4mm inset from trim. Resolution: 300 DPI.

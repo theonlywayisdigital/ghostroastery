@@ -54,15 +54,15 @@ export interface TemplateFabricObject {
   evented?: boolean;
 }
 
-// ─── Canvas constants (94mm × 140mm trim, 3mm bleed, 4mm safe) ───
-const BLEED = mmToPx(3);
-const TRIM_W = mmToPx(94);
-const TRIM_H = mmToPx(140);
+// ─── Canvas constants (106mm × 156mm total, with 2mm bleed on each side) ───
+const TRIM_W = mmToPx(102);
+const TRIM_H = mmToPx(152);
+const BLEED = mmToPx(2);
 const CANVAS_W = TRIM_W + BLEED * 2;
 const CANVAS_H = TRIM_H + BLEED * 2;
 const SAFE = mmToPx(4);
 
-// Helper to position relative to trim area
+// Helper to position relative to trim (offset by BLEED from canvas edge)
 const trimLeft = BLEED;
 const trimTop = BLEED;
 const trimCenterX = BLEED + TRIM_W / 2;
@@ -424,7 +424,7 @@ const foundry: TemplateDefinition = {
       fill: "#111111",
       data: { elementType: "shape", isBackground: true },
     },
-    // Top accent bar — rust
+    // Top accent bar — rust (extends into bleed)
     {
       type: "rect",
       left: 0,
@@ -464,7 +464,7 @@ const foundry: TemplateDefinition = {
       originY: "center",
       data: { elementType: "text", fieldName: "Coffee Name" },
     },
-    // Bottom accent bar with weight
+    // Bottom accent bar with weight (extends into bleed)
     {
       type: "rect",
       left: 0,
@@ -637,7 +637,7 @@ const bloc: TemplateDefinition = {
       fill: "#F0EDE8",
       data: { elementType: "shape", isBackground: true },
     },
-    // Large green block — full-width, upper portion with logo
+    // Large green block — full-width, upper portion with logo (extends into bleed)
     {
       type: "rect",
       left: 0,
@@ -692,7 +692,7 @@ const bloc: TemplateDefinition = {
       originY: "center",
       data: { elementType: "text" },
     },
-    // Bottom golden accent bar
+    // Bottom golden accent bar (extends into bleed)
     {
       type: "rect",
       left: 0,

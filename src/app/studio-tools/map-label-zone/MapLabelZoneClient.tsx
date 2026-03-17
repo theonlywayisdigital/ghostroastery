@@ -33,7 +33,7 @@ type RectDragTarget =
   | { type: "body" };
 
 // ── Label size presets ────────────────────────────────────────────────
-// Physical sizes in mm. The 140x94mm size matches SHARED_LABEL_RECT.
+// Physical sizes in mm. The 152x102mm size matches SHARED_LABEL_RECT.
 // All presets are scaled proportionally and centered on the bag.
 
 interface LabelSizePreset {
@@ -46,14 +46,14 @@ const LABEL_SIZE_PRESETS: LabelSizePreset[] = [
   { label: "80×45mm",  widthMm: 80,  heightMm: 45 },
   { label: "88×63mm",  widthMm: 88,  heightMm: 63 },
   { label: "110×75mm", widthMm: 110, heightMm: 75 },
-  { label: "140×94mm", widthMm: 140, heightMm: 94 },
+  { label: "152×102mm", widthMm: 152, heightMm: 102 },
 ];
 
-// Reference: SHARED_LABEL_RECT corresponds to 140x94mm
-const REF_WIDTH_MM = 140;
-const REF_HEIGHT_MM = 94;
+// Reference: SHARED_LABEL_RECT corresponds to 152x102mm
+const REF_WIDTH_MM = 152;
+const REF_HEIGHT_MM = 102;
 
-/** Compute the center and span of the reference (140x94) rect in % coords */
+/** Compute the center and span of the reference (152x102) rect in % coords */
 function getRefRectMetrics(): { cx: number; cy: number; halfW: number; halfH: number } {
   const r = SHARED_LABEL_RECT;
   const cx = (r.topLeft.x + r.topRight.x + r.bottomLeft.x + r.bottomRight.x) / 4;
@@ -1111,7 +1111,7 @@ export function MapLabelZoneClient() {
                   onClick={() => setLabelRect(deepCloneRect(SHARED_LABEL_RECT))}
                   className="mt-2 w-full bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-lg px-3 py-1.5 text-xs transition-colors"
                 >
-                  Reset to default (140×94mm)
+                  Reset to default (152×102mm)
                 </button>
               </div>
 

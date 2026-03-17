@@ -242,7 +242,7 @@ function BackgroundGenerator({
               <button
                 key={i}
                 onClick={() => onAddBackground(img)}
-                className="aspect-[94/140] rounded-lg overflow-hidden border border-neutral-700 hover:border-accent transition-colors"
+                className="aspect-[102/152] rounded-lg overflow-hidden border border-neutral-700 hover:border-accent transition-colors"
               >
                 <img
                   src={img}

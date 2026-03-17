@@ -15,13 +15,13 @@ const LABEL_INTERVAL = 10; // mm
 
 /**
  * Horizontal ruler that spans the full scaled canvas width.
- * Origin (0) aligns with the trim edge. Bleed area shows negative values.
+ * Origin (0) aligns with the trim edge (offset by bleedMm from canvas edge).
  */
 export function HorizontalRuler({ totalWMm, scale, bleedMm }: RulersProps) {
   const ticks: { label: number; px: number; isLabel: boolean }[] = [];
   for (let mm = 0; mm <= totalWMm; mm += TICK_INTERVAL) {
     ticks.push({
-      label: mm - bleedMm, // 0 at trim edge, negative in bleed
+      label: mm - bleedMm, // 0 at trim edge
       px: mmToPx(mm) * scale,
       isLabel: mm % LABEL_INTERVAL === 0,
     });
@@ -60,13 +60,13 @@ export function HorizontalRuler({ totalWMm, scale, bleedMm }: RulersProps) {
 
 /**
  * Vertical ruler that spans the full scaled canvas height.
- * Origin (0) aligns with the trim edge. Bleed area shows negative values.
+ * Origin (0) aligns with the trim edge (offset by bleedMm from canvas edge).
  */
 export function VerticalRuler({ totalHMm, scale, bleedMm }: RulersProps) {
   const ticks: { label: number; px: number; isLabel: boolean }[] = [];
   for (let mm = 0; mm <= totalHMm; mm += TICK_INTERVAL) {
     ticks.push({
-      label: mm - bleedMm, // 0 at trim edge, negative in bleed
+      label: mm - bleedMm, // 0 at trim edge
       px: mmToPx(mm) * scale,
       isLabel: mm % LABEL_INTERVAL === 0,
     });

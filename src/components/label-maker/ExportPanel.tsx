@@ -156,7 +156,7 @@ export function ExportPanel({
               <div className="flex justify-between">
                 <span className="text-neutral-500">Size</span>
                 <span className="text-foreground">
-                  {dimensions.widthMm}&times;{dimensions.heightMm}mm
+                  {dimensions.widthMm + dimensions.bleedMm * 2}&times;{dimensions.heightMm + dimensions.bleedMm * 2}mm
                 </span>
               </div>
               <div className="flex justify-between">
@@ -166,7 +166,7 @@ export function ExportPanel({
               <div className="flex justify-between col-span-2">
                 <span className="text-neutral-500">Includes</span>
                 <span className="text-foreground">
-                  Crop marks, bleed area
+                  {dimensions.bleedMm}mm bleed area
                 </span>
               </div>
             </div>

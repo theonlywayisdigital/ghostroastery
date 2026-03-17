@@ -33,7 +33,7 @@ function getSwatchClass(name: string): string {
 interface BagPreviewModalProps {
   open: boolean;
   onClose: () => void;
-  /** Trim-only label PNG as a data URL (94×140mm, 1110×1654px) */
+  /** Trim-only label PNG as a data URL (102×152mm, 1205×1795px) */
   labelImageDataUrl: string | null;
   /** Called when user clicks "Done — export label" */
   onDone: () => void;

@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import sharp from "sharp";
 
-// Expected print dimensions at 300 DPI
-const TRIM_WIDTH = 1110; // 94mm at 300 DPI
-const TRIM_HEIGHT = 1654; // 140mm at 300 DPI
-const BLEED_WIDTH = 1181; // 100mm at 300 DPI
-const BLEED_HEIGHT = 1724; // 146mm at 300 DPI
+// Expected print dimensions at 300 DPI (canvas = 106×156mm, trim + 2mm bleed each side)
+const LABEL_WIDTH = 1252; // 106mm at 300 DPI
+const LABEL_HEIGHT = 1843; // 156mm at 300 DPI
 const TOLERANCE = 0.1; // 10% tolerance
 const MIN_DPI = 200;
 
@@ -50,27 +48,20 @@ export async function POST(request: Request) {
       dpiWarning = `Image resolution is ${dpi} DPI. We recommend at least 300 DPI for sharp printing. Your label may appear blurry.`;
     }
 
-    // Check dimensions against trim (1110x1654) and bleed (1181x1724)
-    const matchesTrim =
-      isWithinTolerance(width, TRIM_WIDTH) &&
-      isWithinTolerance(height, TRIM_HEIGHT);
-    const matchesBleed =
-      isWithinTolerance(width, BLEED_WIDTH) &&
-      isWithinTolerance(height, BLEED_HEIGHT);
+    // Check dimensions against label size (1252x1843)
+    const matchesLabel =
+      isWithinTolerance(width, LABEL_WIDTH) &&
+      isWithinTolerance(height, LABEL_HEIGHT);
 
-    if (matchesTrim || matchesBleed) {
+    if (matchesLabel) {
       // Within 10% — auto-resize to exact target
-      const targetW = matchesBleed ? BLEED_WIDTH : TRIM_WIDTH;
-      const targetH = matchesBleed ? BLEED_HEIGHT : TRIM_HEIGHT;
-
-      if (width !== targetW || height !== targetH) {
-        // Resize the image
+      if (width !== LABEL_WIDTH || height !== LABEL_HEIGHT) {
         await sharp(buffer)
-          .resize(targetW, targetH, { fit: "fill" })
+          .resize(LABEL_WIDTH, LABEL_HEIGHT, { fit: "fill" })
           .toBuffer();
 
         warnings.push(
-          `Image was ${width}x${height}px, resized to ${targetW}x${targetH}px to match label dimensions.`
+          `Image was ${width}x${height}px, resized to ${LABEL_WIDTH}x${LABEL_HEIGHT}px to match label dimensions.`
         );
       }
 
@@ -85,7 +76,7 @@ export async function POST(request: Request) {
     // More than 10% off — reject
     return NextResponse.json(
       {
-        error: `Image dimensions (${width}x${height}px) don't match the required label size. Expected approximately ${TRIM_WIDTH}x${TRIM_HEIGHT}px (trim) or ${BLEED_WIDTH}x${BLEED_HEIGHT}px (with bleed). Please resize your image or use our Label Maker to design a correctly sized label.`,
+        error: `Image dimensions (${width}x${height}px) don't match the required label size. Expected approximately ${LABEL_WIDTH}x${LABEL_HEIGHT}px (106\u00d7156mm at 300 DPI, includes 2mm bleed). Please resize your image or use our Label Maker to design a correctly sized label.`,
       },
       { status: 422 }
     );

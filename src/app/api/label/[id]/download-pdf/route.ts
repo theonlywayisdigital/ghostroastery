@@ -46,12 +46,12 @@ export async function GET(
     }
     const canvasPng = Buffer.from(await printResponse.arrayBuffer());
 
-    // Generate PDF on-demand (100mm x 146mm total with 3mm bleed → 94mm x 140mm trim)
+    // Generate PDF on-demand (106mm × 156mm — trim + 2mm bleed each side)
     const { pdfBuffer } = await generateLabelPdf({
       canvasPng,
-      widthMm: 94,
-      heightMm: 140,
-      bleedMm: 3,
+      widthMm: 102,
+      heightMm: 152,
+      bleedMm: 2,
     });
 
     const safeName = (label.name || "label").replace(/[^a-zA-Z0-9_-]/g, "_");

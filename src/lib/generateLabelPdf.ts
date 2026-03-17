@@ -7,7 +7,7 @@ interface LabelPdfOptions {
   /** Label dimensions in mm */
   widthMm: number;
   heightMm: number;
-  /** Bleed in mm (added on all sides) */
+  /** Bleed in mm (internal design guide — not added to page size) */
   bleedMm: number;
 }
 
@@ -23,24 +23,22 @@ interface LabelPdfResult {
 /**
  * Generates a print-ready PDF from a Fabric.js canvas PNG export.
  *
- * Matches the printer template (instantprint 94mm × 140mm Rectangle Sticker):
- * - PDF page size = 100mm × 146mm (trim + 3mm bleed on all sides)
- * - Artwork fills the entire page edge-to-edge — NO crop marks, NO white border
- * - Image embedded at 300 DPI
- *
- * The printer handles cutting at the 94mm × 140mm trim line.
+ * PDF page size = trim + bleed (e.g. 106mm × 156mm with 2mm bleed).
+ * Artwork fills the entire page edge-to-edge — NO crop marks, NO white border.
+ * Image embedded at 300 DPI.
  */
 export async function generateLabelPdf(
   options: LabelPdfOptions
 ): Promise<LabelPdfResult> {
   const { canvasPng, widthMm, heightMm, bleedMm } = options;
 
-  // Total canvas dimensions (trim + bleed on all sides)
+  // PDF page = trim + bleed on each side
   const totalWidthMm = widthMm + bleedMm * 2;
   const totalHeightMm = heightMm + bleedMm * 2;
 
-  // Convert mm to points (1mm = 2.83465pt)
-  const mmToPt = (mm: number) => mm * 2.83465;
+  // Convert mm to points: 1 inch = 72pt = 25.4mm → 1mm = 72/25.4 pt
+  // Use exact fraction to avoid floating-point drift that causes white borders
+  const mmToPt = (mm: number) => (mm * 72) / 25.4;
 
   const totalWidthPt = mmToPt(totalWidthMm);
   const totalHeightPt = mmToPt(totalHeightMm);
@@ -64,7 +62,7 @@ export async function generateLabelPdf(
     .png({ quality: 85 })
     .toBuffer();
 
-  // Build the PDF — page size matches artwork exactly (100mm × 146mm)
+  // Build the PDF — page size matches artwork exactly (trim + bleed)
   const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
     const chunks: Buffer[] = [];
     const doc = new PDFDocument({

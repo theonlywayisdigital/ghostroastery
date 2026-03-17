@@ -166,7 +166,7 @@ export function MobileSavedLabelsSheet({
                       : "border-neutral-700 active:border-neutral-600"
                   )}
                 >
-                  <div className="aspect-[94/140] bg-neutral-900 flex items-center justify-center">
+                  <div className="aspect-[102/152] bg-neutral-900 flex items-center justify-center">
                     {label.thumbnail_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img

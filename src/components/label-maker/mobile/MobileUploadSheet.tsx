@@ -20,7 +20,7 @@ const ACCEPTED_TYPES = [
 function getDpiInfo(
   width: number,
   height: number,
-  printWidthMm: number = 94
+  printWidthMm: number = 102
 ): { dpi: number; quality: "high" | "medium" | "low" } {
   const printWidthInches = printWidthMm / 25.4;
   const dpi = Math.round(width / printWidthInches);

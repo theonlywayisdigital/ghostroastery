@@ -132,7 +132,7 @@ export function MobileExportSheet({
             <div className="flex justify-between">
               <span className="text-neutral-500">Size</span>
               <span className="text-foreground">
-                {dimensions.widthMm}&times;{dimensions.heightMm}mm
+                {dimensions.widthMm + dimensions.bleedMm * 2}&times;{dimensions.heightMm + dimensions.bleedMm * 2}mm
               </span>
             </div>
             <div className="flex justify-between">

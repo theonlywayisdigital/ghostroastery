@@ -2,10 +2,10 @@ import { mmToPx } from "../types";
 import type { TemplateDefinition } from "./templates";
 import { logoZone } from "./templates";
 
-// ─── Canvas constants (94mm × 140mm trim, 3mm bleed, 4mm safe) ───
-const BLEED = mmToPx(3);
-const TRIM_W = mmToPx(94);
-const TRIM_H = mmToPx(140);
+// ─── Canvas constants (106mm × 156mm total, with 2mm bleed on each side) ───
+const TRIM_W = mmToPx(102);
+const TRIM_H = mmToPx(152);
+const BLEED = mmToPx(2);
 const CANVAS_W = TRIM_W + BLEED * 2;
 const CANVAS_H = TRIM_H + BLEED * 2;
 const SAFE = mmToPx(4);

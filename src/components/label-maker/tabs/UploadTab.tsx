@@ -16,9 +16,9 @@ const ACCEPTED_EXT = ".png,.jpg,.jpeg,.svg,.pdf";
 function getDpiInfo(
   width: number,
   height: number,
-  printWidthMm: number = 94
+  printWidthMm: number = 102
 ): { dpi: number; quality: "high" | "medium" | "low" } {
-  // Estimate DPI based on assuming the image fills the label width (94mm trim)
+  // Estimate DPI based on assuming the image fills the label width (102mm trim)
   const printWidthInches = printWidthMm / 25.4;
   const dpi = Math.round(width / printWidthInches);
   let quality: "high" | "medium" | "low" = "high";

@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       canvasPng,
       widthMm: dimensions.widthMm,
       heightMm: dimensions.heightMm,
-      bleedMm: dimensions.bleedMm ?? 3,
+      bleedMm: dimensions.bleedMm ?? 2,
     });
     console.log("[label/save] PDF generated:", filename, pdfBuffer.length);
 

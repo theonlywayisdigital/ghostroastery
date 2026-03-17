@@ -4,7 +4,7 @@ import type { TemplateDefinition } from "./data/templates";
 export function TemplateThumbnail({ template }: { template: TemplateDefinition }) {
   return (
     <div
-      className="w-full aspect-[94/140] rounded overflow-hidden relative"
+      className="w-full aspect-[102/152] rounded overflow-hidden relative"
       style={{ backgroundColor: template.backgroundColor }}
     >
       {/* Template 1 — Classic (gold on dark brown, framed) */}

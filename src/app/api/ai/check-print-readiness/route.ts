@@ -16,24 +16,25 @@ export async function POST(request: Request) {
     // ─── Client-side checks (based on element data) ───
 
     if (elements && Array.isArray(elements) && dimensions) {
-      const bleedMm = dimensions.bleedMm ?? 3;
+      const bleedMm = dimensions.bleedMm ?? 2;
       const safeZoneMm = dimensions.safeZoneMm ?? 4;
-      const trimW = dimensions.widthMm ?? 94;
-      const trimH = dimensions.heightMm ?? 140;
+      const trimW = dimensions.widthMm ?? 102;
+      const trimH = dimensions.heightMm ?? 152;
 
       // Safe zone edges (relative to canvas origin, in mm)
+      // Canvas origin is at the bleed edge, so offset by bleedMm
       const safeLeft = bleedMm + safeZoneMm;
       const safeTop = bleedMm + safeZoneMm;
       const safeRight = bleedMm + trimW - safeZoneMm;
       const safeBottom = bleedMm + trimH - safeZoneMm;
 
-      // Trim edges
+      // Trim edges (offset by bleedMm from canvas edge)
       const trimLeft = bleedMm;
       const trimTop = bleedMm;
       const trimRight = bleedMm + trimW;
       const trimBottom = bleedMm + trimH;
 
-      // Total canvas
+      // Total canvas = trim + bleed on each side
       const totalW = trimW + bleedMm * 2;
       const totalH = trimH + bleedMm * 2;
 

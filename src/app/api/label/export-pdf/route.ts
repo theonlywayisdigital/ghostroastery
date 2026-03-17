@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       canvasPng,
       widthMm: dimensions.widthMm,
       heightMm: dimensions.heightMm,
-      bleedMm: dimensions.bleedMm ?? 3,
+      bleedMm: dimensions.bleedMm ?? 2,
     });
 
     // Embed 300 DPI metadata into print PNG
