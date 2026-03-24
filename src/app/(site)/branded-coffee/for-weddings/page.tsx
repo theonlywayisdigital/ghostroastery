@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Wedding Coffee Favours | Ghost Roastery",
     description:
       "Custom coffee bags as wedding favours. Design them yourself with our online label maker. From 25 bags.",
-    url: "https://ghostroastery.com/branded-coffee/for-weddings",
+    url: "https://roasteryplatform.com/branded-coffee/for-weddings",
   },
 };
 

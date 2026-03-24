@@ -7,7 +7,7 @@ import { roasterFeatureDetailBySlugQuery, allRoasterFeatureDetailSlugsQuery } fr
 
 export const revalidate = 3600;
 
-const PLATFORM_URL = "https://platform.ghostroastery.com";
+const PLATFORM_URL = "https://app.roasteryplatform.com";
 
 const suiteLabelMap: Record<string, string> = {
   sales: "Sales Suite",

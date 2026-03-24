@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: "Terms & Conditions | Ghost Roastery",
     description:
       "Terms of service for using the Ghost Roastery website and services.",
-    url: "https://ghostroastery.com/terms",
+    url: "https://roasteryplatform.com/terms",
   },
 };
 

@@ -116,7 +116,7 @@ export default async function RoastersCaseStudiesPage() {
             Join the platform and start growing your roastery today.
           </p>
           <a
-            href="https://platform.ghostroastery.com"
+            href="https://app.roasteryplatform.com"
             className="inline-flex items-center px-8 py-4 border-2 border-accent bg-accent text-white font-semibold text-lg rounded-lg hover:bg-transparent hover:text-accent transition-colors"
           >
             Get Started Free

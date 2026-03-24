@@ -39,7 +39,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/components/ui/Toast";
 
 const PORTAL_URL = process.env.NEXT_PUBLIC_PORTAL_URL;
-const ROASTERS_URL = process.env.NEXT_PUBLIC_ROASTERS_URL || "https://roasters.ghostroastery.com";
+const ROASTERS_URL = process.env.NEXT_PUBLIC_ROASTERS_URL || "https://roasters.roasteryplatform.com";
 const HOVER_DELAY = 150;
 
 /* ── Mega-menu data ────────────────────────────────────── */

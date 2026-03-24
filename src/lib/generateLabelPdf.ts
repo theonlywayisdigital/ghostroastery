@@ -70,9 +70,9 @@ export async function generateLabelPdf(
       margin: 0,
       info: {
         Title: `Coffee Bag Label - ${widthMm}x${heightMm}mm`,
-        Author: "Ghost Roastery Label Maker",
+        Author: "Roastery Platform Label Maker",
         Subject: "Coffee bag label - print ready",
-        Creator: "Ghost Roastery (ghostroastery.com)",
+        Creator: "Roastery Platform (roasteryplatform.com)",
       },
     });
 

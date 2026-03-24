@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     title: "Ghost Roastery | Branded Coffee Roasting Service UK",
     description:
       "Your brand. Our roasters. Nobody needs to know. UK-based ghost roasting and branded coffee service.",
-    url: "https://ghostroastery.com",
+    url: "https://roasteryplatform.com",
     type: "website",
   },
 };
@@ -33,8 +33,8 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Ghost Roastery",
-  url: "https://ghostroastery.com",
-  logo: "https://ghostroastery.com/logo.png",
+  url: "https://roasteryplatform.com",
+  logo: "https://roasteryplatform.com/logo.png",
   description:
     "UK-based ghost roasting and branded coffee service. Launch your coffee brand from 25 bags with specialty grade coffee.",
   address: {

@@ -11,7 +11,7 @@ import {
 
 export const revalidate = 3600;
 
-const PLATFORM_URL = "https://platform.ghostroastery.com";
+const PLATFORM_URL = "https://app.roasteryplatform.com";
 
 export const metadata: Metadata = {
   title: "Website Builder — Build Your Roastery Website",

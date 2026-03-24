@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowRight, Check, X, CaretRight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
-const PLATFORM_URL = "https://platform.ghostroastery.com";
+const PLATFORM_URL = "https://app.roasteryplatform.com";
 
 /* ── Types ─────────────────────────────────────────────── */
 

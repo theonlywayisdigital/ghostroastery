@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Branded Coffee for Hotels | Ghost Roastery",
     description:
       "Branded in-room coffee that elevates the guest experience. Specialty grade wholesale supply for hotels.",
-    url: "https://ghostroastery.com/wholesale/for-hotels",
+    url: "https://roasteryplatform.com/wholesale/for-hotels",
   },
 };
 

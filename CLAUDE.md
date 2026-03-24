@@ -1,4 +1,4 @@
-# Ghost Roastery — Claude Code Instructions
+# Roastery Platform — Claude Code Instructions
 
 ## Supabase Migrations
 

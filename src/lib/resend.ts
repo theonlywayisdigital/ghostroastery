@@ -2,8 +2,8 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@ghostroasting.co.uk";
-const FROM_EMAIL = "Ghost Roasting UK <noreply@ghostroastery.com>";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@roasteryplatform.com";
+const FROM_EMAIL = "Roastery Platform <noreply@roasteryplatform.com>";
 
 // ── Ghost Roastery order email types ──
 
@@ -140,7 +140,7 @@ export async function sendWholesaleConfirmationEmail(
           </ul>
           ${data.message ? `<p><strong>Message:</strong> ${data.message}</p>` : ""}
           <p style="margin-top: 30px;">In the meantime, feel free to reply to this email if you have any questions.</p>
-          <p>Best,<br>The Ghost Roasting UK Team</p>
+          <p>Best,<br>The Roastery Platform Team</p>
         </div>
       `,
     });
@@ -255,7 +255,7 @@ export async function sendOrderConfirmationEmail(data: OrderEmailData) {
           <p><strong>Delivery to:</strong> ${formatAddress(data.deliveryAddress)}</p>
           <p><strong>Estimated turnaround:</strong> ${data.turnaroundDays}</p>
           <p style="margin-top: 30px;">We'll email you when your order ships. If you have any questions, just reply to this email.</p>
-          <p>Best,<br>The Ghost Roasting UK Team</p>
+          <p>Best,<br>The Roastery Platform Team</p>
         </div>
       `,
     });
@@ -382,7 +382,7 @@ export async function sendAccountActivationEmail(data: AccountActivationEmailDat
           <p style="margin-top: 20px; color: #666; font-size: 14px;">
             This link will sign you in automatically. You can then set a password in your account settings.
           </p>
-          <p>Best,<br>The Ghost Roasting UK Team</p>
+          <p>Best,<br>The Roastery Platform Team</p>
         </div>
       `,
     });
@@ -420,7 +420,7 @@ export async function sendOrderStatusUpdateEmail(data: OrderStatusUpdateEmailDat
             <li><strong>Quantity:</strong> ${data.quantity}</li>
             <li><strong>Status:</strong> ${data.newStatus}</li>
           </ul>
-          <p>Best,<br>The Ghost Roasting UK Team</p>
+          <p>Best,<br>The Roastery Platform Team</p>
         </div>
       `,
     });

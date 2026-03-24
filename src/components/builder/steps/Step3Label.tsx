@@ -481,7 +481,7 @@ export function Step3Label() {
 
               {/* Option C: Get help */}
               <motion.a
-                href="mailto:hello@ghostroastery.com?subject=Label%20design%20help"
+                href="mailto:hello@roasteryplatform.com?subject=Label%20design%20help"
                 className="w-full group flex items-start gap-4 p-5 rounded-xl border border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900/30 transition-colors text-left block"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "Sell coffee wholesale and direct-to-consumer from one dashboard. Orders, invoicing, storefront, and CRM — included free on every plan.",
 };
 
-const PLATFORM_URL = "https://platform.ghostroastery.com";
+const PLATFORM_URL = "https://app.roasteryplatform.com";
 
 const features = [
   {

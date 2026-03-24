@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: "Request Wholesale Access — Ghost Roastery",
     description:
       "Apply for wholesale access. Specialty grade coffee for businesses. Branded or unbranded, from 150 bags.",
-    url: "https://ghostroastery.com/wholesale/sign-up",
+    url: "https://roasteryplatform.com/wholesale/sign-up",
   },
 };
 

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Branded Coffee for Offices | Ghost Roastery",
     description:
       "Quality coffee under your company name. Branded office coffee supply for businesses.",
-    url: "https://ghostroastery.com/wholesale/for-offices",
+    url: "https://roasteryplatform.com/wholesale/for-offices",
   },
 };
 

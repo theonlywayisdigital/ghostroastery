@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     "Everything you need to sell more coffee. Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login.",
 };
 
-const PLATFORM_URL = "https://platform.ghostroastery.com";
+const PLATFORM_URL = "https://app.roasteryplatform.com";
 
 /* ── Types ─────────────────────────────────────────────── */
 
@@ -130,7 +130,7 @@ export default async function RoastersHomePage() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Ghost Roastery",
-    url: "https://roasters.ghostroastery.com",
+    url: "https://roasters.roasteryplatform.com",
     description:
       "The all-in-one platform for coffee roasters. Sales, marketing, roaster tools, and website builder.",
     address: {

@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     "Everything a coffee roaster needs in one platform. Sales suite, marketing suite, roaster tools (free), and website builder. Sell, market, and grow your roastery.",
 };
 
-const PLATFORM_URL = "https://platform.ghostroastery.com";
+const PLATFORM_URL = "https://app.roasteryplatform.com";
 
 // ── Types ────────────────────────────────────────────────────
 

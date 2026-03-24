@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Branded Coffee for Client Gifting | Ghost Roastery",
     description:
       "Premium branded coffee as corporate gifts. Design your bags online. Your logo on every bag. From 25 bags.",
-    url: "https://ghostroastery.com/branded-coffee/for-client-gifting",
+    url: "https://roasteryplatform.com/branded-coffee/for-client-gifting",
   },
 };
 

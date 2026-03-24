@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api", "/studio", "/dashboard"],
     },
-    sitemap: "https://roasters.ghostroastery.com/sitemap.xml",
+    sitemap: "https://roasters.roasteryplatform.com/sitemap.xml",
   };
 }

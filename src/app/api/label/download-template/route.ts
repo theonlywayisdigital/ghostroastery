@@ -34,9 +34,9 @@ export async function GET() {
       margin: 0,
       info: {
         Title: `Label Template - ${pageWidthMm}x${pageHeightMm}mm`,
-        Author: "Ghost Roastery Label Maker",
+        Author: "Roastery Platform Label Maker",
         Subject: `Blank label template for coffee bags \u2014 ${pageWidthMm}\u00d7${pageHeightMm}mm (${trimWidthMm}\u00d7${trimHeightMm}mm trim + ${bleedMm}mm bleed)`,
-        Creator: "Ghost Roastery (ghostroastery.com)",
+        Creator: "Roastery Platform (roasteryplatform.com)",
       },
     });
 

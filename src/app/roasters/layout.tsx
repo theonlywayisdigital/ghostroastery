@@ -12,11 +12,11 @@ export const metadata: Metadata = {
   },
   description:
     "Everything you need to sell more coffee. Storefront, wholesale, marketing, roaster tools, and website builder — one platform, one login.",
-  metadataBase: new URL("https://roasters.ghostroastery.com"),
+  metadataBase: new URL("https://roasters.roasteryplatform.com"),
   openGraph: {
     type: "website",
     locale: "en_GB",
-    url: "https://roasters.ghostroastery.com",
+    url: "https://roasters.roasteryplatform.com",
     siteName: "Ghost Roastery Platform",
     title: "Ghost Roastery Platform — The All-in-One Platform for Coffee Roasters",
     description:

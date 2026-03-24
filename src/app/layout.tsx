@@ -37,11 +37,11 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Ghost Roastery" }],
   creator: "Ghost Roastery",
-  metadataBase: new URL("https://ghostroastery.com"),
+  metadataBase: new URL("https://roasteryplatform.com"),
   openGraph: {
     type: "website",
     locale: "en_GB",
-    url: "https://ghostroastery.com",
+    url: "https://roasteryplatform.com",
     siteName: "Ghost Roastery",
     title: "Ghost Roastery | Branded Coffee Roasting Service UK",
     description:

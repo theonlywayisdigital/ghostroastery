@@ -44,8 +44,8 @@ import type { IconWeight } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
-const PLATFORM_URL = "https://platform.ghostroastery.com";
-const CONSUMER_URL = "https://ghostroastery.com";
+const PLATFORM_URL = "https://app.roasteryplatform.com";
+const CONSUMER_URL = "https://roasteryplatform.com";
 const HOVER_DELAY = 150;
 
 /* ── Top Bar ───────────────────────────────────────────── */
@@ -139,21 +139,21 @@ const moreSections = [
     items: [
       { icon: BookOpen, label: "Case Studies", desc: "See how roasters grow with us", href: "/case-studies" },
       { icon: Newspaper, label: "Blog", desc: "Tips, guides and industry insights", href: "/blog" },
-      { icon: Lifebuoy, label: "Support", desc: "Get help from our team", href: "https://ghostroastery.com/contact", external: true },
+      { icon: Lifebuoy, label: "Support", desc: "Get help from our team", href: "https://roasteryplatform.com/contact", external: true },
     ],
   },
   {
     title: "Company",
     items: [
-      { icon: Info, label: "About", desc: "Our mission and story", href: "https://ghostroastery.com/about", external: true },
+      { icon: Info, label: "About", desc: "Our mission and story", href: "https://roasteryplatform.com/about", external: true },
       { icon: Users, label: "Partner Program", desc: "Earn by roasting for other brands", href: "/partner-program" },
     ],
   },
   {
     title: "Legal",
     items: [
-      { icon: ShieldCheck, label: "Privacy Policy", desc: "How we handle your data", href: "https://ghostroastery.com/privacy", external: true },
-      { icon: FileText, label: "Terms & Conditions", desc: "Platform terms of service", href: "https://ghostroastery.com/terms", external: true },
+      { icon: ShieldCheck, label: "Privacy Policy", desc: "How we handle your data", href: "https://roasteryplatform.com/privacy", external: true },
+      { icon: FileText, label: "Terms & Conditions", desc: "Platform terms of service", href: "https://roasteryplatform.com/terms", external: true },
     ],
   },
 ];

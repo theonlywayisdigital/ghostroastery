@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Wholesale Coffee for Restaurants | Ghost Roastery",
     description:
       "Your brand on the last thing guests taste. Wholesale branded coffee for restaurants and hospitality.",
-    url: "https://ghostroastery.com/wholesale/for-restaurants",
+    url: "https://roasteryplatform.com/wholesale/for-restaurants",
   },
 };
 

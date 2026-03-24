@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: "Privacy Policy | Ghost Roastery",
     description:
       "How Ghost Roastery collects, uses, and protects your personal data.",
-    url: "https://ghostroastery.com/privacy",
+    url: "https://roasteryplatform.com/privacy",
   },
 };
 

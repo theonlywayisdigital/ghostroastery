@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "More orders without the marketing. Join the Ghost Roaster network — we send the orders, you roast and ship. Weekly payouts, zero advertising spend.",
 };
 
-const PLATFORM_URL = "https://platform.ghostroastery.com";
+const PLATFORM_URL = "https://app.roasteryplatform.com";
 
 const steps = [
   {

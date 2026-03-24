@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { InstagramLogo, LinkedinLogo } from "@phosphor-icons/react/dist/ssr";
 
-const PLATFORM_URL = "https://platform.ghostroastery.com";
+const PLATFORM_URL = "https://app.roasteryplatform.com";
 
 const footerLinks = {
   platform: [
@@ -17,13 +17,13 @@ const footerLinks = {
   ],
   resources: [
     { href: "/blog", label: "Blog" },
-    { href: "https://ghostroastery.com/contact", label: "Contact Us", external: true },
-    { href: "https://ghostroastery.com/about", label: "About Ghost Roastery", external: true },
+    { href: "https://roasteryplatform.com/contact", label: "Contact Us", external: true },
+    { href: "https://roasteryplatform.com/about", label: "About Ghost Roastery", external: true },
   ],
   legal: [
-    { href: "https://ghostroastery.com/privacy", label: "Privacy Policy", external: true },
-    { href: "https://ghostroastery.com/terms", label: "Terms of Service", external: true },
-    { href: "https://ghostroastery.com/cookies", label: "Cookie Policy", external: true },
+    { href: "https://roasteryplatform.com/privacy", label: "Privacy Policy", external: true },
+    { href: "https://roasteryplatform.com/terms", label: "Terms of Service", external: true },
+    { href: "https://roasteryplatform.com/cookies", label: "Cookie Policy", external: true },
   ],
 };
 

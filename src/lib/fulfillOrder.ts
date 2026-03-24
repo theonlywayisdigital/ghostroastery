@@ -97,7 +97,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
   // Link order to existing user or create a new account
   try {
     const customerEmail = order.customer_email;
-    const portalUrl = process.env.NEXT_PUBLIC_PORTAL_URL || process.env.PORTAL_URL || "https://portal.ghostroasting.co.uk";
+    const portalUrl = process.env.NEXT_PUBLIC_PORTAL_URL || process.env.PORTAL_URL || "https://app.roasteryplatform.com";
 
     if (customerEmail) {
       // Check if a public.users row exists for this email
@@ -262,7 +262,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
 
         if (roaster) {
           // Send notification to partner (non-blocking)
-          const portalUrl = process.env.PORTAL_URL || "https://portal.ghostroasting.co.uk";
+          const portalUrl = process.env.PORTAL_URL || "https://app.roasteryplatform.com";
           sendGhostRoasterOrderNotification({
             roasterEmail: roaster.email,
             roasterName: roaster.contact_name,
@@ -317,7 +317,7 @@ export async function fulfillOrder(session: Stripe.Checkout.Session) {
     const adminEmail =
       siteSettings?.adminEmail ||
       process.env.ADMIN_EMAIL ||
-      "admin@ghostroastery.com";
+      "admin@roasteryplatform.com";
     const roasteryEmail = siteSettings?.roasteryEmail || adminEmail;
     const turnaroundDays = "7–10 working days";
 
