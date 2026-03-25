@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "About Us | Ghost Roastery",
     description:
       "We're a UK-based ghost roasting service helping businesses launch and grow their own coffee brands.",
-    url: "https://roasteryplatform.com/about",
+    url: "https://ghostroastery.com/about",
   },
 };
 

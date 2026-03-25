@@ -75,13 +75,13 @@ export async function generateMetadata({
     title,
     description,
     alternates: {
-      canonical: `https://roasteryplatform.com/blog/${slug}`,
+      canonical: `https://ghostroastery.com/blog/${slug}`,
     },
     openGraph: {
       type: "article",
       title,
       description,
-      url: `https://roasteryplatform.com/blog/${slug}`,
+      url: `https://ghostroastery.com/blog/${slug}`,
       publishedTime: post.publishedAt,
       authors: post.author ? [post.author] : undefined,
       images: imageUrl
@@ -240,14 +240,14 @@ function JsonLd({ post }: { post: BlogPost }) {
       name: "Ghost Roastery",
       logo: {
         "@type": "ImageObject",
-        url: "https://roasteryplatform.com/logo.png",
+        url: "https://ghostroastery.com/logo.png",
       },
     },
     datePublished: post.publishedAt,
     dateModified: post.publishedAt,
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://roasteryplatform.com/blog/${post.slug.current}`,
+      "@id": `https://ghostroastery.com/blog/${post.slug.current}`,
     },
     ...(imageUrl && {
       image: {

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Branded Coffee for Events & Conferences | Ghost Roastery",
     description:
       "Custom branded coffee bags for corporate events, conferences, and launches. Design it yourself online. From 25 bags.",
-    url: "https://roasteryplatform.com/branded-coffee/for-events",
+    url: "https://ghostroastery.com/branded-coffee/for-events",
   },
 };
 

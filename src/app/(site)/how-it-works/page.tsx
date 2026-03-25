@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: "How It Works — Launch Your Own Coffee Brand | Ghost Roastery",
     description:
       "Four simple steps to your own branded coffee. Design, choose, roast, deliver. From 25 bags.",
-    url: "https://roasteryplatform.com/how-it-works",
+    url: "https://ghostroastery.com/how-it-works",
   },
 };
 
@@ -49,7 +49,7 @@ const productJsonLd = {
   brand: {
     "@type": "Organization",
     name: "Ghost Roastery",
-    url: "https://roasteryplatform.com",
+    url: "https://ghostroastery.com",
   },
   offers: {
     "@type": "AggregateOffer",

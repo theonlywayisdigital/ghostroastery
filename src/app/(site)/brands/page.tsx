@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "Our Brands | Ghost Roastery",
     description:
       "Discover the coffee brands built with Ghost Roastery.",
-    url: "https://roasteryplatform.com/brands",
+    url: "https://ghostroastery.com/brands",
   },
 };
 

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: "Our Coffee — Specialty Grade, Ethically Sourced | Ghost Roastery",
     description:
       "Specialty grade, ethically sourced, small batch roasted in the UK.",
-    url: "https://roasteryplatform.com/our-coffee",
+    url: "https://ghostroastery.com/our-coffee",
   },
 };
 

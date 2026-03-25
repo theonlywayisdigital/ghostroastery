@@ -38,7 +38,7 @@ export const metadata: Metadata = {
       "Wholesale Branded Coffee — White Label Coffee Supplier UK | Ghost Roastery",
     description:
       "Wholesale branded coffee for cafes, hotels, restaurants, and offices. Specialty grade, flexible delivery across the UK.",
-    url: "https://roasteryplatform.com/wholesale",
+    url: "https://ghostroastery.com/wholesale",
   },
 };
 
@@ -48,7 +48,7 @@ const jsonLd = {
   name: "Ghost Roastery",
   description:
     "UK-based wholesale branded coffee supplier. Specialty grade, custom roast profiles, branded or unbranded packaging for businesses.",
-  url: "https://roasteryplatform.com/wholesale",
+  url: "https://ghostroastery.com/wholesale",
   address: {
     "@type": "PostalAddress",
     addressCountry: "GB",

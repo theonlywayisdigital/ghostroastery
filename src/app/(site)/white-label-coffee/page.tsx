@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: "White Label Coffee UK — Your Brand, Our Roasters | Ghost Roastery",
     description:
       "White label coffee service for UK businesses. Design your label, pick your roast, and launch your own coffee brand. From 25 bags.",
-    url: "https://roasteryplatform.com/white-label-coffee",
+    url: "https://ghostroastery.com/white-label-coffee",
   },
 };
 
@@ -49,7 +49,7 @@ const productJsonLd = {
   brand: {
     "@type": "Organization",
     name: "Ghost Roastery",
-    url: "https://roasteryplatform.com",
+    url: "https://ghostroastery.com",
   },
   offers: {
     "@type": "AggregateOffer",

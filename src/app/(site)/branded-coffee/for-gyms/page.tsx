@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Branded Coffee for Gyms & Fitness Studios | Ghost Roastery",
     description:
       "Launch your own branded coffee line for your gym or studio. Design it yourself with our online builder. From 25 bags.",
-    url: "https://roasteryplatform.com/branded-coffee/for-gyms",
+    url: "https://ghostroastery.com/branded-coffee/for-gyms",
   },
 };
 

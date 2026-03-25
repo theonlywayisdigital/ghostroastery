@@ -61,7 +61,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description:
         cms?.heroSubheadline ??
         "Tips, guides, and industry insights from the Ghost Roastery team.",
-      url: "https://roasteryplatform.com/blog",
+      url: "https://ghostroastery.com/blog",
     },
   };
 }

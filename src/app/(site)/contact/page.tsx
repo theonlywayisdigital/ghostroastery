@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "Contact Us | Ghost Roastery",
     description:
       "Get in touch with Ghost Roastery. We're here to help you launch your coffee brand.",
-    url: "https://roasteryplatform.com/contact",
+    url: "https://ghostroastery.com/contact",
   },
 };
 

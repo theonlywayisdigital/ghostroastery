@@ -3,7 +3,6 @@ import type { StructureResolver } from "sanity/structure";
 const singletons = new Set([
   "siteSettings",
   "builderSettings",
-  "roastersPageSettings",
   "customerHomePage",
   "customerAboutPage",
   "customerHowItWorksPage",
@@ -15,17 +14,11 @@ const singletons = new Set([
   "customerWholesalePage",
   "customerContactPage",
   "customerBlogSettings",
-  "roasterFeaturesPage",
-  "roasterPricingPage",
-  "roasterPartnerProgramPage",
-  "roasterProductsCarousel",
 ]);
 
 // Types fully managed via groups below — hide from auto-generated list
 const managed = new Set([
   ...singletons,
-  "roasterFeature",
-  "roasterFeatureDetail",
   "customerLegalPage",
   "wholesaleSubPage",
   "blogPost",
@@ -109,53 +102,6 @@ export const structure: StructureResolver = (S) =>
                     .title("FAQs (Consumer)")
                     .filter(
                       '_type == "faq" && category in ["bespoke", "wholesale", "general"]'
-                    )
-                ),
-            ])
-        ),
-
-      // ── Roasters Site ─────────────────────────────────────
-      S.listItem()
-        .title("Roasters Site")
-        .child(
-          S.list()
-            .title("Roasters Site")
-            .items([
-              singleton(S, "Home Page", "roastersPageSettings"),
-              singleton(S, "Features Index", "roasterFeaturesPage"),
-              S.documentTypeListItem("roasterFeatureDetail").title(
-                "Feature Details"
-              ),
-              S.documentTypeListItem("roasterFeature").title("Features"),
-              singleton(S, "Pricing", "roasterPricingPage"),
-              singleton(S, "Partner Program", "roasterPartnerProgramPage"),
-              singleton(S, "Products Carousel", "roasterProductsCarousel"),
-              S.divider(),
-              S.listItem()
-                .title("Blog Posts")
-                .child(
-                  S.documentList()
-                    .title("Blog Posts (Roasters)")
-                    .filter(
-                      '_type == "blogPost" && audience in ["roaster", "both"]'
-                    )
-                ),
-              S.listItem()
-                .title("Case Studies")
-                .child(
-                  S.documentList()
-                    .title("Case Studies (Roasters)")
-                    .filter(
-                      '_type == "caseStudy" && audience in ["roaster", "both"]'
-                    )
-                ),
-              S.listItem()
-                .title("FAQs")
-                .child(
-                  S.documentList()
-                    .title("FAQs (Roasters)")
-                    .filter(
-                      '_type == "faq" && category in ["roaster-pricing", "roaster-features"]'
                     )
                 ),
             ])

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     title: "Branded Coffee — Create Your Own Coffee Brand | Ghost Roastery",
     description:
       "Design your own branded coffee bags online. Free label maker, specialty grade beans, from 25 bags.",
-    url: "https://roasteryplatform.com/branded-coffee",
+    url: "https://ghostroastery.com/branded-coffee",
   },
 };
 

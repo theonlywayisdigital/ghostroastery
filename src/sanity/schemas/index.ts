@@ -12,8 +12,6 @@ import { faq } from "./faq";
 import { bagOptions } from "./bagOptions";
 import { labelTemplate } from "./labelTemplate";
 import { svgElement } from "./svgElement";
-import { roasterFeature } from "./roasterFeature";
-import { roastersPageSettings } from "./roastersPageSettings";
 
 // Customer site schemas
 import { customerHomePage } from "./customerHomePage";
@@ -29,13 +27,6 @@ import { wholesaleSubPage } from "./wholesaleSubPage";
 import { customerContactPage } from "./customerContactPage";
 import { customerBlogSettings } from "./customerBlogSettings";
 import { customerLegalPage } from "./customerLegalPage";
-
-// Roaster site schemas
-import { roasterFeaturesPage } from "./roasterFeaturesPage";
-import { roasterPricingPage } from "./roasterPricingPage";
-import { roasterPartnerProgramPage } from "./roasterPartnerProgramPage";
-import { roasterProductsCarousel } from "./roasterProductsCarousel";
-import { roasterFeatureDetail } from "./roasterFeatureDetail";
 
 export const schemaTypes = [
   // Content
@@ -72,15 +63,6 @@ export const schemaTypes = [
   customerContactPage,
   customerBlogSettings,
   customerLegalPage,
-
-  // Roasters site
-  roasterFeature,
-  roastersPageSettings,
-  roasterFeaturesPage,
-  roasterPricingPage,
-  roasterPartnerProgramPage,
-  roasterProductsCarousel,
-  roasterFeatureDetail,
 
   // Settings
   siteSettings,

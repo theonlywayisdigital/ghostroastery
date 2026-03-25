@@ -15,6 +15,6 @@ export default function robots(): MetadataRoute.Robots {
         "/account",
       ],
     },
-    sitemap: "https://roasteryplatform.com/sitemap.xml",
+    sitemap: "https://ghostroastery.com/sitemap.xml",
   };
 }

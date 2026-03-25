@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Shop | Ghost Roastery",
     description:
       "Browse and buy specialty coffee from Ghost Roastery. Freshly roasted, ethically sourced, delivered to your door.",
-    url: "https://roasteryplatform.com/shop",
+    url: "https://ghostroastery.com/shop",
   },
 };
 

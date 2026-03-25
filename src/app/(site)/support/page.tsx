@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "Support | Ghost Roastery",
     description:
       "Need help? Get in touch with the Ghost Roastery team.",
-    url: "https://roasteryplatform.com/support",
+    url: "https://ghostroastery.com/support",
   },
 };
 

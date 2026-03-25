@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const hostname = request.headers.get("host") || "";
   const pathname = request.nextUrl.pathname;
 
   // Skip internal paths (Next.js internals, API, studio, static files)
@@ -15,27 +14,27 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Detect roasters subdomain
-  const isRoasters =
-    hostname.startsWith("roasters.") ||
-    hostname.startsWith("roasters.localhost");
-
-  if (isRoasters) {
-    // Don't double-rewrite if already on roasters path
-    if (pathname.startsWith("/roasters")) {
-      return NextResponse.next();
-    }
-    // Rewrite roasters subdomain requests to /roasters/* routes
-    const url = request.nextUrl.clone();
-    url.pathname = `/roasters${pathname}`;
-    return NextResponse.rewrite(url);
+  // Redirect old /roasters/* paths to the new roasters site
+  if (pathname.startsWith("/roasters")) {
+    return NextResponse.redirect(
+      new URL(
+        pathname.replace("/roasters", "") || "/",
+        "https://roasteryplatform.com"
+      ),
+      301
+    );
   }
 
-  // Block direct access to /roasters/* on the main domain
-  if (pathname.startsWith("/roasters")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-    return NextResponse.redirect(url);
+  // Redirect roasters subdomain visitors to the new domain
+  const hostname = request.headers.get("host") || "";
+  if (
+    hostname.startsWith("roasters.") ||
+    hostname.startsWith("roasters.localhost")
+  ) {
+    return NextResponse.redirect(
+      new URL(pathname, "https://roasteryplatform.com"),
+      301
+    );
   }
 
   return NextResponse.next();

@@ -3,7 +3,7 @@ import { client } from "@/sanity/lib/client";
 import { consumerBlogSlugsQuery } from "@/sanity/lib/queries";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://roasteryplatform.com";
+  const baseUrl = "https://ghostroastery.com";
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
