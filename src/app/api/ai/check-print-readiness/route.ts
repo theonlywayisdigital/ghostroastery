@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
 import { getVisionModel, base64ToInlineData } from "@/lib/gemini";
+import { createAuthServerClient } from "@/lib/supabase";
+import {
+  checkAiCredits,
+  consumeAiCredits,
+  resolveRoasterId,
+} from "@/lib/ai-credits";
 
 interface CheckResult {
   label: string;
@@ -9,32 +15,57 @@ interface CheckResult {
 
 export async function POST(request: Request) {
   try {
+    // ── Auth ──────────────────────────────────────────────────
+    const supabaseAuth = await createAuthServerClient();
+    const {
+      data: { user },
+    } = await supabaseAuth.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const roasterId = await resolveRoasterId(user.id);
+    if (!roasterId) {
+      return NextResponse.json(
+        { error: "No roaster account found" },
+        { status: 403 }
+      );
+    }
+
     const { canvasImageBase64, elements, dimensions } = await request.json();
+
+    // Only charge credits when the AI contrast check will run
+    const willRunAiCheck = !!canvasImageBase64;
+
+    if (willRunAiCheck) {
+      const creditCheck = await checkAiCredits(roasterId, "label_print_check");
+      if (!creditCheck.allowed) {
+        return NextResponse.json(
+          { error: creditCheck.error, creditsRemaining: creditCheck.creditsRemaining },
+          { status: 429 }
+        );
+      }
+    }
 
     const results: CheckResult[] = [];
 
     // ─── Client-side checks (based on element data) ───
-
     if (elements && Array.isArray(elements) && dimensions) {
       const bleedMm = dimensions.bleedMm ?? 2;
       const safeZoneMm = dimensions.safeZoneMm ?? 4;
       const trimW = dimensions.widthMm ?? 102;
       const trimH = dimensions.heightMm ?? 152;
 
-      // Safe zone edges (relative to canvas origin, in mm)
-      // Canvas origin is at the bleed edge, so offset by bleedMm
       const safeLeft = bleedMm + safeZoneMm;
       const safeTop = bleedMm + safeZoneMm;
       const safeRight = bleedMm + trimW - safeZoneMm;
       const safeBottom = bleedMm + trimH - safeZoneMm;
 
-      // Trim edges (offset by bleedMm from canvas edge)
       const trimLeft = bleedMm;
       const trimTop = bleedMm;
       const trimRight = bleedMm + trimW;
       const trimBottom = bleedMm + trimH;
 
-      // Total canvas = trim + bleed on each side
       const totalW = trimW + bleedMm * 2;
       const totalH = trimH + bleedMm * 2;
 
@@ -47,7 +78,6 @@ export async function POST(request: Request) {
       for (const el of elements) {
         if (el.isBackground) {
           hasBackground = true;
-          // Check if background covers bleed area
           const coversBleed =
             el.x <= 0.5 &&
             el.y <= 0.5 &&
@@ -70,7 +100,6 @@ export async function POST(request: Request) {
           continue;
         }
 
-        // Check safe zone
         if (
           el.x < safeLeft ||
           el.y < safeTop ||
@@ -80,7 +109,6 @@ export async function POST(request: Request) {
           elementsOutsideSafe++;
         }
 
-        // Check near trim (within 2mm)
         const nearTrimThreshold = 2;
         if (
           el.x < trimLeft + nearTrimThreshold ||
@@ -91,19 +119,15 @@ export async function POST(request: Request) {
           elementsNearTrim++;
         }
 
-        // Check image DPI
         if (el.type === "image" && el.dpi && el.dpi < 150) {
           lowDpiImages++;
         }
 
-        // Check text size (6pt minimum)
         if (el.type === "text" && el.fontSizeMm && el.fontSizeMm < 2.1) {
-          // 6pt ≈ 2.12mm
           tinyText++;
         }
       }
 
-      // Safe zone check
       if (elementsOutsideSafe > 0) {
         results.push({
           label: "Elements within safe zone",
@@ -118,7 +142,6 @@ export async function POST(request: Request) {
         });
       }
 
-      // Background check
       if (!hasBackground) {
         results.push({
           label: "Background reaches bleed",
@@ -128,7 +151,6 @@ export async function POST(request: Request) {
         });
       }
 
-      // Image DPI check
       if (lowDpiImages > 0) {
         results.push({
           label: "Image resolution",
@@ -143,7 +165,6 @@ export async function POST(request: Request) {
         });
       }
 
-      // Text size check
       if (tinyText > 0) {
         results.push({
           label: "Text size",
@@ -158,7 +179,6 @@ export async function POST(request: Request) {
         });
       }
 
-      // Near trim check
       if (elementsNearTrim > 0) {
         results.push({
           label: "Elements near trim",
@@ -213,16 +233,19 @@ No other text, just the JSON object.`,
             message: "Unable to evaluate text contrast automatically.",
           });
         }
+
+        // ── Consume credits (AI check succeeded) ──────────────
+        await consumeAiCredits(roasterId, "label_print_check");
       } catch {
         results.push({
           label: "Text contrast",
           status: "warning",
           message: "Could not perform AI contrast check. Please verify text is readable manually.",
         });
+        // Don't consume credits if AI check failed
       }
     }
 
-    // Separate results by status
     const passed = results.filter((r) => r.status === "passed");
     const warnings = results.filter((r) => r.status === "warning");
     const errors = results.filter((r) => r.status === "error");

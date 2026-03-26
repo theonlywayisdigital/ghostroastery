@@ -1,8 +1,41 @@
 import { NextResponse } from "next/server";
 import { getTextModel, getImageModel } from "@/lib/gemini";
+import { createAuthServerClient } from "@/lib/supabase";
+import {
+  checkAiCredits,
+  consumeAiCredits,
+  resolveRoasterId,
+} from "@/lib/ai-credits";
 
 export async function POST(request: Request) {
   try {
+    // ── Auth ──────────────────────────────────────────────────
+    const supabaseAuth = await createAuthServerClient();
+    const {
+      data: { user },
+    } = await supabaseAuth.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const roasterId = await resolveRoasterId(user.id);
+    if (!roasterId) {
+      return NextResponse.json(
+        { error: "No roaster account found" },
+        { status: 403 }
+      );
+    }
+
+    // ── Credit check ─────────────────────────────────────────
+    const creditCheck = await checkAiCredits(roasterId, "label_background");
+    if (!creditCheck.allowed) {
+      return NextResponse.json(
+        { error: creditCheck.error, creditsRemaining: creditCheck.creditsRemaining },
+        { status: 429 }
+      );
+    }
+
+    // ── Body ─────────────────────────────────────────────────
     const { prompt, style } = await request.json();
 
     if (!prompt || typeof prompt !== "string") {
@@ -66,14 +99,10 @@ Example: ["description 1", "description 2", "description 3"]`;
     }
 
     // Use Gemini's image generation for each description
-    // Note: Gemini Flash image generation requires the imagen model
-    // For now, we return the prompts — the client can use them with an image gen service
-    // or we generate placeholder gradient backgrounds
     const images: string[] = [];
 
     for (const desc of descriptions.slice(0, 3)) {
       try {
-        // Use Gemini's native image generation model
         const imageModel = getImageModel();
         const imgResult = await imageModel.generateContent(
           `Generate a flat rectangular background image in portrait orientation (about 1020px wide × 1520px tall). This is a FULL-BLEED surface texture/pattern for a printed label — NOT a product photo.
@@ -87,7 +116,6 @@ ABSOLUTE REQUIREMENTS:
 Description: ${desc}. Style: ${styleDesc}.`
         );
 
-        // Check if response contains image data
         const response = imgResult.response;
         const parts = response.candidates?.[0]?.content?.parts;
         const imagePart = parts?.find(
@@ -99,13 +127,15 @@ Description: ${desc}. Style: ${styleDesc}.`
             `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`
           );
         } else {
-          // If no image in response, generate a placeholder gradient
           images.push(generateGradientPlaceholder(desc));
         }
       } catch {
         images.push(generateGradientPlaceholder(desc));
       }
     }
+
+    // ── Consume credits (after successful response) ──────────
+    await consumeAiCredits(roasterId, "label_background", { prompt, style });
 
     return NextResponse.json({ images, descriptions });
   } catch (error) {
@@ -119,7 +149,6 @@ Description: ${desc}. Style: ${styleDesc}.`
 
 /** Generate a simple SVG gradient as a placeholder data URL */
 function generateGradientPlaceholder(description: string): string {
-  // Extract colour hints from the description
   const dark = description.toLowerCase().includes("dark");
   const warm = description.toLowerCase().includes("warm") || description.toLowerCase().includes("coffee");
   const cool = description.toLowerCase().includes("cool") || description.toLowerCase().includes("blue");

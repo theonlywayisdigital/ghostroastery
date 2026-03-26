@@ -1,8 +1,41 @@
 import { NextResponse } from "next/server";
 import { getTextModel } from "@/lib/gemini";
+import { createAuthServerClient } from "@/lib/supabase";
+import {
+  checkAiCredits,
+  consumeAiCredits,
+  resolveRoasterId,
+} from "@/lib/ai-credits";
 
 export async function POST(request: Request) {
   try {
+    // ── Auth ──────────────────────────────────────────────────
+    const supabaseAuth = await createAuthServerClient();
+    const {
+      data: { user },
+    } = await supabaseAuth.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const roasterId = await resolveRoasterId(user.id);
+    if (!roasterId) {
+      return NextResponse.json(
+        { error: "No roaster account found" },
+        { status: 403 }
+      );
+    }
+
+    // ── Credit check ─────────────────────────────────────────
+    const creditCheck = await checkAiCredits(roasterId, "label_copy");
+    if (!creditCheck.allowed) {
+      return NextResponse.json(
+        { error: creditCheck.error, creditsRemaining: creditCheck.creditsRemaining },
+        { status: 429 }
+      );
+    }
+
+    // ── Body ─────────────────────────────────────────────────
     const { brandName, origin, roastLevel, flavourNotes, tone } =
       await request.json();
 
@@ -70,6 +103,9 @@ No other text, just the JSON object.`
         brandStory: `${brandName} is dedicated to bringing you exceptional coffee, roasted with precision and passion.`,
       };
     }
+
+    // ── Consume credits (after successful response) ──────────
+    await consumeAiCredits(roasterId, "label_copy", { brandName, tone });
 
     return NextResponse.json(copy);
   } catch (error) {

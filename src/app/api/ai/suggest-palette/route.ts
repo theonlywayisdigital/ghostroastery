@@ -1,8 +1,41 @@
 import { NextResponse } from "next/server";
 import { getVisionModel, base64ToInlineData } from "@/lib/gemini";
+import { createAuthServerClient } from "@/lib/supabase";
+import {
+  checkAiCredits,
+  consumeAiCredits,
+  resolveRoasterId,
+} from "@/lib/ai-credits";
 
 export async function POST(request: Request) {
   try {
+    // ── Auth ──────────────────────────────────────────────────
+    const supabaseAuth = await createAuthServerClient();
+    const {
+      data: { user },
+    } = await supabaseAuth.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const roasterId = await resolveRoasterId(user.id);
+    if (!roasterId) {
+      return NextResponse.json(
+        { error: "No roaster account found" },
+        { status: 403 }
+      );
+    }
+
+    // ── Credit check ─────────────────────────────────────────
+    const creditCheck = await checkAiCredits(roasterId, "label_palette");
+    if (!creditCheck.allowed) {
+      return NextResponse.json(
+        { error: creditCheck.error, creditsRemaining: creditCheck.creditsRemaining },
+        { status: 429 }
+      );
+    }
+
+    // ── Body ─────────────────────────────────────────────────
     const { logoImageBase64 } = await request.json();
 
     if (!logoImageBase64 || typeof logoImageBase64 !== "string") {
@@ -50,6 +83,9 @@ No other text, just the JSON array.`,
         ["#3d1f0e", "#8b6b4a", "#f0e6d8"],
       ];
     }
+
+    // ── Consume credits (after successful response) ──────────
+    await consumeAiCredits(roasterId, "label_palette");
 
     return NextResponse.json({ palettes });
   } catch (error) {
